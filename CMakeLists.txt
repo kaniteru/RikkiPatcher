@@ -13,10 +13,6 @@ file(GLOB_RECURSE SRC_FILES
         "${PROJECT_SOURCE_DIR}/src/**.cpp"
 )
 
-file(GLOB_RECURSE RES_FILES
-        "${CMAKE_SOURCE_DIR}/res/*"
-)
-
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_executable(RikkiPatcher "${SRC_FILES}")
 else()
@@ -43,4 +39,5 @@ add_definitions("-DUNICODE" "-D_UNICODE")
 
 add_custom_command(TARGET RikkiPatcher POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/res/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        ${CMAKE_SOURCE_DIR}/res/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
