@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rikki Patcher</title>
+    <link rel="stylesheet" href="styles/fonts.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/control.css">
+    <link rel="stylesheet" href="styles/console.css">
+</head>
+<body onload="onLoad()">
+<!-- DIV - HEADER -->
+<div id="div-hdr" class="div-section no-select">
+    <div id="div-hdr-title"><h3 id="h3-hdr">Rikki Patcher</h3></div>
+    <div id="div-hdr-kani"><h4 id="h4-kani">By. kaniteru</h4></div>
+</div>
+<!-- DIV - CENTER -->
+<div id="div-center" class="div-section no-select">
+<div id="div-ctrl">
+    <div id="div-ctrl-progress" class="div-ctrl">
+        <div id="div-ctrl-init-anim"></div>
+    </div>
+    <div id="div-ctrl-gmdir" class="div-ctrl">
+        <div><p id="p-ctrl-gmdir-desc" class="p-ctrl-desc">You need set game directory first.</p></div>
+        <div><button id="bt-ctrl-gmdir-manually" class="bt-ctrl">Select GameDirectory Manually</button></div>
+        <div id="div-ctrl-gmdir-or"><p id="p-ctrl-gmdir-or" class="p-ctrl-desc">or</p></div>
+        <div><button id="bt-ctrl-gmdir-automatically" class="bt-ctrl">Find GameDirectory Automatically (If steam)</button></div>
+    </div>
+    <div id="div-ctrl-options" class="div-ctrl">
+        <div id="div-ctrl-options-center">
+            <div><p id="p-ctrl-options-desc" class="p-ctrl-desc">What do you want to do?</p></div>
+            <div id="div-ctrl-options-center-bt">
+                <button id="bt-ctrl-options-extract" class="bt-ctrl">Extract data from game</button>
+                <button id="bt-ctrl-options-apply" class="bt-ctrl">Apply patch to game</button>
+            </div>
+        </div>
+        <div id="div-ctrl-options-footer">
+            <button id="bt-ctrl-options-setting" class="bt-ctrl">Reset GameDirectory</button>
+        </div>
+    </div>
+<!--    <div id="div-ctrl-extract" class="div-ctrl">
+        <div id="div-ctrl-extract-top">
+            <p id="p-ctrl-extract-desc" class="p-ctrl-desc">Extract data from game</p>
+        </div>
+        <div id="div-ctrl-extract-center"></div>
+        <div id="div-ctrl-extract-footer" class="div-ctrl-patch-footer"></div>
+    </div>
+    <div id="div-ctrl-apply" class="div-ctrl">
+        <div id="div-ctrl-apply-top">
+            <p id="p-ctrl-apply-desc" class="p-ctrl-desc">Extract data from game</p>
+        </div>
+        <div id="div-ctrl-apply-center"></div>
+        <div id="div-ctrl-apply-footer" class="div-ctrl-patch-footer"></div>
+    </div>-->
+    <div id="div-ctrl-patch" class="div-ctrl">
+        <div id="div-ctrl-patch-top">
+            <p id="p-ctrl-patch-desc" class="p-ctrl-desc">Patch Description</p>
+        </div>
+        <div id="div-ctrl-patch-center">
+            <div><p id="p-ctrl-patch-alert" class="p-ctrl-desc">WARNING!</p></div>
+            <div id="div-ctrl-patch-select-dir">
+                <p id="p-ctrl-patch-continue" class="p-ctrl-desc">Continue?</p>
+                <button id="bt-ctrl-patch-select-dir" class="bt-ctrl">Select Folder</button>
+            </div>
+
+        </div>
+        <div id="div-ctrl-patch-footer">
+            <button id="bt-ctrl-patch-back" class="bt-ctrl">Back</button>
+            <button id="bt-ctrl-patch-start" class="bt-ctrl">Start Patch</button>
+        </div>
+    </div>
+    <div id="div-ctrl-setting" class="div-ctrl">
+
+    </div>
+</div>
+</div>
+<!-- DIV - FOOTER -->
+<div id="div-footer" class="div-section">
+<div id="div-console">
+
+</div>
+</div>
+<script src="scripts/index.js"></script>
+<script src="scripts/logger.js"></script>
+<script src="scripts/control.js"></script>
+</body>
+</html>

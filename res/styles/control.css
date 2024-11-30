@@ -1,0 +1,170 @@
+.div-ctrl {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.p-ctrl-desc {
+    font-size: 5vmin;
+    font-weight: bold;
+    font-family: 'Architects Daughter', serif;
+}
+
+.bt-ctrl {
+    padding: 1vmin;
+
+    color: white;
+    font-size: 3vmin;
+    font-family: 'Architects Daughter', serif;
+
+    border: 0;
+    border-radius: 1vmin;
+    background-color: black;
+}
+.bt-ctrl:hover {
+    background-color: rebeccapurple;
+}
+.bt-ctrl:active {
+    color: black;
+    background-color: mediumpurple;
+}
+.bt-ctrl:disabled {
+    color: black;
+    background-color: dimgrey;
+    cursor: not-allowed;
+}
+
+#div-ctrl {
+    width: 100%;
+    height: 100%;
+}
+
+/*https://blog.hubspot.com/website/css-loading-animation*/
+#div-ctrl-init-anim {
+    width: 22vmin;
+    height: 22vmin;
+    margin: auto;
+
+    background-color: darkmagenta;
+    animation: spin 2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+#div-ctrl-gmdir {
+    display: flex;
+    flex-direction: column;
+}
+
+#p-ctrl-gmdir-or {
+    padding: 0;
+}
+
+#div-ctrl-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#div-ctrl-options-center {
+    flex: 80%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#div-ctrl-options-center-bt {
+    display: flex;
+    align-items: baseline;
+    align-content: center;
+    justify-content: space-between;
+}
+#div-ctrl-options-center-bt > button {
+    margin: 4vmin;
+}
+
+#bt-ctrl-setting {
+    background-color: grey;
+}
+#bt-ctrl-setting:hover {
+    background-color: darkmagenta;
+}
+
+#div-ctrl-options-footer {
+    flex: 20%;
+}
+
+#div-ctrl-patch {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#div-ctrl-extract-top {
+    flex: 5%;
+}
+
+#p-ctrl-patch-desc {
+    color: darkmagenta;
+}
+
+#div-ctrl-patch-center {
+    flex: 75%;
+}
+
+#div-ctrl-patch-select-dir {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#p-ctrl-patch-alert {
+    font-size: 3.5vmin;
+}
+
+#p-ctrl-patch-continue {
+    color: tomato;
+    font-size: 2.7vmin;
+}
+
+#bt-ctrl-patch-select-dir {
+    background-color: tomato;
+}
+#bt-ctrl-patch-select-dir:hover {
+    color: white;
+    background-color: darkolivegreen;
+}
+#bt-ctrl-patch-select-dir:active {
+    color: black;
+    background-color: olive;
+}
+
+#div-ctrl-patch-footer {
+    flex: 20%;
+
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#bt-ctrl-patch-back {
+    position: absolute;
+    left: 0;
+    margin-left: 1vmin;
+}
+
+@keyframes spin {
+    0%, 100% {
+        transform: scale(0.5) rotate(0deg);
+    }
+    50% {
+        transform: scale(1) rotate(180deg);
+    }
+}

@@ -1,0 +1,20 @@
+#div-console {
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+
+    /*    border: 2px solid white;
+    border-radius: 7px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);*/
+
+    color: white;
+    background-color: black;
+
+    overflow-y: auto;
+    word-wrap: break-word;
+    box-sizing: border-box;
+}
+
+.div-log {
+    font-size: 2.6vmin;
+}

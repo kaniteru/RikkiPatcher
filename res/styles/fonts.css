@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Permanent Marker';
+    src: url('../res/fonts/PermanentMarker-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Architects Daughter';
+    src: url('../res/fonts/ArchitectsDaughter-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
