@@ -16,6 +16,7 @@ public:
 class Patcher : IPatcher {
 public:
     static void load_and_patch(const path_t& src);
+    static void migration_modified_data(const path_t& src);
 private:
     static void update_dialogues(const path_t& spk, const path_t& dia, const path_t& dst);
 };

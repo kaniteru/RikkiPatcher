@@ -8,3 +8,7 @@ void StringUtil::replace(std::string& str, std::string_view oldSub, std::string_
         pos += newSub.length();
     }
 }
+
+const char* StringUtil::u8_to_cstr(std::u8string_view str) {
+    return reinterpret_cast<const char*>(str.data());
+}

@@ -169,3 +169,8 @@ void Patcher::update_dialogues(const path_t& spk, const path_t& dia, const path_
     WvInvoker::log(LOG_LV_INFO, "Updated " + std::to_string(found) + " / " + std::to_string(updated) + " dialogue files");
     WvInvoker::log(LOG_LV_ALERT, "Finished update dialogues");
 }
+
+void Patcher::migration_modified_data(const path_t& src) {
+    WvInvoker::log(LOG_LV_ALERT, u8"Starting the migration for " + src.generic_u8string());
+
+}

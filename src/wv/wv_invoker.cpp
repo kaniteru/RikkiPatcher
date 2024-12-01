@@ -2,6 +2,7 @@
 #include "enums.hpp"
 #include "rikki/dir_mgr.hpp"
 #include "rikki/config.hpp"
+#include "utils/string_util.hpp"
 
 void WvInvoker::init_success() {
     constexpr static auto FN = "_initSuccess";
@@ -16,20 +17,17 @@ void WvInvoker::init_gmdir(const path_t gmdir) {
         return;
     }
 
-    InstanceFactory::instance().reset<DirMgr>();
-    InstanceFactory::instance().make<DirMgr>(gmdir);
+    auto& instFac = InstanceFactory::instance();
+    instFac.reset<DirMgr>();
+    instFac.make<DirMgr>(gmdir);
 
     const auto u8 = gmdir.generic_u8string();
+    WvInvoker::log(LOG_LV_ALERT, u8"Game directory set: " + u8);
 
-    const auto u8log = u8"Game directory set: " + u8;
-    WvInvoker::log(LOG_LV_ALERT, reinterpret_cast<const char*>(u8log.c_str()));
-
-    auto u8str = reinterpret_cast<const char*>(u8.c_str());
-
-    auto config = InstanceFactory::instance().get<Config>();
-    config->set(Config::KEY_GMDIR, u8str);
-    config->save();
-
+    auto pConfig = instFac.get<Config>();
+    auto u8str =  StringUtil::u8_to_cstr(u8);
+    pConfig->set(Config::KEY_GMDIR, u8str);
+    pConfig->save();
     WvInvoker::call(FN, u8str);
 }
 
@@ -42,12 +40,8 @@ void WvInvoker::selected_patch_data_dir(const path_t& dir) {
     }
 
     const auto u8 = dir.generic_u8string();
-
-    const auto u8log = u8"Loaded patch data files from " + u8;
-    WvInvoker::log(LOG_LV_INFO, reinterpret_cast<const char*>(u8log.c_str()));
-
-    auto u8str = reinterpret_cast<const char*>(u8.c_str());
-    WvInvoker::call(FN, u8str);
+    WvInvoker::log(LOG_LV_INFO, u8"Loaded patch data files from " + u8);
+    WvInvoker::call(FN, StringUtil::u8_to_cstr(u8));
 }
 
 void WvInvoker::finish_patch() {
@@ -58,6 +52,11 @@ void WvInvoker::finish_patch() {
 void WvInvoker::log(enum eLogLV lv, std::string_view msg) {
     constexpr static auto FN = "_log";
     WvInvoker::call(FN, lv, msg);
+}
+
+void WvInvoker::log(eLogLV lv, std::u8string_view msg) {
+    constexpr static auto FN = "_log";
+    WvInvoker::call(FN, lv, reinterpret_cast<const char*>(msg.data()));
 }
 
 void WvInvoker::clear_log() {

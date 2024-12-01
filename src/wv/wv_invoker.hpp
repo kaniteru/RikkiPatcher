@@ -19,6 +19,7 @@ public:
     static void finish_patch();
 
     static void log(eLogLV lv, std::string_view msg);
+    static void log(eLogLV lv, std::u8string_view msg);
     static void clear_log();
 };
 
