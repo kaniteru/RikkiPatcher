@@ -2,7 +2,7 @@
 #include "utils/filesystem_util.hpp"
 #include "wv/wv_invoker.hpp"
 #include "wv/enums.hpp"
-#include "dialogue.hpp"
+#include "data/dialogue.hpp"
 #include "utils/json_util.hpp"
 #include "dir_mgr.hpp"
 
@@ -101,7 +101,7 @@ void Patcher::load_and_patch(const path_t& src) {
 }
 
 void Patcher::update_dialogues(const path_t& spk, const path_t& dia, const path_t& dst) {
-    DialogueEntry de { };
+    _DialogueEntry de { };
     nlohmann::json j { };
     size_t diaAdded = 0;
 

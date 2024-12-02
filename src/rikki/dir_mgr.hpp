@@ -12,11 +12,31 @@ enum eDir {
     DIR_GAME_JSON_DIALOGUES
 };
 
+/**
+ * @brief Using get directory path.
+ */
 class DirMgr {
 public:
+    /**
+     * @brief Get target path.
+     *
+     * @param [in] type Target type.
+     * @return Returns target path.
+     *
+     * @code
+     * DirMgr dirMgr(...);
+     * eDir dirType = ...;
+     * auto path = dirMgr.get(dirType);
+     * @endcode
+     */
     const path_t& get(eDir type);
 
 public:
+    /**
+     * @brief Initialize using game directory.
+     *
+     * @param [in] gmDir Game directory path.
+     */
     explicit DirMgr(const path_t gmDir);
 private:
     std::unordered_map<eDir, path_t> m_dirs;

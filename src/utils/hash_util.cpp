@@ -14,3 +14,7 @@ std::string HashUtil::file_to_hash(const path_t& file) {
 
     return result;
 }
+
+std::string HashUtil::str_to_hash(std::string_view str) {
+    return SHA512().hash(str.data());
+}
