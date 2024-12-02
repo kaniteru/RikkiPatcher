@@ -14,7 +14,7 @@ public:
     template <class T>
     void set(const char* key, T&& value);
 
-    bool save();
+    bool save() const;
 public:
     explicit Config(const path_t& file);
 private:

@@ -1,0 +1,10 @@
+#ifndef RIKKI_PATCHER_RIKKI_GMDATA_I_GMDATA_HPP
+#define RIKKI_PATCHER_RIKKI_GMDATA_I_GMDATA_HPP
+
+class IGMData {
+public:
+  bool backup();
+}
+
+
+#endif //RIKKI_PATCHER_RIKKI_GMDATA_I_GMDATA_HPP

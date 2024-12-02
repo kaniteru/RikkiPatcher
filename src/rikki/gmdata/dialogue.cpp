@@ -43,7 +43,7 @@ bool Dialogue::save(const path_t& path) {
 }
 
 void Dialogue::find_dialogue(const dialogue_callback_t& callback) {
-    constexpr static auto KEY                     = "customCommands";
+    constexpr static auto KEY                      = "customCommands";
     constexpr static auto ID_DIALOGUE   = 11;
     constexpr static auto IDX_ID               = 0;
     constexpr static auto IDX_SPEAKER    = 3;

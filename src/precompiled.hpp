@@ -3,6 +3,7 @@
 
 #include <webview.h>
 #include <nlohmann/json.hpp>
+#include <SHA512.h>
 
 #include <windows.h>
 #include <shellapi.h>

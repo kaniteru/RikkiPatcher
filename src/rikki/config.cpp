@@ -5,7 +5,7 @@ bool Config::exists(const char* key) {
     return m_j.contains(key);
 }
 
-bool Config::save() {
+bool Config::save() const {
     return JsonUtil::save_into_file(m_j, m_file);
 }
 
