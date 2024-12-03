@@ -95,6 +95,10 @@ document.getElementById('bt-ctrl-options-apply').addEventListener('click', e => 
     const selectDiv = document.getElementById('div-ctrl-patch-select-dir');
     selectDiv.style.display = 'flex';
 });
+document.getElementById('bt-ctrl-options-migrate').addEventListener('click', e => {
+    Control.INSTANCE.move(eCtrlLv.CTRL_LV_PROGRESS);
+    window.MIGRATE_PATCH_DATA();
+});
 document.getElementById('bt-ctrl-options-setting').addEventListener('click', e => {
    Control.INSTANCE.move(eCtrlLv.CTRL_LV_GMDIR);
 });

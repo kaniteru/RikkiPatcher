@@ -1,0 +1,6 @@
+{
+    "initializing": "intializing {0}...",
+    "initialized": "{0} initialized",
+    "current_version": "Current RikkiPatcher ver: {0}",
+    "gmdir_set": "Game directory set: {0}"
+}
