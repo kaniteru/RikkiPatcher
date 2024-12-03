@@ -1,0 +1,6 @@
+{
+    "initializing": "{0} 초기화 중...",
+    "initialized": "{0} 초기화 됨",
+    "current_version": "현재 RikkiPatcher 버전: {0}",
+    "gmdir_set": "게임 경로 설정됨: {0}"
+}

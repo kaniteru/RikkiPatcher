@@ -16,7 +16,8 @@ DirMgr::DirMgr(const path_t gmDir) {
     };
 
     add(DIR_PROJ_BASE, std::filesystem::current_path());
-    add_dir(DIR_PROJ_DATA, DIR_PROJ_BASE, "data");
+    //add_dir(DIR_PROJ_DATA, DIR_PROJ_BASE, "data");
+    //add_dir(DIR_PROJ_DATA_LANGUAGES, DIR_PROJ_BASE, "lang"); todo: support multi-languages
     add_dir(DIR_PROJ_DATA_EXTRACED, DIR_PROJ_BASE, "extracted");
 
     add(DIR_GAME_BASE, gmDir);

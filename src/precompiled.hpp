@@ -3,6 +3,7 @@
 
 #include <webview.h>
 #include <nlohmann/json.hpp>
+#include <SHA512.h>
 
 #include <windows.h>
 #include <shellapi.h>
@@ -17,6 +18,8 @@
 #include <array>
 #include <queue>
 #include <vector>
+#include <set>
+#include <map>
 #include <unordered_map>
 
 #include <memory>
