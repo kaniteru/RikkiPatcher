@@ -24,7 +24,7 @@ public:
      * @return Returns true if migrated successfully.
      */
     bool migration() final;
-private:
+public: // todo
     /**
      * @brief Generate migration info data.
      *             This data will be used to migrate custom patch data to match the updated game in the future.
@@ -38,7 +38,7 @@ public:
     /**
      * @brief Initialize using custom data directory.
      *
-     * @param [in] src Custom data directory path.
+     * @param [in] src Custom data directory root path.
      */
     explicit DialoguePatcher(const path_t& src);
 private:
@@ -66,7 +66,7 @@ public:
      * @brief Check target speaker is exists.
      *
      * @param [in] spk Target speaker.
-     * @return Returns true if target spaeakr exists
+     * @return Returns true if target speaker exists.
      */
     bool is_spekaer_exists(std::string_view spk) const;
 
@@ -99,6 +99,8 @@ public:
       * @param [in] file Speaker custom patch file path.
       */
      explicit SpeakerPatchStream(const path_t& file);
+
+     SpeakerPatchStream() = default;
 private:
     path_t m_file;
     nlohmann::json m_j;
@@ -111,7 +113,7 @@ private:
 class DialoguePatchStream {
 public:
     /**
-     * @brief Find dialogue using index.
+     * @brief Find dialogue from index.
      *
      * @param [in] idx Target dialogue index.
      * @return Returns target index dialogue.
@@ -148,6 +150,11 @@ public:
     void remove_dialogue(dialogue_idx_t idx);
 
     /**
+     * @brief Clear dialogues from loaded data.
+     */
+    void clear();
+
+    /**
      * @brief Save data into file.
      *
      * @return Returns ture if data saved successfully.
@@ -163,7 +170,7 @@ public:
     explicit DialoguePatchStream(const path_t& file);
 private:
     path_t m_file;
-    nlohmann::json m_j;
+    nlohmann::ordered_json m_j;
 
     constexpr static auto KEY_SPEAKER = "speaker";
     constexpr static auto KEY_DIALOGUE = "dialogue";
@@ -223,7 +230,7 @@ public:
     explicit DialogueMigrStream(const path_t& file);
 private:
     bool m_isValid;
-    nlohmann::json m_j;
+    nlohmann::ordered_json m_j;
 
     constexpr static auto KEY_HASH = "hash";
     constexpr static auto KEY_LIST = "list";

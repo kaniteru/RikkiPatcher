@@ -8,7 +8,7 @@ struct DialogueEntry;
 using dialogue_idx_t = uint64_t; /* Dialogue index. */
 using dialogue_map_t = std::map<dialogue_idx_t, DialogueEntry>;
 using speaker_map_t = std::map<std::string, std::string>; // chinense | translated
-using dialogue_callback_t = std::function<void(dialogue_idx_t idx, std::string& speaker, std::string&)>;
+using dialogue_callback_t = std::function<void(const dialogue_idx_t idx, std::string& speaker, std::string&)>;
 
 struct DialogueEntry {
     std::string m_speaker; /* Speaker. ex) Rikky Shiina */
@@ -106,20 +106,6 @@ private:
     bool m_isValid;         /* Using is dialogue data loaded successful in constructor. */
     path_t m_file;          /* Target dialogue in game file path */
     nlohmann::json m_j; /* Loaded dialogue data */
-};
-
-struct DialogueMigr {
-    std::string m_hash;
-    dialogue_map_t m_entries;
-
-    bool save(const path_t& file) const;
-
-    static DialogueMigr from_file(const path_t& file);
-private:
-    constexpr static auto KEY_MIGR_HASH         = "hash";
-    constexpr static auto KEY_MIGR_DIA_LIST  = "dia_list";
-    constexpr static auto KEY_MIGR_SPEAKER    = "speaker";
-    constexpr static auto KEY_MIGR_DIALOGUE = "dialogue";
 };
 
 

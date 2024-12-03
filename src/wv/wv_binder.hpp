@@ -20,6 +20,7 @@ private:
 
     std::string patch_extract(HANDLER_ARGS);
     std::string patch_apply(HANDLER_ARGS);
+    std::string migrate_patch_data(HANDLER_ARGS);
 };
 
 

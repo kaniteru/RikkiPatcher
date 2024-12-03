@@ -5,90 +5,203 @@
 #include "utils/instance_factory.hpp"
 #include "utils/json_util.hpp"
 #include "utils/hash_util.hpp"
-#include "utils/string_util.hpp"
+#include "wv/enums.hpp"
+#include "wv/wv_invoker.hpp"
 
 size_t DialoguePatcher::patch() {
-    size_t result = 0;
-    constexpr auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
     const auto spkdir = path_t(m_dataBase).append(FILE_SPEAKERS);
 
-    SpeakerPatchStream sps(spkdir);
-    const auto speakers = sps.get_speakers();
+    /*SpeakerPatchStream sps(spkdir);
+    const auto speakers = sps.get_speakers();*/
 
-    for (const auto files = FilesystemUtil::sort_files(gmdir); const auto& f : files) {
-        auto fName = f.filename().generic_u8string();
-        auto fCustom = path_t(m_dataBase).append(fName);
+    size_t total = 0;
+    size_t failed = 0;
+    size_t passed = 0;
+    size_t ok = 0;
 
+    for (const auto& files = FilesystemUtil::sort_files(gmdir); const auto& f : files) {
+        const auto fName = f.filename().generic_u8string();
+        const auto fCustom = path_t(m_dataBase).append(fName);
+        auto log = fName + u8" => ";
+
+        total++;
+
+        // check patch file exists
         if (!std::filesystem::exists(fCustom)) {
+            log += u8"Pass (no data)";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            passed++;
             continue;
         }
 
-        DialoguePatchStream dps(fCustom);
+        DialoguePatchStream patchStream(fCustom);
         Dialogue dia(f);
 
         if (!dia.is_valid()) {
+            log += u8"Read failed";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            failed++;
             continue;
         }
 
-        auto entries = dps.get_dialogues();
+        // get patch file data
+        const auto entries = patchStream.get_dialogues();
+        const auto lenEntries = std::to_string(entries.size());
 
-        for (auto& e : entries) {
+        /*for (auto& e : entries) {
             auto& s = e.second.m_speaker;
 
             if (const auto it = speakers.find(s); it != speakers.end()) {
                 s = it->second;
             }
-        }
+        }*/
 
+        // apply patch data into game data
         const auto patched = dia.update(entries);
+        const auto lenPatched = std::to_string(patched.size());
+
+        log += std::u8string(lenPatched.begin(), lenPatched.end())
+              + u8" / "
+              + std::u8string(lenEntries.begin(), lenEntries.end())
+              += u8" => ";
 
         if (dia.save()) {
-            result++;
+            log += u8"OK";
+
+            ok++;
+        } else {
+            log += u8"Write failed";
         }
+
+        WvInvoker::log(LOG_LV_PROG, log);
     }
 
-    return result;
+    std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
+                            + " | failed: " + std::to_string(failed);
+    WvInvoker::log(LOG_LV_INFO, log);
+
+    return ok;
 }
 
 bool DialoguePatcher::migration() {
-    constexpr auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
-    const auto files = FilesystemUtil::sort_files(m_migrBase);
+    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+    auto migrFiles = FilesystemUtil::sort_files(m_migrBase);
 
-    for (const auto& f : files) {
-        auto fName = f.filename().generic_u8string();
+    /*SpeakerPatchStream sps { };
 
-        // Handle speakers
-        if (StringUtil::u8_to_cstr(fName) == DialogueMigrStream::FILE_SPEAKERS) {
-            auto speakers = DialogueMigrStream::get_spekaers(f);
-            SpeakerPatchStream sps(path_t(m_migrBase).append(FILE_SPEAKERS));
-
-            for (const auto& it : speakers) {
-                if (sps.is_spekaer_exists(it)) {
-                    speakers.erase(std::remove(speakers.begin(), speakers.end(), it), speakers.end());
-                    continue;
-                }
-
-                sps.remove_spekaer(it);
-            }
-
-            speaker_map_t map { };
-
-            for (const auto& it : speakers) {
-                map[it] = it;
-            }
-
-            if (!map.empty()) {
-                sps.set_speakers(map);
-            }
-
+    // find spekaer file
+    for (auto& f : migrFiles) {
+        if (f.filename().generic_string() != FILE_SPEAKERS) {
             continue;
         }
 
-        // todo: Handle dialogues
+        sps = SpeakerPatchStream(f);
+        std::erase(migrFiles, f);
+        break;
+    }*/
+
+    auto gmFiles = FilesystemUtil::sort_files(gmdir);
+
+    for (const auto& f : gmFiles) {
+        const auto fName = f.filename().generic_u8string();
+
+        // path_t
+        const auto fPatch = path_t(m_dataBase).append(fName);
+        const auto fMigr = path_t(m_migrBase).append(fName);
+
+        // extract pure dialogues from game
+        Dialogue pureDia(f);
+        auto pureMap = pureDia.extract();
+
+        // delete patch data when pure dialogues doesn't exists
+        if (pureMap.empty()) {
+            std::filesystem::remove(fPatch);
+            continue;
+        }
+
+        // migration file stream
+        DialogueMigrStream migrStream(fMigr);
+        const auto migrMap = migrStream.get_dialogues();
+
+        // check pure dialogue file is updated using hash
+        if (const auto pureHash = HashUtil::file_to_hash(f); pureHash == migrStream.get_file_hash()) {
+            // if not, doesn't need working.
+            continue;
+        }
+
+        // pure dialogue file updated.
+
+        dialogue_map_t newDiaMap { };
+
+        // patch file stream
+        DialoguePatchStream patchStream(fPatch);
+        const auto patchMap = patchStream.get_dialogues();
+
+        for (const auto pureDiaMap = pureDia.extract(); const auto& [k, v] : pureDiaMap) {
+            const auto& idx = k;
+            const auto& [pureSkp, pureDia] = v;
+
+            /*if (!sps.is_spekaer_exists(pureSpk)) {
+                sps.set_speakers({ pureSpk, pureSpk });
+            }*/
+
+            // translation found boolean
+            bool tranFound = false;
+
+            // find pure dialogue data exist from migration data
+            for (const auto& [migrIdx, value] : migrMap) {
+                const auto& [migrSpk, migrDia] = value;
+
+                // dialogue doesn't matched
+                if (pureDia != migrDia) {
+                    continue;
+                }
+
+                // dialogue not found in patch data
+                if (!patchStream.is_idx_exists(migrIdx)) {
+                    break;
+                }
+
+                // found translated dialogue from patch data!
+                tranFound = true;
+
+                // load translated dialogue from patch data
+                auto tranEntry = patchStream.get_dialogue(idx);
+
+                // if speaker updated, change it to pure speaker str
+                if (pureSkp != migrSpk) {
+                    tranEntry.m_speaker = pureSkp;
+                }
+
+                newDiaMap[idx] = std::move(tranEntry);
+                break;
+            }
+
+            // already migrated, pass it
+            if (tranFound) {
+                continue;
+            }
+
+            newDiaMap[idx] = v;
+        }
+
+        // clear patch data
+        patchStream.clear();
+        // overwrite patch data using migrated data
+        patchStream.set_dialogues(newDiaMap);
+        // save overwrote patch data
+        patchStream.save();
     }
+
+    return true;
 }
 
 bool DialoguePatcher::generate_migration_info() {
+    std::filesystem::remove_all(m_migrBase);
+    std::filesystem::create_directories(m_migrBase);
     DialogueMigrStream::save_migration_data(m_migrBase);
     return true;
 }
@@ -97,7 +210,12 @@ DialoguePatcher::DialoguePatcher(const path_t& src) :
     IPatcher(src) {
 
     m_dataBase = path_t(src).append(FOLDER_BASE);
-    m_migrBase = path_t(src).append(FOLDER_BASE);
+    std::filesystem::create_directories(m_dataBase);
+
+    m_migrBase = path_t(src).append("migration").append(FOLDER_BASE);
+    std::filesystem::create_directories(m_migrBase);
+
+    m_isAvailable = true;
 }
 
 // ======================== C L A S S ========================
@@ -150,7 +268,7 @@ SpeakerPatchStream::SpeakerPatchStream(const path_t& file) :
 // ======================== C L A S S ========================
 
 DialogueEntry DialoguePatchStream::get_dialogue(const dialogue_idx_t idx) const {
-    auto& v = m_j[idx];
+    auto& v = m_j[std::to_string(idx)];
     return { v[KEY_SPEAKER], v[KEY_DIALOGUE] };
 }
 
@@ -175,11 +293,11 @@ bool DialoguePatchStream::is_idx_exists(const dialogue_idx_t idx) const {
 }
 
 void DialoguePatchStream::set_dialogues(const dialogue_map_t& map) {
-    for (const auto& it : map) {
-        const auto& idx = it.first;
-        const auto& [spk, dia] = it.second;
+    for (const auto& [k, v] : map) {
+        const auto& idx = k;
+        const auto& [spk, dia] = v;
 
-        auto& j = m_j[idx];
+        auto& j = m_j[std::to_string(idx)];
         j[KEY_SPEAKER] = spk;
         j[KEY_DIALOGUE] = dia;
     }
@@ -189,12 +307,18 @@ void DialoguePatchStream::remove_dialogue(const dialogue_idx_t idx) {
     m_j.erase(idx);
 }
 
+void DialoguePatchStream::clear() {
+    m_j.clear();
+}
+
 bool DialoguePatchStream::save() const {
     return JsonUtil::save_into_file(m_j, m_file);
 }
 
-DialoguePatchStream::DialoguePatchStream(const path_t& file) {
-    JsonUtil::load_from_file(m_j, file);
+DialoguePatchStream::DialoguePatchStream(const path_t& file) :
+    m_file(file) {
+
+    JsonUtil::load_from_file(m_j, m_file);
 }
 
 // ======================== C L A S S ========================
@@ -221,6 +345,8 @@ dialogue_map_t DialogueMigrStream::get_dialogues() const {
         const std::string dia = e[KEY_DIALOGUE];
         result[idx] = { spk, dia };
     }
+
+    return result;
 }
 
 std::vector<std::string> DialogueMigrStream::get_spekaers(const path_t& file) {
@@ -237,21 +363,31 @@ std::vector<std::string> DialogueMigrStream::get_spekaers(const path_t& file) {
 }
 
 void DialogueMigrStream::save_migration_data(const path_t& dir) {
-    constexpr auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
-    std::set<std::string> speakers { };
+    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+    //std::set<std::string> speakers { };
+
+    size_t total = 0;
+    size_t failed = 0;
+    size_t ok = 0;
 
     for (const auto files = FilesystemUtil::sort_files(gmdir); const auto& f : files) {
         const auto fName = f.filename().generic_u8string();
+        auto log = fName + std::u8string(u8" => ");
+
+        total++;
+
         Dialogue dia(f);
 
         if (!dia.is_valid()) {
+            log += u8"Read failed";
+            failed++;
             continue;
         }
 
         const auto hash = HashUtil::file_to_hash(f);
         const auto entries = dia.extract();
 
-        nlohmann::json j { };
+        nlohmann::ordered_json j { };
         j[KEY_HASH] = hash;
 
         auto& list = j[KEY_LIST];
@@ -260,18 +396,30 @@ void DialogueMigrStream::save_migration_data(const path_t& dir) {
             const auto& idx = k;
             const auto& [spk, dia] = v;
 
-            auto& entry = list[idx];
+            auto& entry = list[std::to_string(idx)];
             entry[KEY_SPEAKER] = spk;
             entry[KEY_DIALOGUE] = dia;
-            speakers.emplace(spk);
+            //speakers.emplace(spk);
         }
 
-        JsonUtil::save_into_file(j, path_t(dir).append(fName));
+        if (JsonUtil::save_into_file(j, path_t(dir).append(fName))) {
+            log += u8"OK";
+            ok++;
+        }
+        else {
+            log += u8"Write failed";
+            failed++;
+        }
+
+        WvInvoker::log(LOG_LV_PROG, log);
     }
 
-    nlohmann::json j { };
+    const auto log = "Total: " + std::to_string(total) + " | migrated: " + std::to_string(ok) + " | Failed: " + std::to_string(failed);
+    WvInvoker::log(LOG_LV_INFO, log);
+
+    /*nlohmann::json j { };
     j.parse(speakers);
-    JsonUtil::save_into_file(j, path_t(dir).append(FILE_SPEAKERS));
+    JsonUtil::save_into_file(j, path_t(dir).append(FILE_SPEAKERS));*/
 }
 
 DialogueMigrStream::DialogueMigrStream(const path_t& file) :

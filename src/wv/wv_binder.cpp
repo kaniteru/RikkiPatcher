@@ -8,7 +8,8 @@
 #include "rikki/dir_mgr.hpp"
 #include "utils/dialog_util.hpp"
 #include "utils/registry_reader.hpp"
-#include "rikki/patcher.hpp"
+#include "rikki/patcher/dialogue_patcher.hpp"
+#include "rikki/patcher/dialogue_extractor.hpp"
 
 #define BIND_EVENT_HANDLER(EVENT, FN) InstanceFactory::instance().get<webview::webview>()->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
 #define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) InstanceFactory::instance().get<webview::webview>()->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
@@ -21,6 +22,7 @@ void WvBinder::bind() {
     BIND_EVENT_HANDLER("SELECT_PATCH_DATA_DIR", this->select_patch_data_dir);
     BIND_EVENT_HANDLER("PATCH_EXTRACT", this->patch_extract);
     BIND_EVENT_HANDLER("PATCH_APPLY", this->patch_apply);
+    BIND_EVENT_HANDLER("MIGRATE_PATCH_DATA", this->migrate_patch_data);
 }
 
 std::string WvBinder::init_patcher(HANDLER_ARGS) {
@@ -31,7 +33,7 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
 
     auto& inst = InstanceFactory::instance();
     inst.make<Config>(std::filesystem::current_path().append(CONFIG_FILE));
-    inst.make<Worker>(WORKER_THREADS);
+    //inst.make<Worker>(WORKER_THREADS);
 
     path_t gmDir { };
 
@@ -45,8 +47,8 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
         std::cerr << e.what() << std::endl;
     }
 
-    auto pWorker = inst.get<Worker>();
-    pWorker->start();
+    //auto pWorker = inst.get<Worker>();
+    //pWorker->start();
 
     WvInvoker::log(LOG_LV_INFO, "Patcher initialized");
 
@@ -127,7 +129,7 @@ std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
         WvInvoker::log(LOG_LV_PROG, "Checked game installed");
     }
 
-    auto gm = rrGame.read_string(KEY_GAME_NAME);
+    const auto gm = rrGame.read_string(KEY_GAME_NAME);
 
     if (gm.empty()) {
         std::wcerr << "RegistryReader can't read key: " << KEY_GAME_NAME << std::endl;
@@ -165,21 +167,66 @@ std::string WvBinder::select_patch_data_dir(const std::string& args) {
 }
 
 std::string WvBinder::patch_extract(HANDLER_ARGS) {
-    auto pDirMgr = InstanceFactory::instance().get<DirMgr>();
-    auto src = pDirMgr->get(DIR_GAME_JSON_DIALOGUES);
-    auto dst = pDirMgr->get(DIR_PROJ_DATA_EXTRACED);
+    const auto pDirMgr = InstanceFactory::instance().get<DirMgr>();
+    const auto dst = pDirMgr->get(DIR_PROJ_DATA_EXTRACED);
 
-    Extractor::extract_dialogues(src, dst);
+    try {
+        std::filesystem::remove_all(dst);
+    }
+    catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    std::filesystem::create_directories(dst);
+
+    WvInvoker::log(LOG_LV_ALERT, "Start extract data from game");
+
+    DialogueExtractor extractor(dst);
+    extractor.extract();
+
+    WvInvoker::log(LOG_LV_ALERT, "Start generate migration info");
+
+    DialoguePatcher patcher(dst);
+    patcher.generate_migration_info();
+
+    WvInvoker::log(LOG_LV_ALERT, "Finished generate migration info");
+    WvInvoker::log(LOG_LV_ALERT, "Finished extract data from game");
+
+    WvInvoker::log(LOG_LV_INFO, u8"You can find extracted data into: " + dst.generic_u8string());
+
     WvInvoker::finish_patch();
     return { };
 }
 
 std::string WvBinder::patch_apply(HANDLER_ARGS) {
-    auto a = WvArgsParser::from_js(args);
-    auto src = a.get<std::string>(0);
-    auto u8src = reinterpret_cast<const char8_t*>(src.c_str());
+    const auto a = WvArgsParser::from_js(args);
+    const auto src = a.get<std::string>(0);
+    const auto u8src = reinterpret_cast<const char8_t*>(src.c_str());
 
-    Patcher::load_and_patch(u8src);
+    WvInvoker::log(LOG_LV_ALERT, "Start apply custom data into game");
+
+    DialoguePatcher patcher(u8src);
+    patcher.patch();
+
+    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom data into game");
+
+    WvInvoker::finish_patch();
+    return { };
+}
+
+std::string WvBinder::migrate_patch_data(HANDLER_ARGS) {
+    WvInvoker::log(LOG_LV_ALERT, "Start migrate custom data");
+
+    // todo: logging migration progress
+    if (path_t dir { }; DialogUtil::folder_select_dialog(dir)) {
+        if (DialoguePatcher patcher(dir); patcher.is_available()) {
+            patcher.migration();
+            patcher.generate_migration_info();
+        }
+    }
+
+    WvInvoker::log(LOG_LV_ALERT, "Finished migrate custom data");
+
     WvInvoker::finish_patch();
     return { };
 }
