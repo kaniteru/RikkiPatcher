@@ -4,10 +4,13 @@ A simple patch tool to modify the game '[鼓手余命十日谭 (Shiina Taki's De
 ![screenshot](img/patcher.png)
 
 ## Features
-- **Extract and apply modified dialogue texts**
+- Extract and apply modified dialogue texts
 
 ## Usage
-[Here](https://kaniteru.github.io/project/RikkiPatcher/usage.html)
+[Usage](https://kaniteru.github.io/project/RikkiPatcher/usage.html)
+[Download & Contribute Translation patches](https://github.com/kaniteru/RikkiPatcher-Patches)
 
 ## Todo
-- **Extract and apply modified images (like button)**
+- Extract and apply modified images (like button)
+- Support multiple languages on client
+- Improve 'Migrate path data'
