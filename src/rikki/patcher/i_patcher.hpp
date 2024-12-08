@@ -23,15 +23,14 @@ class IPatcher : public IRikkiPatcher {
 public:
     virtual size_t patch() = 0;
     virtual bool migration() = 0;
-protected:
     virtual bool generate_migration_info() = 0;
 
 public:
     explicit IPatcher(const path_t& dir);
 protected:
     path_t m_migrDir;
-private:
-    constexpr static auto FOLDER_MIGRATE = "migrate";
+
+    constexpr static auto FOLDER_MIGRATE = "migration";
 };
 
 

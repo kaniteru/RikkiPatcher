@@ -1,15 +1,17 @@
 #include "wv_binder.hpp"
-#include "utils/instance_factory.hpp"
-#include "wv_args_parser.hpp"
-#include "wv_invoker.hpp"
 #include "enums.hpp"
+#include "wv_invoker.hpp"
+#include "wv_args_parser.hpp"
+
 #include "rikki/config.hpp"
-#include "utils/worker.hpp"
 #include "rikki/dir_mgr.hpp"
+#include "rikki/patcher/dialogue_patcher.hpp"
+#include "rikki/extractor/dialogue_extractor.hpp"
+
+#include "utils/worker.hpp"
 #include "utils/dialog_util.hpp"
 #include "utils/registry_reader.hpp"
-#include "rikki/patcher/dialogue_patcher.hpp"
-#include "rikki/patcher/dialogue_extractor.hpp"
+#include "utils/instance_factory.hpp"
 
 #define BIND_EVENT_HANDLER(EVENT, FN) InstanceFactory::instance().get<webview::webview>()->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
 #define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) InstanceFactory::instance().get<webview::webview>()->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
@@ -173,27 +175,48 @@ std::string WvBinder::patch_extract(HANDLER_ARGS) {
     try {
         std::filesystem::remove_all(dst);
     }
-    catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
-    }
+    catch (...) { }
 
     std::filesystem::create_directories(dst);
 
+    // start extract data
     WvInvoker::log(LOG_LV_ALERT, "Start extract data from game");
 
-    DialogueExtractor extractor(dst);
-    extractor.extract();
+    // extract dialogues
+    WvInvoker::log(LOG_LV_ALERT, "Start extract dialogues from game");
+    DialogueExtractor diaExtractor(dst);
+    diaExtractor.extract();
+    WvInvoker::log(LOG_LV_ALERT, "Finished extract dialogues from game");
 
-    WvInvoker::log(LOG_LV_ALERT, "Start generate migration info");
+    // extract choices
+    WvInvoker::log(LOG_LV_ALERT, "Start extract choices from game");
+    ChoiceExtractor choExtractor(dst);
+    choExtractor.extract();
+    WvInvoker::log(LOG_LV_ALERT, "Finished extract choices from game");
 
-    DialoguePatcher patcher(dst);
-    patcher.generate_migration_info();
-
-    WvInvoker::log(LOG_LV_ALERT, "Finished generate migration info");
+    // finished extract data
     WvInvoker::log(LOG_LV_ALERT, "Finished extract data from game");
 
-    WvInvoker::log(LOG_LV_INFO, u8"You can find extracted data into: " + dst.generic_u8string());
+    // start generate migration info
+    WvInvoker::log(LOG_LV_ALERT, "Start generate migration info");
 
+    // generate dialogue migration info
+    WvInvoker::log(LOG_LV_ALERT, "Start generate dialogues migration info");
+    DialoguePatcher diaPatcher(dst);
+    diaPatcher.generate_migration_info();
+    WvInvoker::log(LOG_LV_ALERT, "Finished generate dialogues migration info");
+
+    // generate choice migration info
+    WvInvoker::log(LOG_LV_ALERT, "Start generate choices migration info");
+    ChoicePatcher choPatcher(dst);
+    choPatcher.generate_migration_info();
+    WvInvoker::log(LOG_LV_ALERT, "Finished generate choices migration info");
+
+    // finished generate migration info
+    WvInvoker::log(LOG_LV_ALERT, "Finished generate migration info");
+
+    // finished
+    WvInvoker::log(LOG_LV_INFO, u8"You can find extracted data into: " + dst.generic_u8string());
     WvInvoker::finish_patch();
     return { };
 }
@@ -203,30 +226,64 @@ std::string WvBinder::patch_apply(HANDLER_ARGS) {
     const auto src = a.get<std::string>(0);
     const auto u8src = reinterpret_cast<const char8_t*>(src.c_str());
 
+    // start apply custom data
     WvInvoker::log(LOG_LV_ALERT, "Start apply custom data into game");
 
-    DialoguePatcher patcher(u8src);
-    patcher.patch();
+    // apply dialogues
+    WvInvoker::log(LOG_LV_ALERT, "Start apply custom dialogues data into game");
+    DialoguePatcher diaPatcher(u8src);
+    diaPatcher.patch();
+    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom dialogues data into game");
 
+    // apply choices
+    WvInvoker::log(LOG_LV_ALERT, "Start apply custom choices data into game");
+    ChoicePatcher choPatcher(u8src);
+    choPatcher.patch();
+    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom choices data into game");
+
+    // finished
     WvInvoker::log(LOG_LV_ALERT, "Finished apply custom data into game");
-
     WvInvoker::finish_patch();
     return { };
 }
 
 std::string WvBinder::migrate_patch_data(HANDLER_ARGS) {
-    WvInvoker::log(LOG_LV_ALERT, "Start migrate custom data");
-
-    // todo: logging migration progress
-    if (path_t dir { }; DialogUtil::folder_select_dialog(dir)) {
-        if (DialoguePatcher patcher(dir); patcher.is_available()) {
-            patcher.migration();
-            patcher.generate_migration_info();
+    constexpr auto migrate_process = [&](IPatcher* p) {
+        if (!p->is_available()) {
+            return false;
         }
+
+        p->migration();
+        p->generate_migration_info();
+        return true;
+    };
+
+    path_t dir { };
+
+    if (!DialogUtil::folder_select_dialog(dir)) {
+        // maybe user closed dialog window
+        WvInvoker::log(LOG_LV_ERR, "An error occurred while retrieving the path");
+        WvInvoker::finish_patch();
+        return { };
     }
 
-    WvInvoker::log(LOG_LV_ALERT, "Finished migrate custom data");
+    // start migrate custom data
+    WvInvoker::log(LOG_LV_ALERT, "Start migrate custom data");
 
+    // migrate dialogues data
+    WvInvoker::log(LOG_LV_ALERT, "Start migrate dialogues data");
+    DialoguePatcher diaPatcher(dir);
+    migrate_process(&diaPatcher);
+    WvInvoker::log(LOG_LV_ALERT, "Finished migrate dialogues data");
+
+    // migrate choices data
+    WvInvoker::log(LOG_LV_ALERT, "Start migrate choices data");
+    ChoicePatcher choPatcher(dir);
+    migrate_process(&choPatcher);
+    WvInvoker::log(LOG_LV_ALERT, "Finished migrate choices data");
+
+    // finished
+    WvInvoker::log(LOG_LV_ALERT, "Finished migrate custom data");
     WvInvoker::finish_patch();
     return { };
 }
