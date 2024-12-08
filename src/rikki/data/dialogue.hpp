@@ -3,17 +3,39 @@
 #include "precompiled.hpp"
 #include "i_data.hpp"
 
+/* dialogue.hpp
+ *  Included classes:
+ *      - Dialogue
+ *
+ *  Included structs:
+ *      - DialogueEntry
+ */
+
 struct DialogueEntry;
 
 using dialogue_idx_t = uint64_t; /* Dialogue index. */
+using choice_idx_t = uint64_t; /* Choice index. */
+
 using dialogue_map_t = std::map<dialogue_idx_t, DialogueEntry>;
+using choice_map_t = std::map<choice_idx_t, std::string>;
 using speaker_map_t = std::map<std::string, std::string>; // chinense | translated
-using dialogue_callback_t = std::function<void(const dialogue_idx_t idx, std::string& speaker, std::string&)>;
+
+using dialogue_iterate_t = std::function<void(const int64_t elementID, nlohmann::basic_json<>& array)>;
+using dialogue_callback_t = std::function<void(const dialogue_idx_t idx, std::string& speaker, std::string& dialogue)>;
+using choices_callback_t = std::function<void(const choice_idx_t idx, std::string& choice)>;
+
+// ======================= S T R U C T =======================
+// ===    DialogueEntry
+// ======================= S T R U C T =======================
 
 struct DialogueEntry {
-    std::string m_speaker; /* Speaker. ex) Rikky Shiina */
+    std::string m_speaker; /* Speaker. ex) Rikki Shiina */
     std::string m_dialogue; /* Dialogue. ex) Good morning, tomori-chan */
 };
+
+// ======================== C L A S S ========================
+// ===    Dialogue
+// ======================== C L A S S ========================
 
 /**
  * @brief Using load, modify and save the dialogue file.
@@ -39,7 +61,14 @@ public:
      *
      * @return Existing dialogues data map.
      */
-    dialogue_map_t extract();
+    dialogue_map_t extract_dialogues();
+
+    /**
+     * @brief Extract all existing choices from data.
+     *
+     * @return Existing choices data map.
+     */
+    choice_map_t extract_choices();
 
     /**
      * @brief Modify the dialogues data.
@@ -47,7 +76,15 @@ public:
      * @param [in] entries Map of data to be modified.
      * @return Successfully modified dialogue indexes.
      */
-    std::vector<dialogue_idx_t> update(const dialogue_map_t& entries);
+    std::vector<dialogue_idx_t> update_dialogues(const dialogue_map_t& entries);
+
+    /**
+     * @brief Modify the choices data.
+     *
+     * @param entries Map of data to be modified.
+     * @return Successfully modified choice indexes.
+     */
+    std::vector<choice_idx_t> update_choices(const choice_map_t& entries);
 
     /**
      * @brief Copy and save the data file into arg path.
@@ -73,6 +110,28 @@ public:
     bool save(const path_t& path) final;
 private:
     /**
+     * @brief iterate array elements in dialogue data.
+     *
+     * @param [in, out, optional] callback Retrieve or modify the data of elements.
+     *
+     * @code
+     * constexpr static auto ID_ANYTHING   = ...;
+     * constexpr static auto IDX_ANYTHING = ...;
+     *
+     * Dialogue dialogue(...);
+     * dialogue.iterate_elements([&](const auto id, auto& el) {
+     *      if (id != ID_ANYTHING) {
+     *          break;
+     *      }
+     *
+     *      auto& data = el[IDX_ANYTHING]; // nlohmann::json::basic_json<>&
+     *      ...
+     * }
+     * @endcode
+     */
+    void iterate_elements(const dialogue_iterate_t& callback);
+
+    /**
      * @brief Perform a for-each on the loaded dialogue data.
      *             Can get index and modify the data of spekaer and diagloue string.
      *
@@ -83,7 +142,7 @@ private:
      * std::vector<std::string> speakers  { };
      * std::vector<std::string> dialogues { };
      *
-     * dialogue.find_dialogue([&](dialogue_idx_t idx, std::string& spk, std::string& dia) {
+     * dialogue.find_dialogues([&](const dialogue_idx_t idx, std::string& spk, std::string& dia) {
      *      speakers.emplace_back(spk);
      *      dialogues.emplace_back(dia);
      *
@@ -93,8 +152,24 @@ private:
      * });
      * @endcode
      */
-    void find_dialogue(const dialogue_callback_t& callback);
+    void find_dialogues(const dialogue_callback_t& callback);
 
+    /**
+     * @brief Perfomr a for-each on the loaded choice data.
+     *             Can get index and modify the data of choice string.
+     *
+     * @param [in, out, optional] callback Retrieve or modify the data of choice string.
+     *
+     * @code
+     * Dialogue dialogue(...);
+     * std::vector<std::string> choices { };
+     *
+     * dialogue.find_choices([&](const choice_idx_t idx, std::string& cho) {
+     *      choices.emplace_back(cho);
+     *      ...
+     * });
+     */
+    void find_choices(const choices_callback_t& callback);
 public:
     /**
      * @brief Load dialogue from game data file.

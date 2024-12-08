@@ -14,14 +14,10 @@ file(GLOB_RECURSE SRC_FILES
         "${PROJECT_SOURCE_DIR}/src/**.cpp"
 )
 
-file (GLOB_RECURSE LIB_SRC_FILES
-        "${sha_SOURCE_DIR}/src/SHA512.cpp"
-)
-
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    add_executable(RikkiPatcher "${SRC_FILES}" "${LIB_SRC_FILES}")
+    add_executable(RikkiPatcher "${SRC_FILES}")
 else()
-    add_executable(RikkiPatcher WIN32 "${SRC_FILES}" "${LIB_SRC_FILES}")
+    add_executable(RikkiPatcher WIN32 "${SRC_FILES}")
 endif()
 
 target_precompile_headers(RikkiPatcher
@@ -31,11 +27,11 @@ target_precompile_headers(RikkiPatcher
 target_include_directories(RikkiPatcher
         PRIVATE "${PROJECT_SOURCE_DIR}/src"
         PRIVATE "${json_SOURCE_DIR}/single_include"
-        PRIVATE "${sha_SOURCE_DIR}/src"
 )
 
 target_link_libraries(RikkiPatcher
         PRIVATE webview::core
+        PRIVATE SHA::static
 )
 
 set(CMAKE_C_FLAGS "/utf-8")

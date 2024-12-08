@@ -2,6 +2,8 @@
 #define RIKKI_PATCHER_LANG_LANG_HPP
 #include "precompiled.hpp"
 
+// todo: support multiple languages on client
+
 enum eLang {
     LANG_HELLO
 };
