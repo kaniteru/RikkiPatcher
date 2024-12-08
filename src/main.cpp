@@ -2,18 +2,19 @@
 #include "utils/instance_factory.hpp"
 #include "wv/wv_binder.hpp"
 
-int main(int argc, char* argv[]) {
+int main(const int argc, char* argv[]) {
     const bool enableF12 = argc > 1;
+    auto& instFac = InstanceFactory::instance();
 
-    if (!InstanceFactory::instance().make<webview::webview>(enableF12, nullptr)) {
+    if (!instFac.make<webview::webview>(enableF12, nullptr)) {
         return EXIT_FAILURE;
     }
 
-    auto wv = InstanceFactory::instance().get<webview::webview>();
-    wv->set_title("Rikky Patcher");
+    const auto wv = instFac.get<webview::webview>();
+    wv->set_title("Rikki Patcher");
     wv->set_size(600, 750, WEBVIEW_HINT_NONE);
 
-    WvBinder binder;
+    WvBinder binder { };
     binder.bind();
 
     const auto index = std::filesystem::current_path().append("index.html");
