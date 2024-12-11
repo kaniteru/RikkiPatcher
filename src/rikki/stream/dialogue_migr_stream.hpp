@@ -14,7 +14,7 @@
 // ===    DialogueMigrStream
 // ======================== C L A S S ========================
 
-class DialogueMigrStream : public IMigrStream {
+class DialogueMigrStream final : public IMigrStream {
 public:
     /**
      * @brief Get pure dialogue file hash.
@@ -73,7 +73,7 @@ private:
 // ===    ChoiceMigrStream
 // ======================== C L A S S ========================
 
-class ChoiceMigrStream : public IMigrStream {
+class ChoiceMigrStream final : public IMigrStream {
 public:
     /**
      * @brief Get pure dialogue file hash. (because choices included dialogue file)
