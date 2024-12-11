@@ -1,25 +1,32 @@
 #include "dialogue_util.hpp"
-#include "string_util.hpp"
+#include "rikki/data/dialogue.hpp"
 
-bool DialogueUtil::extract_text_from_span(std::string_view span, std::string& result) {
-    static const auto SPAN_REGEX = std::regex("<span.*?>(.*?)</span>");
-    std::match_results<std::string_view::const_iterator> matches { };
+std::vector<DialogueSpan> DialogueUtil::extract_texts_from_span(std::string_view span) {
+    const static auto SPAN_REGEX = std::regex(R"(<span\s+([^>]*)>([^<]*)</span>)");
 
-    if (!std::regex_search(span.begin(), span.end(), matches, SPAN_REGEX)) {
-        return false;
+    std::vector<DialogueSpan> result { };
+    const std::string target(span);
+    std::smatch matched { };
+    auto searchStart(target.cbegin());
+
+    while (std::regex_search(searchStart, target.cend(), matched, SPAN_REGEX)) {
+        DialogueSpan element { };
+        element.m_html = matched[1].str();
+        element.m_text = matched[2].str();
+
+        result.emplace_back(std::move(element));
+        searchStart = matched.suffix().first;
     }
 
-    result = matches[1].str();
-    return true;
+    return result;
 }
 
-bool DialogueUtil::replace_text_in_span(std::string& span, std::string_view text) {
-    std::string extracted { };
+std::string DialogueUtil::insert_dialogue_into_span(const std::vector<DialogueSpan>& dialogues) {
+    std::string result { };
 
-    if (!DialogueUtil::extract_text_from_span(span, extracted)) {
-        return false;
+    for (const auto& [html, text] : dialogues) {
+        result += "<span " + html + ">" += text + "</span>";
     }
 
-    StringUtil::replace(span, extracted, text);
-    return true;
+    return result;
 }

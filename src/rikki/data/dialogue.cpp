@@ -2,7 +2,18 @@
 
 #include "utils/json_util.hpp"
 #include "utils/dialogue_util.hpp"
-#include "utils/string_util.hpp"
+
+// ======================= S T R U C T =======================
+// ===    DialogueSpan
+// ======================= S T R U C T =======================
+
+bool DialogueSpan::operator==(const DialogueSpan& other) const {
+    return m_html == other.m_html && m_text == other.m_text;
+}
+
+// ======================== C L A S S ========================
+// ===    Dialogue
+// ======================== C L A S S ========================
 
 bool Dialogue::is_valid() {
     return m_isValid;
@@ -11,11 +22,8 @@ bool Dialogue::is_valid() {
 dialogue_map_t Dialogue::extract_dialogues() {
     dialogue_map_t result { };
 
-    this->find_dialogues([&](const dialogue_idx_t idx, const std::string& s, const std::string& d) {
-        DialogueEntry entry { };
-        entry.m_speaker = s;
-        entry.m_dialogue = d;
-
+    this->find_dialogues([&](const dialogue_idx_t idx, const DialogueEntry& e) {
+        DialogueEntry entry = e;
         result[idx] = std::move(entry);
     });
 
@@ -35,11 +43,9 @@ choice_map_t Dialogue::extract_choices() {
 std::vector<dialogue_idx_t> Dialogue::update_dialogues(const dialogue_map_t& entries) {
     std::vector<dialogue_idx_t> result { };
 
-    this->find_dialogues([&](dialogue_idx_t idx, std::string& s, std::string& d) {
+    this->find_dialogues([&](dialogue_idx_t idx, DialogueEntry& e) {
         if (const auto it = entries.find(idx); it != entries.end()) {
-            const auto& [spk, dia] = it->second;
-            s = spk;
-            d = dia;
+            e = it->second;
 
             result.emplace_back(idx);
         }
@@ -65,7 +71,7 @@ std::vector<choice_idx_t> Dialogue::update_choices(const choice_map_t& entries) 
 bool Dialogue::backup(const path_t& dir) {
     try {
         const auto fName = m_file.filename().u8string();
-        std::filesystem::copy(m_file, path_t(dir).append(fName));
+        std::filesystem::copy(m_file, path_t(dir).append(fName), std::filesystem::copy_options::overwrite_existing);
     }
     catch (const std::exception& e) {
         return false;
@@ -121,27 +127,12 @@ void Dialogue::find_dialogues(const dialogue_callback_t& callback) {
             return;
         }
 
-        std::string bufSpk(spk);
-        std::string bufDia(span);
+        DialogueEntry buf { spk, DialogueUtil::extract_texts_from_span(span) };
 
-        if (!DialogueUtil::extract_text_from_span(bufDia, bufDia)) {
-            return;
-        }
+        callback(idx, buf);
 
-        const std::string orgSpk(bufSpk);
-        const std::string orgDia(bufDia);
-
-        callback(idx, bufSpk, bufDia);
-
-        if (orgSpk != bufSpk) {
-            spk = bufSpk;
-        }
-
-        if (orgDia != bufDia) {
-            std::string bufSpan(span);
-            StringUtil::replace(bufSpan, orgDia, bufDia);
-            span = bufSpan;
-        }
+        spk  = buf.m_speaker;
+        span = DialogueUtil::insert_dialogue_into_span(buf.m_dialogues);
     });
 }
 
@@ -176,8 +167,8 @@ void Dialogue::find_choices(const choices_callback_t& callback) {
 }
 
 Dialogue::Dialogue(const path_t& file) :
-                                       m_isValid(false),
-                                       m_file(file) {
+    m_isValid(false),
+    m_file(file) {
 
     m_isValid = JsonUtil::load_from_file(m_j, m_file);
 }

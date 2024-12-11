@@ -28,18 +28,45 @@ dialogue_map_t DialogueMigrStream::get_dialogues() const {
         return result;
     }
 
-    auto& entries = m_j[KEY_LIST];
-
-    for (auto& it : entries.items()) {
+    for (auto& entries = m_j[KEY_LIST]; auto& it : entries.items()) {
         dialogue_idx_t idx = std::stoi(it.key());
-
         const auto& e = it.value();
+
         const std::string spk = e[KEY_SPEAKER];
-        const std::string dia = e[KEY_DIALOGUE];
-        result[idx] = { spk, dia };
+        std::vector<DialogueSpan> dialogues { };
+
+        for (const auto& diaJ = e[KEY_DIALOGUE]; const auto& dia : diaJ) {
+            DialogueSpan span { };
+            span.m_html = dia[KEY_DIA_HTML];
+            span.m_text = dia[KEY_DIA_TEXT];
+
+            dialogues.emplace_back(std::move(span));
+        }
+
+        result[idx] = { spk, dialogues };
     }
 
     return result;
+}
+
+bool DialogueMigrStream::get_dialogue(const dialogue_idx_t idx, DialogueEntry& e) const {
+    auto& j = m_j[KEY_LIST][std::to_string(idx)];
+
+    if (j.is_null()) {
+        return false;
+    }
+
+    e.m_speaker = j[KEY_SPEAKER];
+
+    for (const auto& dia : j[KEY_DIALOGUE]) {
+        DialogueSpan span { };
+        span.m_html = dia[KEY_DIA_HTML];
+        span.m_text = dia[KEY_DIA_TEXT];
+
+        e.m_dialogues.emplace_back(std::move(span));
+    }
+
+    return true;
 }
 
 void DialogueMigrStream::save_migration_data(const path_t& dir) {
@@ -78,7 +105,10 @@ void DialogueMigrStream::save_migration_data(const path_t& dir) {
 
             auto& entry = list[std::to_string(idx)];
             entry[KEY_SPEAKER] = spk;
-            entry[KEY_DIALOGUE] = dia;
+
+            for (const auto& [html, text] : dia) {
+                entry[KEY_DIALOGUE] += { { KEY_DIA_HTML, html }, { KEY_DIA_TEXT, text } };
+            }
         }
 
         if (JsonUtil::save_into_file(j, path_t(dir).append(fName))) {

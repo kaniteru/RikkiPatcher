@@ -30,6 +30,15 @@ public:
      */
     dialogue_map_t get_dialogues() const;
 
+    /**
+     * @brief Get pure dialogue entry by index.
+     *
+     * @param [in] idx Target dialogue index.
+     * @param [out] e Dialogue entry reference.
+     * @return Returns true if dialogue entry is found by index in data.
+     */
+    bool get_dialogue(dialogue_idx_t idx, DialogueEntry& e) const;
+
 public:
     /**
      * @brief Save migration data files.
@@ -51,9 +60,11 @@ private:
     nlohmann::ordered_json m_j;
 
     constexpr static auto KEY_HASH = "hash";
-    constexpr static auto KEY_LIST = "list";
+    constexpr static auto KEY_LIST   = "list";
     constexpr static auto KEY_SPEAKER    = "speaker";
     constexpr static auto KEY_DIALOGUE = "dialogue";
+    constexpr static auto KEY_DIA_HTML = "html";
+    constexpr static auto KEY_DIA_TEXT = "text";
 
     friend class DialoguePatcher;
 };
