@@ -5,9 +5,23 @@
 // ===    DialoguePatchStream
 // ======================== C L A S S ========================
 
-DialogueEntry DialoguePatchStream::get_dialogue(const dialogue_idx_t idx) const {
-    auto& v = m_j[std::to_string(idx)];
-    return { v[KEY_SPEAKER], v[KEY_DIALOGUE] };
+bool DialoguePatchStream::get_dialogue(const dialogue_idx_t idx, DialogueEntry& e) const {
+    if (const auto strIdx = std::to_string(idx); !m_j.contains(strIdx)) {
+        return false;
+    }
+
+    auto& j = m_j[std::to_string(idx)];
+    e.m_speaker = j[KEY_SPEAKER];
+
+    for (const auto& d : j[KEY_DIALOGUE]) {
+        DialogueSpan span { };
+        span.m_html = d[KEY_DIA_HTML];
+        span.m_text = d[KEY_DIA_TEXT];
+
+        e.m_dialogues.emplace_back(std::move(span));
+    }
+
+    return true;
 }
 
 dialogue_map_t DialoguePatchStream::get_dialogues() const {
@@ -19,7 +33,18 @@ dialogue_map_t DialoguePatchStream::get_dialogues() const {
 
         dialogue_idx_t idx = std::stoi(k);
         const std::string spk = v[KEY_SPEAKER];
-        const std::string dia = v[KEY_DIALOGUE];
+        const auto& diaJ = v[KEY_DIALOGUE];
+
+        std::vector<DialogueSpan> dia { };
+
+        for (const auto& d : diaJ) {
+            DialogueSpan span { };
+            span.m_html = d[KEY_DIA_HTML];
+            span.m_text = d[KEY_DIA_TEXT];
+
+            dia.emplace_back(std::move(span));
+        }
+
         result[idx] = { spk, dia };
     }
 
@@ -37,7 +62,10 @@ void DialoguePatchStream::set_dialogues(const dialogue_map_t& map) {
 
         auto& j = m_j[std::to_string(idx)];
         j[KEY_SPEAKER] = spk;
-        j[KEY_DIALOGUE] = dia;
+
+        for (const auto& [html, text] : dia) {
+            j[KEY_DIALOGUE] += { { KEY_DIA_HTML, html }, { KEY_DIA_TEXT, text } };
+        }
     }
 }
 
@@ -106,51 +134,6 @@ bool ChoicePatchStream::save() const {
 }
 
 ChoicePatchStream::ChoicePatchStream(const path_t& file) :
-    m_file(file) {
-
-    JsonUtil::load_from_file(m_j, m_file);
-}
-
-// ======================== C L A S S ========================
-// ===    SpeakerPatchStream
-// ======================== C L A S S ========================
-
-speaker_map_t SpeakerPatchStream::get_speakers() const {
-    speaker_map_t result { };
-
-    for (auto& it : m_j.items()) {
-        const std::string& spk = it.key();
-        const std::string tran = it.value();
-        result[spk] = tran;
-    }
-
-    return result;
-}
-
-bool SpeakerPatchStream::is_speaker_exists(std::string_view spk) const {
-    return m_j.contains(spk.data());
-}
-
-void SpeakerPatchStream::set_speakers(const speaker_map_t& map) {
-    for (const auto& [spk, tran] : map) {
-        m_j[spk] = tran;
-    }
-}
-
-bool SpeakerPatchStream::remove_speaker(std::string_view spk) {
-    if (!this->is_speaker_exists(spk)) {
-        return false;
-    }
-
-    m_j.erase(spk);
-    return true;
-}
-
-bool SpeakerPatchStream::save() const {
-    return JsonUtil::save_into_file(m_j, m_file);
-}
-
-SpeakerPatchStream::SpeakerPatchStream(const path_t& file) :
     m_file(file) {
 
     JsonUtil::load_from_file(m_j, m_file);

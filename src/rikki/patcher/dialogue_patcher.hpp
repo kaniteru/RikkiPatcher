@@ -13,7 +13,7 @@
 // ===    DialoguePatcher
 // ======================== C L A S S ========================
 
-class DialoguePatcher : public IPatcher {
+class DialoguePatcher final : public IPatcher {
 public:
     /**
      * @brief Do custom patch into game data.
@@ -57,7 +57,7 @@ private:
 // ===    ChoicePatcher
 // ======================== C L A S S ========================
 
-class ChoicePatcher : public IPatcher {
+class ChoicePatcher final : public IPatcher {
 public:
     /**
      * @brief Do custom patch into game data.

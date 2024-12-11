@@ -9,19 +9,20 @@
  *
  *  Included structs:
  *      - DialogueEntry
+ *      - DialogueSpan
  */
 
 struct DialogueEntry;
+struct DialogueSpan;
 
 using dialogue_idx_t = uint64_t; /* Dialogue index. */
 using choice_idx_t = uint64_t; /* Choice index. */
 
 using dialogue_map_t = std::map<dialogue_idx_t, DialogueEntry>;
 using choice_map_t = std::map<choice_idx_t, std::string>;
-using speaker_map_t = std::map<std::string, std::string>; // chinense | translated
 
 using dialogue_iterate_t = std::function<void(const int64_t elementID, nlohmann::basic_json<>& array)>;
-using dialogue_callback_t = std::function<void(const dialogue_idx_t idx, std::string& speaker, std::string& dialogue)>;
+using dialogue_callback_t = std::function<void(const dialogue_idx_t idx, DialogueEntry& entry)>;
 using choices_callback_t = std::function<void(const choice_idx_t idx, std::string& choice)>;
 
 // ======================= S T R U C T =======================
@@ -30,7 +31,18 @@ using choices_callback_t = std::function<void(const choice_idx_t idx, std::strin
 
 struct DialogueEntry {
     std::string m_speaker; /* Speaker. ex) Rikki Shiina */
-    std::string m_dialogue; /* Dialogue. ex) Good morning, tomori-chan */
+    std::vector<DialogueSpan> m_dialogues;
+};
+
+// ======================= S T R U C T =======================
+// ===    DialogueSpan
+// ======================= S T R U C T =======================
+
+struct DialogueSpan {
+    std::string m_html;  /* CSS and JS.   ex) style="color: red; font-family: 'rikki'" onclick="..." */
+    std::string m_text; /* Dialogue text. ex) Good morning, tomori-chan */
+
+    bool operator==(const DialogueSpan&) const;
 };
 
 // ======================== C L A S S ========================
@@ -87,7 +99,7 @@ public:
     std::vector<choice_idx_t> update_choices(const choice_map_t& entries);
 
     /**
-     * @brief Copy and save the data file into arg path.
+     * @brief Copy and save the data file into arg path. If file exists in target directory, overwrite it.
      *
      * @param [in] dir Target directory path.
      * @return Returns true if saved successfully.
@@ -139,16 +151,17 @@ private:
      *
      * @code
      * Dialogue dialogue(...);
-     * std::vector<std::string> speakers  { };
-     * std::vector<std::string> dialogues { };
+     * dialogue_map_t map { };
      *
-     * dialogue.find_dialogues([&](const dialogue_idx_t idx, std::string& spk, std::string& dia) {
-     *      speakers.emplace_back(spk);
-     *      dialogues.emplace_back(dia);
+     * dialogue.find_dialogues([&](const dialogue_idx_t idx, DialogueEntry& ety) {
+     *      auto& spk = ety.m_speaker;
+     *      auto& dia = ety.m_dialogues[0].m_text;
      *
      *      if (spk == "rikki") {
      *          dia = "I'm a rikki, I will dead :c";
      *      }
+     *
+     *      map[spk] = ety.m_dialogues[0];
      * });
      * @endcode
      */

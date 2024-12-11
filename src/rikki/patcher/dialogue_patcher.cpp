@@ -83,8 +83,6 @@ size_t DialoguePatcher::patch() {
 
 bool DialoguePatcher::migration() {
     const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
-    const auto migrFiles = FilesystemUtil::sort_files(m_migrDB);
-
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
 
     for (const auto& f : gmFiles) {
@@ -106,70 +104,88 @@ bool DialoguePatcher::migration() {
 
         // migration file stream
         DialogueMigrStream migrStream(fMigr);
-        const auto migrMap = migrStream.get_dialogues();
 
         // check pure dialogue file is updated using hash
         if (const auto pureHash = HashUtil::file_to_hash(f); pureHash == migrStream.get_file_hash()) {
             // if not, doesn't need working.
-            continue;
+            //continue; todo: test
         }
 
         // pure dialogue file updated.
 
-        dialogue_map_t newDiaMap { };
+        const auto migrMap = migrStream.get_dialogues();
+        dialogue_map_t newMap { };
 
         // patch file stream
         DialoguePatchStream patchStream(fPatch);
         const auto patchMap = patchStream.get_dialogues();
 
-        for (const auto& [k, v] : pureMap) {
-            const auto& idx = k;
-            const auto& [pureSpk, pureDia] = v;
+        for (const auto& [idx, pureEntry] : pureMap) {
+            const auto& [pureSpk, pureDia] = pureEntry;
 
             // translation found boolean
-            bool tranFound = false;
+            bool foundSpk = false;
+            bool foundDia = false;
 
-            // find pure dialogue data exist from migration data
+            DialogueEntry newEntry { };
+
+            if (migrStream.get_dialogue(idx, newEntry)) {
+                auto& migrSpk = newEntry.m_speaker;
+                auto& migrDia = newEntry.m_dialogues;
+
+                if (patchStream.get_dialogue(idx, newEntry)) {
+                    foundSpk = migrSpk == pureSpk;
+                    foundDia  = migrDia == pureDia;
+                }
+
+                if (foundSpk && foundDia) {
+                    newMap[idx] = newEntry;
+                    continue;
+                }
+            }
+
+            // find matching migration entry between pure entry.
             for (const auto& [migrIdx, migrEntry] : migrMap) {
                 const auto& [migrSpk, migrDia] = migrEntry;
+                DialogueEntry bufEntry { };
 
-                // dialogue doesn't matched
-                if (pureDia != migrDia) {
+                if (!patchStream.get_dialogue(migrIdx, bufEntry)) {
                     continue;
                 }
 
-                // dialogue not found in patch data
-                if (!patchStream.is_idx_exists(migrIdx)) {
+                // is found translated speaker?
+                if (!foundSpk && pureSpk == migrSpk) {
+                    newEntry.m_speaker = bufEntry.m_speaker;
+                    foundSpk = true;
+                }
+
+                // is found translated dialogue?
+                if (!foundDia && pureDia == migrDia) {
+                    newEntry.m_dialogues = bufEntry.m_dialogues;
+                    foundDia = true;
+                }
+
+                // ok, maybe index changed after game update
+                if (foundSpk && foundDia) {
                     break;
                 }
-
-                // found translated dialogue from patch data!
-                tranFound = true;
-
-                // load translated dialogue from patch data
-                auto tranEntry = patchStream.get_dialogue(idx);
-
-                // if speaker updated, change it to pure speaker str
-                if (pureSpk != migrSpk) {
-                    tranEntry.m_speaker = pureSpk;
-                }
-
-                newDiaMap[idx] = std::move(tranEntry);
-                break;
             }
 
-            // already migrated, pass it
-            if (tranFound) {
-                continue;
+            if (!foundSpk) {
+                newEntry.m_speaker = pureSpk;
             }
 
-            newDiaMap[idx] = v;
+            if (!foundDia) {
+                newEntry.m_dialogues = pureDia;
+            }
+
+            newMap[idx] = newEntry;
         }
 
         // clear patch data
         patchStream.clear();
         // overwrite patch data using migrated data
-        patchStream.set_dialogues(newDiaMap);
+        patchStream.set_dialogues(newMap);
         // save overwrote patch data
         patchStream.save();
     }

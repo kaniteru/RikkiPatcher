@@ -7,7 +7,6 @@
  * Included classes:
  *     - DialoguePatchStream
  *     - ChoicePatchStream
- *     - [unused] SpeakerPatchStream
  */
 
 // ======================== C L A S S ========================
@@ -20,9 +19,10 @@ public:
      * @brief Find dialogue from index.
      *
      * @param [in] idx Target dialogue index.
-     * @return Returns target dialogue of index.
+     * @param [out] e Result reference.
+     * @return Returns true if target dialogue exists.
      */
-    DialogueEntry get_dialogue(dialogue_idx_t idx) const;
+    bool get_dialogue(dialogue_idx_t idx, DialogueEntry& e) const;
 
     /**
      * @brief Get loaded dialogues.
@@ -76,8 +76,10 @@ private:
     path_t m_file;
     nlohmann::ordered_json m_j;
 
-    constexpr static auto KEY_SPEAKER = "speaker";
+    constexpr static auto KEY_SPEAKER    = "speaker";
     constexpr static auto KEY_DIALOGUE = "dialogue";
+    constexpr static auto KEY_DIA_HTML = "html";
+    constexpr static auto KEY_DIA_TEXT = "text";
 };
 
 // ======================== C L A S S ========================
@@ -116,63 +118,6 @@ public:
 private:
     path_t m_file;
     nlohmann::ordered_json m_j;
-};
-
-// ======================== C L A S S ========================
-// ===    SpeakerPatchStream
-// ======================== C L A S S ========================
-
-class SpeakerPatchStream {
-public:
-    /**
-     * @brief Get speakers from data.
-     *
-     * @return Returns speakers map.
-     */
-    speaker_map_t get_speakers() const;
-
-    /**
-     * @brief Check target speaker is exists.
-     *
-     * @param [in] spk Target speaker.
-     * @return Returns true if target speaker exists.
-     */
-   bool is_speaker_exists(std::string_view spk) const;
-
-    /**
-     * @brief Set speakers in data.
-     *
-     * @param [in] map Speakers map.
-     */
-    void set_speakers(const speaker_map_t& map);
-
-    /**
-     * @brief Remove target speaker from data.
-     *
-     * @param [in] spk Target speaker.
-     * @return Returns false if target speaker doesn't exist in data.
-     */
-    bool remove_speaker(std::string_view spk);
-
-    /**
-     * @brief Save data into file.
-     *
-     * @return Returns ture if data saved successfully.
-     */
-    bool save() const;
-
-public:
-    /**
-      * @brief Load speakers from custom path file.
-      *
-      * @param [in] file Speaker custom patch file path.
-      */
-    explicit SpeakerPatchStream(const path_t& file);
-
-    SpeakerPatchStream() = default;
-private:
-    path_t m_file;
-    nlohmann::json m_j;
 };
 
 

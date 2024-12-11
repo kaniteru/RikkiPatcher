@@ -14,7 +14,7 @@
 // ===    DialogueMigrStream
 // ======================== C L A S S ========================
 
-class DialogueMigrStream : public IMigrStream {
+class DialogueMigrStream final : public IMigrStream {
 public:
     /**
      * @brief Get pure dialogue file hash.
@@ -29,6 +29,15 @@ public:
      * @return Returns pure dialogue entries.
      */
     dialogue_map_t get_dialogues() const;
+
+    /**
+     * @brief Get pure dialogue entry by index.
+     *
+     * @param [in] idx Target dialogue index.
+     * @param [out] e Dialogue entry reference.
+     * @return Returns true if dialogue entry is found by index in data.
+     */
+    bool get_dialogue(dialogue_idx_t idx, DialogueEntry& e) const;
 
 public:
     /**
@@ -51,9 +60,11 @@ private:
     nlohmann::ordered_json m_j;
 
     constexpr static auto KEY_HASH = "hash";
-    constexpr static auto KEY_LIST = "list";
+    constexpr static auto KEY_LIST   = "list";
     constexpr static auto KEY_SPEAKER    = "speaker";
     constexpr static auto KEY_DIALOGUE = "dialogue";
+    constexpr static auto KEY_DIA_HTML = "html";
+    constexpr static auto KEY_DIA_TEXT = "text";
 
     friend class DialoguePatcher;
 };
@@ -62,7 +73,7 @@ private:
 // ===    ChoiceMigrStream
 // ======================== C L A S S ========================
 
-class ChoiceMigrStream : public IMigrStream {
+class ChoiceMigrStream final : public IMigrStream {
 public:
     /**
      * @brief Get pure dialogue file hash. (because choices included dialogue file)
