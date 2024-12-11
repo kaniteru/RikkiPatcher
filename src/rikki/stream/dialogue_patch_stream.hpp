@@ -19,8 +19,8 @@ public:
      * @brief Find dialogue from index.
      *
      * @param [in] idx Target dialogue index.
-     * @param e
-     * @return Returns target dialogue of index.
+     * @param [out] e Result reference.
+     * @return Returns true if target dialogue exists.
      */
     bool get_dialogue(dialogue_idx_t idx, DialogueEntry& e) const;
 

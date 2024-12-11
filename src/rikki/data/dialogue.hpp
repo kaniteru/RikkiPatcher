@@ -12,11 +12,6 @@
  *      - DialogueSpan
  */
 
-/*
- * TODO: Improve dialogue structure: multiple span in dialogue.
- * (<span style='color:#FfFffF'> Hello </span><span style='color:#f50c59'> world! </span><span style='color:#FfFffF'> yay~ </span>)
- */
-
 struct DialogueEntry;
 struct DialogueSpan;
 
