@@ -75,19 +75,19 @@ struct SettingUIText : IUI {
             line_6);
     };
 
-    std::string fullscreen = "fullscreen";
-    std::string skip_seen_dialogues = "skip_seen_dialogues";
-    std::string reverse_mouse_wheel = "reverse_mouse_wheel";
-    std::string bgm_volume = "bgm_volume";
-    std::string se_volume = "se_volume";
-    std::string sfx_volume = "sfx_volume";
-    std::string voice_volume = "voice_volume";
-    std::string controls = "controls";
-    std::string dialogue_ui_opacity = "dialogue_ui_opacity";
-    std::string dialogue_ui_opacity_preview = "dialogue_ui_opacity_preview";
-    std::string text_speed = "text_speed";
-    std::string auto_play_dialogue_speed = "auto_play_dialogue_speed";
-    std::string text_speed_preview = "text_speed_preview";
+    std::string fullscreen;
+    std::string skip_seen_dialogues;
+    std::string reverse_mouse_wheel;
+    std::string bgm_volume;
+    std::string se_volume;
+    std::string sfx_volume;
+    std::string voice_volume;
+    std::string controls;
+    std::string dialogue_ui_opacity;
+    std::string dialogue_ui_opacity_preview;
+    std::string text_speed;
+    std::string auto_play_dialogue_speed;
+    std::string text_speed_preview;
     SettingUIText::ControlsUsage controls_usage;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(SettingUIText,
