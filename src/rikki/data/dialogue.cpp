@@ -167,7 +167,6 @@ void Dialogue::find_choices(const choices_callback_t& callback) {
 }
 
 Dialogue::Dialogue(const path_t& file) :
-    m_isValid(false),
     m_file(file) {
 
     m_isValid = JsonUtil::load_from_file(m_j, m_file);

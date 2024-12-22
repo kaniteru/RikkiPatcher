@@ -4,17 +4,16 @@
 
 class IData {
 public:
-  virtual bool is_valid() = 0;
+    bool is_valid();
 
-  virtual bool backup(const path_t& dir) = 0;
-
-  virtual bool save() = 0;
-  virtual bool save(const path_t& dir) = 0;
-  // extract()
-  // update()
+    virtual bool backup(const path_t& dir) = 0;
+    virtual bool save() = 0;
+    virtual bool save(const path_t& dir) = 0;
 
 public:
-  virtual ~IData() = default;
+    virtual ~IData() = default;
+protected:
+    bool m_isValid = false;
 };
 
 
