@@ -1,9 +1,9 @@
 #ifndef RIKKI_PATCHER_PRECOMPILED_HPP
 #define RIKKI_PATCHER_PRECOMPILED_HPP
-
 #include <webview.h>
 #include <nlohmann/json.hpp>
 #include <SHA512.hpp>
+
 
 #include <windows.h>
 #include <shellapi.h>
@@ -28,6 +28,7 @@
 #include <iostream>
 #include <sstream>
 
+#include <exception>
 #include <typeindex>
 #include <filesystem>
 #include <functional>
