@@ -43,7 +43,7 @@ size_t DialogueExtractor::extract() {
             continue;
         }
 
-        DialoguePatchStream patchStream(path_t(m_dataBase).append(fName));
+        DialoguePatchStream patchStream(path_t(m_db).append(fName));
         patchStream.set_dialogues(dialogues);
 
         if (patchStream.save()) {
@@ -65,8 +65,8 @@ size_t DialogueExtractor::extract() {
 DialogueExtractor::DialogueExtractor(const path_t& dst) :
     IExtractor() {
 
-    m_dataBase = path_t(dst).append(FOLDER_BASE);
-    std::filesystem::create_directories(m_dataBase);
+    m_db = path_t(dst).append(FOLDER_BASE);
+    std::filesystem::create_directories(m_db);
 }
 
 // ======================== C L A S S ========================
