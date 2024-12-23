@@ -16,13 +16,14 @@ DirMgr::DirMgr(const path_t gmDir) {
     };
 
     add(DIR_PROJ_BASE, std::filesystem::current_path());
-    //add_dir(DIR_PROJ_DATA, DIR_PROJ_BASE, "data");
-    //add_dir(DIR_PROJ_DATA_LANGUAGES, DIR_PROJ_BASE, "lang"); todo: support multi-languages
+    add(DIR_PROJ_TEMP, std::filesystem::current_path().append("temp"));
     add_dir(DIR_PROJ_DATA_EXTRACED, DIR_PROJ_BASE, "extracted");
+    add(DIR_PROJ_EXE_7ZIP, std::filesystem::current_path().append("7zip").append("7za.exe"));
 
     add(DIR_GAME_BASE, gmDir);
 
     // todo: improve
-    const auto json = std::filesystem::path(gmDir).append("asset").append("json");
-    add(DIR_GAME_JSON_DIALOGUES, std::filesystem::path(json).append("server").append("scene"));
+    const auto json = path_t(gmDir).append("asset").append("json");
+    add(DIR_GAME_JSON_DIALOGUES, path_t(json).append("server").append("scene"));
+    add(DIR_GAME_JSON_STARTUP, path_t(json).append("startup.json"));
 }
