@@ -69,7 +69,7 @@ public:
     /**
      * @brief Load dialogues from custom patch file.
      *
-     * @param [in] file Dialogue custom path file path.
+     * @param [in] file Dialogue custom patch file path.
      */
     explicit DialoguePatchStream(const path_t& file);
 private:

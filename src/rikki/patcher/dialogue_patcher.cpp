@@ -1,5 +1,6 @@
 #include "dialogue_patcher.hpp"
 #include "rikki/dir_mgr.hpp"
+#include "rikki/data/dialogue.hpp"
 #include "rikki/stream/dialogue_migr_stream.hpp"
 #include "rikki/stream/dialogue_patch_stream.hpp"
 
@@ -22,7 +23,7 @@ size_t DialoguePatcher::patch() {
     size_t passed = 0;
     size_t ok = 0;
 
-    for (const auto files = FilesystemUtil::sort_files(m_database); const auto& f : files) {
+    for (const auto files = FilesystemUtil::sort_files(m_db); const auto& f : files) {
         const auto fName = f.filename().generic_u8string();
         const auto fGame = path_t(gmdir).append(fName);
         auto log = fName + u8" => ";
@@ -89,7 +90,7 @@ bool DialoguePatcher::migration() {
         const auto fName = f.filename().generic_u8string();
 
         // path_t
-        const auto fPatch = path_t(m_database).append(fName);
+        const auto fPatch = path_t(m_db).append(fName);
         const auto fMigr = path_t(m_migrDB).append(fName);
 
         // extract pure dialogues from game
@@ -203,8 +204,8 @@ bool DialoguePatcher::generate_migration_info() {
 DialoguePatcher::DialoguePatcher(const path_t& src) :
     IPatcher(src) {
 
-    m_database = path_t(src).append(FOLDER_BASE);
-    std::filesystem::create_directories(m_database);
+    m_db = path_t(src).append(FOLDER_BASE);
+    std::filesystem::create_directories(m_db);
 
     m_migrDB = path_t(src).append(FOLDER_MIGRATE).append(FOLDER_BASE);
     std::filesystem::create_directories(m_migrDB);
@@ -224,7 +225,7 @@ size_t ChoicePatcher::patch() {
     size_t passed = 0;
     size_t ok = 0;
 
-    for (const auto files = FilesystemUtil::sort_files(m_database); const auto& f : files) {
+    for (const auto files = FilesystemUtil::sort_files(m_db); const auto& f : files) {
         const auto fName = f.filename().generic_u8string();
         const auto fGame = path_t(gmdir).append(fName);
         auto log = fName + u8" => ";
@@ -293,7 +294,7 @@ bool ChoicePatcher::migration() {
         const auto fName = f.filename().generic_u8string();
 
         // path_t
-        const auto fPatch = path_t(m_database).append(fName);
+        const auto fPatch = path_t(m_db).append(fName);
         const auto fMigr = path_t(m_migrDB).append(fName);
 
         // extract pure dialogues and choices from game
@@ -378,8 +379,8 @@ bool ChoicePatcher::generate_migration_info() {
 ChoicePatcher::ChoicePatcher(const path_t& src) :
     IPatcher(src) {
 
-    m_database = path_t(src).append(FOLDER_BASE);
-    std::filesystem::create_directories(m_database);
+    m_db = path_t(src).append(FOLDER_BASE);
+    std::filesystem::create_directories(m_db);
 
     m_migrDB = path_t(src).append(FOLDER_MIGRATE).append(FOLDER_BASE);
     std::filesystem::create_directories(m_migrDB);
