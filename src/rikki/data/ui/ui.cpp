@@ -1,20 +1,20 @@
 #include "ui.hpp"
-#include "ui_key.hpp"
+#include "key/ui_key.hpp"
 
 #include "utils/json_util.hpp"
 
 bool UIText::get_in_game(const InGameUITextKey& key, std::string& result) {
     bool found = false;
 
-    this->find_in_game(key, [&found, result](const std::string& s) {
+    this->find_in_game(key, [&found, &result](const std::string& s) {
         found = true;
-        result = s;
+        result.assign(s);
     });
 
     return found;
 }
 
-bool UIText::set_in_game(const InGameUITextKey& key, std::string& value) {
+bool UIText::set_in_game(const InGameUITextKey& key, const std::string& value) {
     bool found = false;
 
     this->find_in_game(key, [&found, value](std::string& s) {
@@ -28,7 +28,7 @@ bool UIText::set_in_game(const InGameUITextKey& key, std::string& value) {
 bool UIText::get_setting(const SettingUITextKey& key, SettingUITextEntry& result) {
     bool found = false;
 
-    this->find_setting(key, [&found, result](const SettingUITextEntry& e) {
+    this->find_setting(key, [&found, &result](const SettingUITextEntry& e) {
         found = true;
         result = e;
     });
@@ -36,7 +36,7 @@ bool UIText::get_setting(const SettingUITextKey& key, SettingUITextEntry& result
     return found;
 }
 
-bool UIText::set_setting(const SettingUITextKey& key, SettingUITextEntry& value) {
+bool UIText::set_setting(const SettingUITextKey& key, const SettingUITextEntry& value) {
     bool found = false;
 
     this->find_setting(key, [&found, value](SettingUITextEntry& e) {
@@ -47,10 +47,10 @@ bool UIText::set_setting(const SettingUITextKey& key, SettingUITextEntry& value)
     return found;
 }
 
-bool UIText::get_dialog(const DialogUITextKey& key, std::string& result) {
+bool UIText::get_dialog_type1(const DialogType1UITextKey& key, DialogUITextEntry& result) {
     bool found = false;
 
-    this->find_dialog(key, [&found, result](const std::string& s) {
+    this->find_dialog_type1(key, [&found, &result](const DialogUITextEntry& s) {
         found = true;
         result = s;
     });
@@ -58,10 +58,32 @@ bool UIText::get_dialog(const DialogUITextKey& key, std::string& result) {
     return found;
 }
 
-bool UIText::set_dialog(const DialogUITextKey& key, std::string& value) {
+bool UIText::set_dialog_type1(const DialogType1UITextKey& key, const DialogUITextEntry& value) {
     bool found = false;
 
-    this->find_dialog(key, [&found, value](std::string& s) {
+    this->find_dialog_type1(key, [&found, value](DialogUITextEntry& s) {
+        found = true;
+        s = value;
+    });
+
+    return found;
+}
+
+bool UIText::get_dialog_type2(const DialogType2UITextKey& key, DialogUITextEntry& result) {
+    bool found = false;
+
+    this->find_dialog_type2(key, [&found, &result](const DialogUITextEntry& s) {
+        found = true;
+        result = s;
+    });
+
+    return found;
+}
+
+bool UIText::set_dialog_type2(const DialogType2UITextKey& key, const DialogUITextEntry& value) {
+    bool found = false;
+
+    this->find_dialog_type2(key, [&found, value](DialogUITextEntry& s) {
         found = true;
         s = value;
     });
@@ -117,7 +139,7 @@ void UIText::find_setting(const SettingUITextKey& key, const setting_ui_text_cal
             auto& jFont = arr2It["font"];
             auto& jColor = arr2It["color"];
             auto& jSize = arr2It["fontSize"];
-            auto& jText = arr2It["text"];
+            auto& jText = arr2It[key.m_textKey];
 
             SettingUITextEntry e { };
             e.m_font = jFont;
@@ -135,32 +157,28 @@ void UIText::find_setting(const SettingUITextKey& key, const setting_ui_text_cal
     }
 }
 
-void UIText::find_dialog(const DialogUITextKey& key, const dialog_ui_text_callback_t& callback) {
+void UIText::find_dialog_type1(const DialogType1UITextKey& key, const dialog_ui_text_callback_t& callback) {
     auto& arr = m_j[key.m_ikey][key.m_iiKey]["commands"][0];
+    auto& jSys = arr[3][5];
+    auto& jText = arr[4][5];
 
-    for (auto& it : arr) {
-        if (auto& idx = it[0]; !idx.is_number_integer() || idx != 13) {
-            continue;
-        }
+    DialogUITextEntry buf { jSys, jText };
+    callback(buf);
 
-        std::string cmdID { };
+    jSys = buf.m_system;
+    jText = buf.m_text;
+}
 
-        if (auto& cmdIdx = it[15]; cmdIdx.is_array()) {
-            cmdID = cmdIdx["___cmdID"];
-        } else {
-            continue;
-        }
+void UIText::find_dialog_type2(const DialogType2UITextKey& key, const dialog_ui_text_callback_t& callback) {
+    auto& arr = m_j[key.m_ikey]["commands"][0];
+    auto& jSys = arr[4][5];
+    auto& jText = arr[5][5];
 
-        auto& jText = it[5];
+    DialogUITextEntry buf { jSys, jText };
+    callback(buf);
 
-        if (!jText.is_string()) {
-            continue;
-        }
-
-        std::string buf = jText;
-        callback(buf);
-        jText = buf;
-    }
+    jSys = buf.m_system;
+    jText = buf.m_text;
 }
 
 UIText::UIText(const path_t& file) :
