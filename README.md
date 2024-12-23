@@ -15,3 +15,12 @@ A simple patch tool to modify the game '[鼓手余命十日谭 (Shiina Taki's De
 - Extract and apply modified images (like button)
 - Support multiple languages on client
 - Improve 'Migrate patch data'
+
+## Third-Party Software
+This project includes the 7-Zip executable, which is licensed under the GNU Lesser General Public License (LGPL).
+<br>
+For more information,
+visit the [7-Zip website](https://www.7-zip.org/) and the [LGPL license](https://www.gnu.org/licenses/lgpl-3.0.en.html).
+
+## License
+This project is licensed under the GNU General Public License (GPL) - see the [LICENSE](LICENSE) file for details.
