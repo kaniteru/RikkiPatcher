@@ -15,10 +15,6 @@ bool DialogueSpan::operator==(const DialogueSpan& other) const {
 // ===    Dialogue
 // ======================== C L A S S ========================
 
-bool Dialogue::is_valid() {
-    return m_isValid;
-}
-
 dialogue_map_t Dialogue::extract_dialogues() {
     dialogue_map_t result { };
 
