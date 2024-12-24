@@ -6,6 +6,8 @@ class StringUtil {
 public:
     static void replace(std::string& str, std::string_view oldSub, std::string_view newSub);
     static const char* u8_to_cstr(std::u8string_view str);
+    static std::u8string cstr_to_u8(const char* str);
+    static std::u8string str_to_u8(std::string_view str);
 };
 
 

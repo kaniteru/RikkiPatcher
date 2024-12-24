@@ -1,6 +1,6 @@
 #include "string_util.hpp"
 
-void StringUtil::replace(std::string& str, std::string_view oldSub, std::string_view newSub) {
+void StringUtil::replace(std::string& str, const std::string_view oldSub, const std::string_view newSub) {
     size_t pos = 0;
 
     while ((pos = str.find(oldSub, pos)) != std::string::npos) {
@@ -9,6 +9,14 @@ void StringUtil::replace(std::string& str, std::string_view oldSub, std::string_
     }
 }
 
-const char* StringUtil::u8_to_cstr(std::u8string_view str) {
+const char* StringUtil::u8_to_cstr(const std::u8string_view str) {
     return reinterpret_cast<const char*>(str.data());
+}
+
+std::u8string StringUtil::cstr_to_u8(const char* str) {
+    return reinterpret_cast<const char8_t*>(str);
+}
+
+std::u8string StringUtil::str_to_u8(const std::string_view str) {
+    return { str.begin(), str.end() };
 }
