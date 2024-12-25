@@ -13,7 +13,7 @@
 // ======================== C L A S S ========================
 
 size_t DialogueExtractor::extract() {
-    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
 
     size_t total = 0;
     size_t failed = 0;
@@ -74,7 +74,7 @@ DialogueExtractor::DialogueExtractor(const path_t& dst) :
 // ======================== C L A S S ========================
 
 size_t ChoiceExtractor::extract() {
-    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
 
     size_t total = 0;
     size_t failed = 0;

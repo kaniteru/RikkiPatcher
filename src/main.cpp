@@ -4,13 +4,12 @@
 
 int main(const int argc, char* argv[]) {
     const bool enableF12 = argc > 1;
-    auto& instFac = InstanceFactory::instance();
 
-    if (!instFac.make<webview::webview>(enableF12, nullptr)) {
+    if (auto& instFac = InstanceFactory::instance(); !instFac.make<webview::webview>(enableF12, nullptr)) {
         return EXIT_FAILURE;
     }
 
-    const auto wv = instFac.get<webview::webview>();
+    const auto wv = INSTFAC(webview::webview);
     wv->set_title("Rikki Patcher");
     wv->set_size(600, 750, WEBVIEW_HINT_NONE);
 
