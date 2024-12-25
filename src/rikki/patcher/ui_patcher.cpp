@@ -9,217 +9,126 @@
 #include "rikki/data/ui/key/ui_text_in_game_key.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
 
-#include "utils/sevenzip_util.hpp"
-#include "utils/instance_factory.hpp"
+#include "ui/ui_text_patcher.hpp"
+
+#include "utils/string_util.hpp"
+#include "utils/ui_text_util.hpp"
 
 #include "wv/enums.hpp"
 #include "wv/wv_invoker.hpp"
 
-size_t UITextPatcher::patch() {
-    const auto pDirMgr = InstanceFactory::instance().get<DirMgr>();
-    const auto& fGm = pDirMgr->get(DIR_GAME_JSON_STARTUP);
-    const auto& fSvzip = pDirMgr->get(DIR_PROJ_EXE_7ZIP);
+PatcherResult UITextPatcher::patch() {
+    PatcherResult result { };
+    size_t& total   =  result.m_total;
+    size_t& ok       = result.m_ok;
+    size_t& failed  = result.m_failed;
+    size_t& passed = result.m_passed;
 
-    const auto& fTemp = pDirMgr->get(DIR_PROJ_TEMP);
-    const auto fPatch = path_t(fTemp).append("startup.json");
-    const auto fPatchZip = path_t(fTemp).append("startup.zip");
+    /*
+     * 1. copy game file to temp dir.
+     * 2. extract(decrypt) the game file.
+     * 3. do patch
+     * 4. zip(encrypt) the patched game file.
+     * 5. copy patched game file to game dir.
+     */
+    path_t fPatch { };
 
-    size_t total = 0;
-    size_t failed = 0;
-    size_t passed = 0;
-    size_t ok = 0;
-
-    SevenzipUtil svzip(fSvzip);
-    static constexpr auto PW = u8"gc_zip";
-
-    std::filesystem::remove_all(fTemp);
-    std::filesystem::create_directories(fTemp);
-
-    // copy the game file to temp dir
-    if (!std::filesystem::copy_file(fGm, fPatchZip, std::filesystem::copy_options::overwrite_existing)) {
-        return ok;
+    // copy a game file to temp dir
+    if (!UITextUtil::copy_startup_from_game_and_decrypt(fPatch)) {
+        WvInvoker::log(LOG_LV_ERR, u8"Can't copied the game file from game directory");
+        return { };
     }
 
-    // decrypt the game file
-    if (!svzip.unzip(fPatchZip, fTemp, true, PW)) {
-        return ok;
-    }
-
-    // do patch
-
-    auto find_file = [this](auto f) {
-        auto fCustom = m_db.append(f);
-        return std::filesystem::exists(fCustom);
-    };
-
+    // load a game file from temp dir
     UIText ut(fPatch);
 
-    // in-game text patch
-    if (find_file(UITextPatchStream::FILE_IN_GAME)) {
-        const UITextPatchStream patchStream(UITextPatchStream::FILE_IN_GAME);
-        const auto patchData = patchStream.get_texts<InGameUIText>();
-
-        for (const auto& [pKey, val] : patchData.m_map) {
-            total++;
-
-            if (const auto it = InGameUITextKeyMgr::g_keys.find(pKey); it != InGameUITextKeyMgr::g_keys.end()) {
-                ut.set_in_game(it->second, val);
-                ok++;
-            }
-            else {
-                failed++;
-            }
-        }
-    }
-    else {
-        // logging pass
+    if (!ut.is_valid()) {
+        WvInvoker::log(LOG_LV_ERR, u8"Can't read the game file");
+        return { };
     }
 
+/*----------------------------------- PATCH START -----------------------------------*/
     {
-        static auto fs_to_entry = [](const SettingUIText::FontStyle& fs) {
-            SettingUITextEntry result { };
-            result.m_font = fs.font;
-            result.m_color = fs.color;
-            result.m_size = fs.size;
-            result.m_text = fs.text;
-            return result;
+        auto find_file = [this](auto f) {
+            const auto fCustom = path_t(m_db).append(f);
+            return std::filesystem::exists(fCustom);
         };
 
-        uint8_t patchPassed = 0;
-        const UITextPatchStream patchStream(UITextPatchStream::FILE_SETTING);
-        const auto patchData = patchStream.get_texts<SettingUIText>();
+        // in-game text patch
+        if (find_file(UITextPatchStream::FILE_IN_GAME)) {
+            WvInvoker::log(LOG_LV_ALERT, u8"Start patch the in-game text");
+
+            InGameUITextPatcher patcher(ut, m_dir);
+            auto res = patcher.patch();
+
+            WvInvoker::log(LOG_LV_ALERT, u8"In-game text patch finished");
+            result += res;
+        }
+        else {
+            // custom patch file not found
+        }
 
         // setting text patch
         if (find_file(UITextPatchStream::FILE_SETTING)) {
-            for (const auto& [pKey, val] : patchData.m_map) {
-                total++;
+            WvInvoker::log(LOG_LV_ALERT, u8"Start patch the setting text");
 
-                if (const auto it = SettingUITextKeyMgr::g_keys.find(pKey); it != SettingUITextKeyMgr::g_keys.end()) {
-                    const auto buf = fs_to_entry(val);
-                    ut.set_setting(it->second, buf);
-                    ok++;
-                }
-                else {
-                    failed++;
-                }
-            }
+            SettingUITextPatcher patcher(ut, m_dir);
+            result += patcher.patch();
+
+            WvInvoker::log(LOG_LV_ALERT, u8"Setting text patch finished");
         }
         else {
-            patchPassed++;
+            // custom patch file not found
         }
 
-        // setting controls-usage text patch
-        if (find_file(UITextPatchStream::FILE_SETTING)) {
-            for (const auto& [pKey, val] : patchData.m_ControlsUsageMap) {
-                total++;
-
-                if (const auto it = SettingUITextKeyMgr::g_keys.find(pKey); it != SettingUITextKeyMgr::g_keys.end()) {
-                    const auto buf = fs_to_entry(val);
-                    ut.set_setting(it->second, buf);
-                    ok++;
-                }
-                else {
-                    failed++;
-                }
-            }
-        }
-        else {
-            patchPassed++;
-        }
-
-        if (patchPassed > 1) {
-            passed++;
-            // todo: logging pass
-        }
-    }
-
-    {
-        static auto d_to_entry = [](const DialogUIText::Dialog& d) {
-            DialogUITextEntry result { };
-            result.m_system = d.system;
-            result.m_text = d.text;
-            return result;
-        };
-
-        uint8_t patchPassed = 0;
-        const UITextPatchStream patchStream(UITextPatchStream::FILE_DIALOG);
-        const auto data = patchStream.get_texts<DialogUIText>();
-
-        // dialog type1 text patch
+        // dialog text patch
         if (find_file(UITextPatchStream::FILE_DIALOG)) {
-            for (const auto& [pKey, val] : data.m_type1Map) {
-                total++;
+            WvInvoker::log(LOG_LV_ALERT, u8"Start patch the dialog text");
 
-                if (const auto it = DialogUITextKeyMgr::g_type1Keys.find(pKey); it != DialogUITextKeyMgr::g_type1Keys.end()) {
-                    const auto buf = d_to_entry(val);
-                    ut.set_dialog_type1(it->second, buf);
-                    ok++;
-                }
-                else {
-                    failed++;
-                }
-            }
+            DialogUITextPatcher patcher(ut, m_dir);
+            result += patcher.patch();
+
+            WvInvoker::log(LOG_LV_ALERT, u8"Dialog text patch finished");
         }
         else {
-            patchPassed++;
-        }
-
-        // dialog type2 text patch
-        if (find_file(UITextPatchStream::FILE_DIALOG)) {
-            for (const auto& [pKey, val] : data.m_type2Map) {
-                total++;
-
-                if (const auto it = DialogUITextKeyMgr::g_type2Keys.find(pKey); it != DialogUITextKeyMgr::g_type2Keys.end()) {
-                    const auto buf = d_to_entry(val);
-                    ut.set_dialog_type2(it->second, buf);
-                    ok++;
-                }
-                else {
-                    failed++;
-                }
-            }
-        }
-        else {
-            patchPassed++;
-        }
-
-        if (patchPassed > 1) {
-            passed++;
-            // todo: logging pass
+            // custom patch file not found
         }
     }
+/*------------------------------------ PATCH END ------------------------------------*/
 
-
-    // end patch
-
-    if (!svzip.zip({ fPatch }, fPatchZip, true, PW)) {
-        return 0;
+    // save patched game file into temp dir
+    if (!ut.save()) {
+        WvInvoker::log(LOG_LV_ERR, u8"Can't save the patched game file");
+        return { };
     }
 
-    // can't copy patch file into gmdir
-    if (!std::filesystem::copy_file(fPatchZip, fGm, std::filesystem::copy_options::overwrite_existing)) {
-        return 0;
+    // copy a patched game file in temp dir to game dir
+    if (!UITextUtil::encrypt_startup_and_move_to_game()) {
+        WvInvoker::log(LOG_LV_ERR, u8"Can't copied the patched game file to game directory");
+        return { };
     }
 
-    std::filesystem::remove_all(fTemp);
-    return ok;
+    std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
+                            + " | failed: " + std::to_string(failed);
+    WvInvoker::log(LOG_LV_INFO, log);
+    return result;
 }
 
-bool UITextPatcher::migration() {
-    return true;
+PatcherResult UITextPatcher::migration() {
+    return { };
 }
 
-bool UITextPatcher::generate_migration_info() {
-    return true;
+PatcherResult UITextPatcher::generate_migration_info() {
+    return { };
 }
 
 UITextPatcher::UITextPatcher(const path_t& src) :
     IPatcher(src) {
 
-    m_db = path_t(src).append(FOLDER_BASE);
+    m_db = path_t(src).append(UITextPatchStream::FOLDER_BASE);
     std::filesystem::create_directories(m_db);
 
-    m_migrDB = path_t(src).append(FOLDER_MIGRATE).append(FOLDER_BASE);
+    m_migrDB = path_t(src).append(FOLDER_MIGRATE).append(UITextPatchStream::FOLDER_BASE);
     std::filesystem::create_directories(m_migrDB);
 
     m_isAvailable = true;

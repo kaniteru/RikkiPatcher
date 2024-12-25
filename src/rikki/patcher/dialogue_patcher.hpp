@@ -20,7 +20,7 @@ public:
      *
      * @return Returns patched files count.
      */
-    size_t patch() final;
+    PatcherResult patch() final;
 
     /**
      * @brief Migrate custom data using game data.
@@ -28,7 +28,7 @@ public:
      *
      * @return Returns true if migrated successfully.
      */
-    bool migration() final;
+    PatcherResult migration() final;
 
     /**
      * @brief Generate migration info data.
@@ -37,7 +37,7 @@ public:
      *
      * @return Returns true if generated migration info successfully.
      */
-    bool generate_migration_info() final;
+    PatcherResult generate_migration_info() final;
 
 public:
     /**
@@ -64,7 +64,7 @@ public:
      *
      * @return Returns patched files count.
      */
-    size_t patch() final;
+    PatcherResult patch() final;
 
     /**
      * @brief Migrate custom data using game data.
@@ -72,7 +72,7 @@ public:
      *
      * @return Returns true if migrated successfully.
      */
-    bool migration() final;
+    PatcherResult migration() final;
 
     /**
      * @brief Generate migration info data.
@@ -81,7 +81,7 @@ public:
      *
      * @return
      */
-    bool generate_migration_info() final;
+    PatcherResult generate_migration_info() final;
 
 public:
     /**

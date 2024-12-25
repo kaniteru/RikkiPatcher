@@ -19,7 +19,7 @@ public:
      *
      * @return Returns patched data count.
      */
-    size_t patch() final;
+    PatcherResult patch() final;
 
     /**
      * @brief Migrate custom data using data data.
@@ -27,7 +27,7 @@ public:
      *
      * @return Returns true if migrated successfully.
      */
-    bool migration() final;
+    PatcherResult migration() final;
 
     /**
      * @brief Generate migration info data.
@@ -36,7 +36,7 @@ public:
      *
      * @return Returns true if generated migration info successfully.
      */
-    bool generate_migration_info() final;
+    PatcherResult generate_migration_info() final;
 
 public:
     /**
@@ -48,8 +48,6 @@ public:
 private:
     path_t m_db;        /* Patch data folder of ui-text data files. */
     path_t m_migrDB; /* Migration folder of ui-text data files */
-
-    constexpr static auto FOLDER_BASE = "ui/texts";
 };
 
 
