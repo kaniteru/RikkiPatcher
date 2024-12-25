@@ -1,4 +1,5 @@
 #include "ui_json.hpp"
+#include "ui.hpp"
 #include "key/ui_text_dialog_key.hpp"
 #include "key/ui_text_setting_key.hpp"
 #include "key/ui_text_in_game_key.hpp"
@@ -20,6 +21,13 @@ InGameUIText::InGameUIText() {
     PAIR_AND_ADD(InGameUITextKeyMgr::KEY_SETTINGS, settings);
     PAIR_AND_ADD(InGameUITextKeyMgr::KEY_RETURN_TO_TITLE, return_to_title);
     PAIR_AND_ADD(InGameUITextKeyMgr::KEY_ENTER_SAVE_FILE_NAME, enter_save_file_name);
+    PAIR_AND_ADD(InGameUITextKeyMgr::KEY_ENTER_SAVE_FILE_NAME2, enter_save_file_name2);
+}
+
+DialogUIText::Dialog& DialogUIText::Dialog::operator=(const DialogUITextEntry& other) {
+    system = other.m_system;
+    text = other.m_text;
+    return *this;
 }
 
 // ======================= S T R U C T =======================
@@ -59,4 +67,12 @@ SettingUIText::SettingUIText() {
     PAIR_AND_ADD_A(m_ControlsUsageMap, SettingUITextKeyMgr::KEY_CONTROLS_USAGE_LINE_4, controls_usage.line_4);
     PAIR_AND_ADD_A(m_ControlsUsageMap, SettingUITextKeyMgr::KEY_CONTROLS_USAGE_LINE_5, controls_usage.line_5);
     PAIR_AND_ADD_A(m_ControlsUsageMap, SettingUITextKeyMgr::KEY_CONTROLS_USAGE_LINE_6, controls_usage.line_6);
+}
+
+SettingUIText::FontStyle& SettingUIText::FontStyle::operator=(const SettingUITextEntry& rhs) {
+    font  = rhs.m_font;
+    color = rhs.m_color;
+    size   = rhs.m_size;
+    text  = rhs.m_text;
+    return *this;
 }

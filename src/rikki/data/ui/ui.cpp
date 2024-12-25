@@ -3,6 +3,29 @@
 
 #include "utils/json_util.hpp"
 
+// ======================= S T R U C T =======================
+// ===    SettingUITextEntry
+// ======================= S T R U C T =======================
+
+SettingUITextEntry::SettingUITextEntry(const SettingUIText::FontStyle& fs) {
+    m_font  = fs.font;
+    m_color = fs.color;
+    m_size   = fs.size;
+    m_text  = fs.text;
+}
+
+SettingUITextEntry& SettingUITextEntry::operator=(const SettingUIText::FontStyle& rhs) {
+    m_font  = rhs.font;
+    m_color = rhs.color;
+    m_size   = rhs.size;
+    m_text  = rhs.text;
+    return *this;
+}
+
+// ======================= S T R U C T =======================
+// ===    DialogUITextEntry
+// ======================= S T R U C T =======================
+
 bool UIText::get_in_game(const InGameUITextKey& key, std::string& result) {
     bool found = false;
 
@@ -113,7 +136,8 @@ bool UIText::save(const path_t& dir) {
 
 void UIText::find_in_game(const InGameUITextKey& key, const in_game_ui_text_callback_t& callback) {
     try {
-        auto& jText = m_j[key.m_iKey][key.m_iiKey]["commands"][1][0][1][key.m_iiiKey][1][2]["atts"][key.m_iiiiKey][1]["text"];
+        auto& jText = m_j[key.m_iKey][key.m_iiKey]["commands"][key.m_iIdx][key.m_iiIdx][1][key.m_iiiKey][1][2]["atts"][key.m_iiiiKey][1]["text"];
+
         std::string buf = jText;
         callback(buf);
         jText = buf;
@@ -170,9 +194,14 @@ void UIText::find_dialog_type1(const DialogType1UITextKey& key, const dialog_ui_
 }
 
 void UIText::find_dialog_type2(const DialogType2UITextKey& key, const dialog_ui_text_callback_t& callback) {
-    auto& arr = m_j[key.m_ikey]["commands"][0];
-    auto& jSys = arr[4][5];
-    auto& jText = arr[5][5];
+    auto& arr = m_j[key.m_ikey]["commands"];
+
+    if (key.m_iIdx > -1) {
+        arr[key.m_iIdx];
+    }
+
+    auto& jSys = arr[key.m_iiIdx][5];
+    auto& jText = arr[key.m_iiiIdx][5];
 
     DialogUITextEntry buf { jSys, jText };
     callback(buf);

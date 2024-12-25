@@ -2,6 +2,7 @@
 #define RIKKI_PATCHER_RIKKI_DATA_UI_HPP
 #include "precompiled.hpp"
 #include "rikki/data/i_data.hpp"
+#include "ui_json.hpp"
 #include "key/ui_key.hpp"
 
 /* ui.hpp
@@ -37,6 +38,11 @@ struct SettingUITextEntry {
     std::string m_color;
     int32_t m_size;
     std::string m_text;
+
+    SettingUITextEntry() = default;
+    SettingUITextEntry(const SettingUIText::FontStyle& fs);
+
+    SettingUITextEntry& operator=(const SettingUIText::FontStyle&);
 };
 
 // ======================= S T R U C T =======================

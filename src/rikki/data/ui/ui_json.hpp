@@ -33,6 +33,7 @@ struct InGameUIText : IUI {
     std::string settings;
     std::string return_to_title;
     std::string enter_save_file_name;
+    std::string enter_save_file_name2;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(InGameUIText,
         previous_dialogue,
@@ -43,7 +44,8 @@ struct InGameUIText : IUI {
         load_game_progress,
         settings,
         return_to_title,
-        enter_save_file_name);
+        enter_save_file_name,
+        enter_save_file_name2);
 
     std::map<const char*, std::string&> m_map;
     InGameUIText();
@@ -62,6 +64,8 @@ struct DialogUIText : IUI {
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(Dialog,
             system,
             text);
+
+        Dialog& operator=(const struct DialogUITextEntry&);
     };
 
     DialogUIText::Dialog delete_save_file;
@@ -98,6 +102,8 @@ struct SettingUIText : IUI {
             color,
             size,
             text);
+
+        FontStyle& operator=(const struct SettingUITextEntry&);
     };
 
     struct ControlsUsage : IUI {
