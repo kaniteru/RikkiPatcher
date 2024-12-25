@@ -39,8 +39,11 @@ struct DialogType1UITextKey : IUIKey {
 
 struct DialogType2UITextKey : IUIKey {
     const char* m_ikey;
+    int32_t m_iIdx;
+    uint32_t m_iiIdx;
+    uint32_t m_iiiIdx;
 
-    explicit DialogType2UITextKey(const char* a);
+    explicit DialogType2UITextKey(const char* a, int32_t b, uint32_t c, uint32_t d);
 };
 
 // ======================= S T R U C T =======================
@@ -50,10 +53,12 @@ struct DialogType2UITextKey : IUIKey {
 struct InGameUITextKey : IUIKey {
     const char* m_iKey;
     const char* m_iiKey;
+    uint32_t m_iIdx;
+    uint32_t m_iiIdx;
     const char* m_iiiKey;
     const char* m_iiiiKey;
 
-    InGameUITextKey(const char* a, const char* b, const char* c, const char* d);
+    InGameUITextKey(const char* a, const char* b, uint32_t c, uint32_t d, const char* e, const char* f);
 };
 
 

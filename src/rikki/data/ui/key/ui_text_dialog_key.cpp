@@ -6,15 +6,24 @@ const DialogType1UITextKey DialogUITextKeyMgr::delete_save_file {
 };
 
 const DialogType2UITextKey DialogUITextKeyMgr::save_file_read_error {
-    "asset/json/server/command/data/ws14007.json"
+    "asset/json/server/command/data/ws14007.json",
+    -1,
+    2,
+    3
 };
 
 const DialogType2UITextKey DialogUITextKeyMgr::save_file_write_error {
-    "asset/json/server/command/data/ws14009.json"
+    "asset/json/server/command/data/ws14009.json",
+    -1,
+    2,
+    3
 };
 
 const DialogType2UITextKey DialogUITextKeyMgr::back_to_title_alert {
-    "asset/json/server/command/data/ws15009.json"
+    "asset/json/server/command/data/ws15009.json",
+    -1,
+    4,
+    5
 };
 
 const std::map<const char*, const DialogType1UITextKey&> DialogUITextKeyMgr::g_type1Keys = {
