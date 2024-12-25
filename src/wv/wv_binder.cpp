@@ -7,14 +7,17 @@
 #include "rikki/dir_mgr.hpp"
 #include "rikki/patcher/dialogue_patcher.hpp"
 #include "rikki/extractor/dialogue_extractor.hpp"
+#include "rikki/patcher/ui_patcher.hpp"
+#include "rikki/extractor/ui_extractor.hpp"
 
 #include "utils/worker.hpp"
 #include "utils/dialog_util.hpp"
+#include "utils/string_util.hpp"
 #include "utils/registry_reader.hpp"
 #include "utils/instance_factory.hpp"
 
-#define BIND_EVENT_HANDLER(EVENT, FN) InstanceFactory::instance().get<webview::webview>()->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
-#define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) InstanceFactory::instance().get<webview::webview>()->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
+#define BIND_EVENT_HANDLER(EVENT, FN) INSTFAC(webview::webview)->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
+#define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) INSTFAC(webview::webview)->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
 
 void WvBinder::bind() {
     BIND_EVENT_HANDLER("INIT_PATCHER", this->init_patcher);
@@ -33,16 +36,16 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
 
     WvInvoker::log(LOG_LV_PROG, "initializing patcher...");
 
-    auto& inst = InstanceFactory::instance();
-    inst.make<Config>(std::filesystem::current_path().append(CONFIG_FILE));
-    //inst.make<Worker>(WORKER_THREADS);
+    auto& instFac = InstanceFactory::instance();
+    instFac.make<Config>(std::filesystem::current_path().append(CONFIG_FILE));
+    //instFac.make<Worker>(WORKER_THREADS);
 
     path_t gmDir { };
 
     try {
-        if (auto pConfig = inst.get<Config>(); pConfig->exists(Config::KEY_GMDIR)) {
-            auto s = pConfig->get<std::string>(Config::KEY_GMDIR);
-            gmDir = reinterpret_cast<const char8_t*>(s.c_str());
+        if (const auto pConfig = INSTFAC(Config); pConfig->exists(Config::KEY_GMDIR)) {
+            const auto s = pConfig->get<std::string>(Config::KEY_GMDIR);
+            gmDir = StringUtil::str_to_u8(s);
         }
     }
     catch (const nlohmann::json::exception& e) {
@@ -52,9 +55,8 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
     //auto pWorker = inst.get<Worker>();
     //pWorker->start();
 
-    WvInvoker::log(LOG_LV_INFO, "Patcher initialized");
-
     WvInvoker::init_gmdir(gmDir);
+    WvInvoker::log(LOG_LV_INFO, "Patcher initialized");
     WvInvoker::init_success();
     return { };
 }
@@ -169,7 +171,7 @@ std::string WvBinder::select_patch_data_dir(const std::string& args) {
 }
 
 std::string WvBinder::patch_extract(HANDLER_ARGS) {
-    const auto pDirMgr = InstanceFactory::instance().get<DirMgr>();
+    const auto pDirMgr = INSTFAC(DirMgr);
     const auto dst = pDirMgr->get(DIR_PROJ_DATA_EXTRACED);
 
     try {
@@ -194,6 +196,12 @@ std::string WvBinder::patch_extract(HANDLER_ARGS) {
     choExtractor.extract();
     WvInvoker::log(LOG_LV_ALERT, "Finished extract choices from game");
 
+    // extract ui-texts
+    WvInvoker::log(LOG_LV_ALERT, "Start extract ui-texts from game");
+    UITextExtractor utExtractor(dst);
+    utExtractor.extract();
+    WvInvoker::log(LOG_LV_ALERT, "Finished extract ui-texts from game");
+
     // finished extract data
     WvInvoker::log(LOG_LV_ALERT, "Finished extract data from game");
 
@@ -211,6 +219,12 @@ std::string WvBinder::patch_extract(HANDLER_ARGS) {
     ChoicePatcher choPatcher(dst);
     choPatcher.generate_migration_info();
     WvInvoker::log(LOG_LV_ALERT, "Finished generate choices migration info");
+
+    // generate ui-text migration info
+    WvInvoker::log(LOG_LV_ALERT, "Start generate ui-texts migration info");
+    UITextPatcher utPatcher(dst);
+    utPatcher.generate_migration_info();
+    WvInvoker::log(LOG_LV_ALERT, "Finished generate ui-texts migration info");
 
     // finished generate migration info
     WvInvoker::log(LOG_LV_ALERT, "Finished generate migration info");
@@ -240,6 +254,12 @@ std::string WvBinder::patch_apply(HANDLER_ARGS) {
     ChoicePatcher choPatcher(u8src);
     choPatcher.patch();
     WvInvoker::log(LOG_LV_ALERT, "Finished apply custom choices data into game");
+
+    // apply ui-texts
+    WvInvoker::log(LOG_LV_ALERT, "Start apply custom ui-texts data into game");
+    UITextPatcher utPatcher(u8src);
+    utPatcher.patch();
+    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-texts data into game");
 
     // finished
     WvInvoker::log(LOG_LV_ALERT, "Finished apply custom data into game");

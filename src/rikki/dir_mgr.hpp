@@ -39,7 +39,7 @@ public:
      *
      * @param [in] gmDir Game directory path.
      */
-    explicit DirMgr(const path_t gmDir);
+    explicit DirMgr(const path_t& gmDir);
 private:
     std::unordered_map<eDir, path_t> m_dirs;
 };

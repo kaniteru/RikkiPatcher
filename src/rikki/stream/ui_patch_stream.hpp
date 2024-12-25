@@ -1,19 +1,18 @@
-#ifndef IKKI_PATCHER_RIKKI_STREAM_UI_PATCH_STREAM_HPP
-#define IKKI_PATCHER_RIKKI_STREAM_UI_PATCH_STREAM_HPP
+#ifndef RIKKI_PATCHER_RIKKI_STREAM_UI_PATCH_STREAM_HPP
+#define RIKKI_PATCHER_RIKKI_STREAM_UI_PATCH_STREAM_HPP
 #include "precompiled.hpp"
 
 struct InGameUITextKey;
 struct SettingUITextKey;
 struct DialogUITextKey;
-struct SettingUITextEntry;
 
 class UITextPatchStream {
 public:
     /**
      * @brief Get loaded ui texts.
      *
-     * @tparam T Target
-     * @return
+     * @tparam T Target ui text struct,
+     * @return Returns target ui text struct with values.
      */
     template<class T>
     T get_texts() const;
@@ -27,7 +26,7 @@ public:
 
 public:
     /**
-     * @brief Load ui texts from custom patch file.
+     * @brief Create or load the ui texts from custom patch file.
      *
      * @param [in] file Ui text custom patch file path.
      */
@@ -40,6 +39,8 @@ public:
     static constexpr auto FILE_IN_GAME = "in_game.json";
     static constexpr auto FILE_SETTING = "setting.json";
     static constexpr auto FILE_DIALOG = "dialog.json";
+
+    static constexpr auto FOLDER_BASE = "ui/texts";
 };
 
 template<class T>
@@ -55,4 +56,4 @@ void UITextPatchStream::set_texts(const T& t) {
 }
 
 
-#endif //IKKI_PATCHER_RIKKI_STREAM_UI_PATCH_STREAM_HPP
+#endif //RIKKI_PATCHER_RIKKI_STREAM_UI_PATCH_STREAM_HPP
