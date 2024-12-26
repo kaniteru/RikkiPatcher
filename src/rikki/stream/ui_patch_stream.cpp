@@ -3,6 +3,10 @@
 
 #include "utils/json_util.hpp"
 
+// ======================== C L A S S ========================
+// ===    UITextPatchStream
+// ======================== C L A S S ========================
+
 template<class T>
 T UITextPatchStream::get_texts() const {
     return JsonUtil::from_json<T>(m_j);
