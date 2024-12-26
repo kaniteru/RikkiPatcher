@@ -3,17 +3,6 @@
 
 #include "utils/json_util.hpp"
 
-void UITextPatchStream::clear() {
-    m_j.clear();
-}
-
-bool UITextPatchStream::save() const {
-    return JsonUtil::save_into_file(m_j, m_file);
-}
-
-UITextPatchStream::UITextPatchStream(const path_t& file) :
-    m_file(file) { }
-
 template<class T>
 T UITextPatchStream::get_texts() const {
     return JsonUtil::from_json<T>(m_j);
@@ -31,3 +20,17 @@ void UITextPatchStream::set_texts(const T& t) {
 template void UITextPatchStream::set_texts<InGameUIText>(const InGameUIText& t);
 template void UITextPatchStream::set_texts<SettingUIText>(const SettingUIText& t);
 template void UITextPatchStream::set_texts<DialogUIText>(const DialogUIText& t);
+
+void UITextPatchStream::clear() {
+    m_j.clear();
+}
+
+bool UITextPatchStream::save() const {
+    return JsonUtil::save_into_file(m_j, m_file);
+}
+
+UITextPatchStream::UITextPatchStream(const path_t& file) :
+    m_file(file) {
+
+    JsonUtil::load_from_file(m_j, m_file);
+}
