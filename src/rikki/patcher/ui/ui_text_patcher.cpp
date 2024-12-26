@@ -52,6 +52,9 @@ PatcherResult InGameUITextPatcher::patch() {
         WvInvoker::log(LOG_LV_PROG, log);
     }
 
+    const std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
+                            + " | failed: " + std::to_string(failed);
+    WvInvoker::log(LOG_LV_INFO, log);
     return result;
 }
 
@@ -103,6 +106,10 @@ PatcherResult SettingUITextPatcher::patch() {
 
     loop_map(patchData.get_map());
     loop_map(patchData.get_controls_usage_map());
+
+    const std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
+                        + " | failed: " + std::to_string(failed);
+    WvInvoker::log(LOG_LV_INFO, log);
     return result;
 }
 
@@ -176,6 +183,9 @@ PatcherResult DialogUITextPatcher::patch() {
         WvInvoker::log(LOG_LV_PROG, log);
     }
 
+    const std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
+                        + " | failed: " + std::to_string(failed);
+    WvInvoker::log(LOG_LV_INFO, log);
     return result;
 }
 

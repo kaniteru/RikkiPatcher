@@ -1,21 +1,17 @@
 #include "ui_patcher.hpp"
-#include "rikki/dir_mgr.hpp"
+#include "ui/ui_text_patcher.hpp"
 #include "rikki/data/ui/ui.hpp"
-#include "rikki/data/ui/ui_json.hpp"
-#include "rikki/data/ui/key/ui_key.hpp"
-#include "rikki/data/ui/key/ui_key_mgr.hpp"
-#include "rikki/data/ui/key/ui_text_dialog_key.hpp"
-#include "rikki/data/ui/key/ui_text_setting_key.hpp"
-#include "rikki/data/ui/key/ui_text_in_game_key.hpp"
+#include "rikki/stream/ui_migr_stream.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
 
-#include "ui/ui_text_patcher.hpp"
-
-#include "utils/string_util.hpp"
 #include "utils/ui_text_util.hpp"
 
 #include "wv/enums.hpp"
 #include "wv/wv_invoker.hpp"
+
+// ======================== C L A S S ========================
+// ===    UITextPatcher
+// ======================== C L A S S ========================
 
 PatcherResult UITextPatcher::patch() {
     PatcherResult result { };
@@ -108,9 +104,6 @@ PatcherResult UITextPatcher::patch() {
         return { };
     }
 
-    std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
-                            + " | failed: " + std::to_string(failed);
-    WvInvoker::log(LOG_LV_INFO, log);
     return result;
 }
 
@@ -119,6 +112,11 @@ PatcherResult UITextPatcher::migration() {
 }
 
 PatcherResult UITextPatcher::generate_migration_info() {
+    std::filesystem::remove_all(m_migrDB);
+    std::filesystem::create_directories(m_migrDB);
+
+    // using migrate dir because currently, it's just wrapper of extractor not pure migr stream.
+    UITextMigrStream::save_migration_data(path_t(m_migrDB).parent_path().parent_path()); // migr dir
     return { };
 }
 
