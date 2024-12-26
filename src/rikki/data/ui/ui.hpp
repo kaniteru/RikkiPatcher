@@ -40,7 +40,7 @@ struct SettingUITextEntry {
     std::string m_text;
 
     SettingUITextEntry() = default;
-    SettingUITextEntry(const SettingUIText::FontStyle& fs);
+    explicit SettingUITextEntry(const SettingUIText::FontStyle& fs);
 
     SettingUITextEntry& operator=(const SettingUIText::FontStyle&);
 };
