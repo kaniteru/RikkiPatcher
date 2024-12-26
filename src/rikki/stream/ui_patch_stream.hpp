@@ -2,6 +2,11 @@
 #define RIKKI_PATCHER_RIKKI_STREAM_UI_PATCH_STREAM_HPP
 #include "precompiled.hpp"
 
+/* ui_patch_stream.hpp
+ *  Included classes:
+ *      - UITextPatchStream
+ */
+
 struct InGameUITextKey;
 struct SettingUITextKey;
 struct DialogUITextKey;

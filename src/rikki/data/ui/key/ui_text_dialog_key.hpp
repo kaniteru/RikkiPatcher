@@ -3,6 +3,11 @@
 #include "precompiled.hpp"
 #include "ui_key.hpp"
 
+/* ui_text_dialog_key.hpp
+ *  Included structs:
+ *      - DialogUITextKeyMgr
+ */
+
 // ======================= S T R U C T =======================
 // ===    DialogUITextKeyMgr
 // ======================= S T R U C T =======================

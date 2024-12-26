@@ -3,6 +3,11 @@
 #include "precompiled.hpp"
 #include "ui_key.hpp"
 
+/* ui_text_in_game_key.hpp
+ *  Included structs:
+ *      - InGameUITextKeyMgr
+ */
+
 // ======================= S T R U C T =======================
 // ===    InGameUITextKeyMgr
 // ======================= S T R U C T =======================

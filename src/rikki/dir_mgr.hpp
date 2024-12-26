@@ -2,6 +2,15 @@
 #define RIKKI_PATCHER_RIKKI_DIR_MGR_HPP
 #include "precompiled.hpp"
 
+/* dir_mgr.hpp
+ *  Included classes:
+ *      - DirMgr
+ */
+
+// ======================== C L A S S ========================
+// ===    DirMgr
+// ======================== C L A S S ========================
+
 enum eDir {
     DIR_PROJ_BASE,
     DIR_PROJ_TEMP,

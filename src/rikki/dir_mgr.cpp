@@ -1,5 +1,9 @@
 #include "dir_mgr.hpp"
 
+// ======================== C L A S S ========================
+// ===    DirMgr
+// ======================== C L A S S ========================
+
 const path_t& DirMgr::get(const eDir type) {
     return m_dirs[type];
 }

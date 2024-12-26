@@ -2,6 +2,11 @@
 #define RIKKI_PATCHER_RIKKI_DATA_UI_KEY_UI_KEY_MGR_HPP
 #include "precompiled.hpp"
 
+/* ui_key_mgr.hpp
+ *  Included classes:
+ *      - UIKeyMgr
+ */
+
 // ======================= S T R U C T =======================
 // ===    UIKeyMgr
 // ======================= S T R U C T =======================

@@ -2,6 +2,15 @@
 #define RIKKY_PATCHER_RIKKY_CONFIG_HPP
 #include "precompiled.hpp"
 
+/* config.hpp
+ *  Included classes:
+ *      - Config
+ */
+
+// ======================== C L A S S ========================
+// ===    Config
+// ======================== C L A S S ========================
+
 /**
  * @brief Using get or set the project settings.
  */
