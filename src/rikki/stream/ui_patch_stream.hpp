@@ -43,17 +43,5 @@ public:
     static constexpr auto FOLDER_BASE = "ui/texts";
 };
 
-template<class T>
-T UITextPatchStream::get_texts() const {
-    T t { };
-    t = m_j.get<T>();
-    return t;
-}
-
-template<class T>
-void UITextPatchStream::set_texts(const T& t) {
-    m_j = t;
-}
-
 
 #endif //RIKKI_PATCHER_RIKKI_STREAM_UI_PATCH_STREAM_HPP
