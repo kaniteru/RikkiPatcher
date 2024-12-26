@@ -47,8 +47,7 @@ struct InGameUIText : IUI {
         enter_save_file_name,
         enter_save_file_name2);
 
-    std::map<const char*, std::string&> m_map;
-    InGameUIText();
+    std::map<const char*, std::string&> get_map();
 };
 
 // ======================= S T R U C T =======================
@@ -79,9 +78,9 @@ struct DialogUIText : IUI {
         save_file_read_error,
         save_file_write_error);
 
-    std::map<const char*, DialogUIText::Dialog&> m_type1Map;
-    std::map<const char*, DialogUIText::Dialog&> m_type2Map;
-    DialogUIText();
+    std::map<const char*, DialogUIText::Dialog&> get_type1_map();
+    std::map<const char*, DialogUIText::Dialog&> get_type2_map();
+    std::vector<std::pair<uint8_t, std::map<const char*, DialogUIText::Dialog&>>> get_maps(); // type num | map
 };
 
 // ======================= S T R U C T =======================
@@ -156,9 +155,8 @@ struct SettingUIText : IUI {
         text_speed_preview,
         controls_usage);
 
-    std::map<const char*, SettingUIText::FontStyle&> m_map;
-    std::map<const char*, SettingUIText::FontStyle&> m_ControlsUsageMap;
-    SettingUIText();
+    std::map<const char*, SettingUIText::FontStyle&> get_map();
+    std::map<const char*, SettingUIText::FontStyle&> get_controls_usage_map();
 };
 
 

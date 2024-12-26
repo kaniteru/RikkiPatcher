@@ -125,10 +125,10 @@ PatcherResult UITextPatcher::generate_migration_info() {
 UITextPatcher::UITextPatcher(const path_t& src) :
     IPatcher(src) {
 
-    m_db = path_t(src).append(UITextPatchStream::FOLDER_BASE);
+    m_db = path_t(src) / UITextPatchStream::FOLDER_BASE;
     std::filesystem::create_directories(m_db);
 
-    m_migrDB = path_t(src).append(FOLDER_MIGRATE).append(UITextPatchStream::FOLDER_BASE);
+    m_migrDB = path_t(src).append(FOLDER_MIGRATE) / UITextPatchStream::FOLDER_BASE;
     std::filesystem::create_directories(m_migrDB);
 
     m_isAvailable = true;
