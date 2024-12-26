@@ -40,7 +40,7 @@ public:
     static constexpr auto FILE_SETTING = "setting.json";
     static constexpr auto FILE_DIALOG = "dialog.json";
 
-    static constexpr auto FOLDER_BASE = "ui/texts";
+    static constexpr auto FOLDER_BASE = u8"ui/texts";
 };
 
 

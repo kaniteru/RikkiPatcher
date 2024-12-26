@@ -7,7 +7,6 @@
 #include "rikki/data/ui/key/ui_text_in_game_key.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
 
-#include "utils/string_util.hpp"
 #include "utils/ui_text_util.hpp"
 #include "utils/filesystem_util.hpp"
 #include "utils/instance_factory.hpp"
@@ -39,9 +38,9 @@ size_t UITextExtractor::extract() {
     DialogUITextExtractor dialog(ut, m_db);
 
     size_t result = 0;
-    result += IExtractor::do_extract(&inGame);
-    result += IExtractor::do_extract(&setting);
-    result += IExtractor::do_extract(&dialog);
+    result += inGame.extract();
+    result += setting.extract();
+    result += dialog.extract();
     return result;
 }
 
@@ -66,7 +65,7 @@ size_t InGameUITextExtractor::extract() {
 
     InGameUIText ig { };
 
-    for (const auto& [pKey, val] : ig.m_map) {
+    for (auto& [pKey, val] : ig.get_map()) {
         const auto key = InGameUITextKeyMgr::g_keys.at(pKey);
 
         std::string buf { };
@@ -103,7 +102,7 @@ size_t SettingUITextExtractor::extract() {
 
     SettingUIText s { };
 
-    for (const auto& [pKey, val] : s.m_map) {
+    for (const auto& [pKey, val] : s.get_map()) {
         const auto& key = SettingUITextKeyMgr::g_keys.at(pKey);
 
         SettingUITextEntry buf { };
@@ -111,7 +110,7 @@ size_t SettingUITextExtractor::extract() {
         val = buf;
     }
 
-    for (const auto& [pKey, val] : s.m_ControlsUsageMap) {
+    for (const auto& [pKey, val] : s.get_controls_usage_map()) {
         const auto& key = SettingUITextKeyMgr::g_keys.at(pKey);
 
         SettingUITextEntry buf { };
@@ -148,7 +147,7 @@ size_t DialogUITextExtractor::extract() {
 
     DialogUIText d { };
 
-    for (const auto& [pKey, val] : d.m_type1Map) {
+    for (const auto& [pKey, val] : d.get_type1_map()) {
         const auto& key = DialogUITextKeyMgr::g_type1Keys.at(pKey);
 
         DialogUITextEntry buf { };
@@ -156,7 +155,7 @@ size_t DialogUITextExtractor::extract() {
         val = buf;
     }
 
-    for (const auto& [pKey, val] : d.m_type2Map) {
+    for (const auto& [pKey, val] : d.get_type2_map()) {
         const auto& key = DialogUITextKeyMgr::g_type2Keys.at(pKey);
 
         DialogUITextEntry buf { };
