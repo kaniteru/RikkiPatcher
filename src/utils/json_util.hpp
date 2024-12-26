@@ -67,7 +67,43 @@ public:
      * @endcode
      */
     static bool save_into_file(const nlohmann::ordered_json& j, const path_t& file);
+
+    template <class T>
+    static T from_json(const nlohmann::json& j);
+
+    template <class T>
+    static T from_json(const nlohmann::ordered_json& j);
+
+    template <class T>
+    static void to_json(nlohmann::json& j, const T& t);
+
+    template <class T>
+    static void to_json(nlohmann::ordered_json& j, const T& t);
 };
+
+template<class T>
+T JsonUtil::from_json(const nlohmann::json& j) {
+    T t { };
+    t = j.get<T>();
+    return t;
+}
+
+template<class T>
+T JsonUtil::from_json(const nlohmann::ordered_json& j) {
+    T t { };
+    t = j.get<T>();
+    return t;
+}
+
+template<class T>
+void JsonUtil::to_json(nlohmann::json& j, const T& t) {
+    j = t;
+}
+
+template<class T>
+void JsonUtil::to_json(nlohmann::ordered_json& j, const T& t) {
+    j = t;
+}
 
 
 #endif //RIKKI_PATCHER_UTILS_JSON_UTIL_HPP
