@@ -139,12 +139,14 @@ PatcherResult DialogUITextPatcher::patch() {
         return res;
     };
 
-    auto loop_map = [this, &total, &ok, &failed](auto& m1, auto& m2, auto typeNum) {
+    auto loop_map = [this, &total, &ok, &failed]<typename T2>(auto& m1, auto m2, auto typeNum) {
         for (const auto& [pKey, val] : m1) {
             total++;
             std::u8string log = StringUtil::cstr_to_u8(pKey) + u8"=>";
 
-            if (const auto it = m2.find(pKey); it != m2.end()) {
+            const std::map<const char*, const T2&>* map = m2;
+
+            if (const auto it = map->find(pKey); it != map->end()) {
                 const auto buf = d_to_entry(val);
 
                 switch (typeNum) { // todo: fix here
@@ -172,8 +174,8 @@ PatcherResult DialogUITextPatcher::patch() {
         }
     };
 
-    loop_map(patchData.m_type1Map, DialogUITextKeyMgr::g_type1Keys, 1);
-    loop_map(patchData.m_type2Map, DialogUITextKeyMgr::g_type2Keys, 2);
+    loop_map.template operator()<DialogType1UITextKey>(patchData.m_type1Map, &DialogUITextKeyMgr::g_type1Keys, 1);
+    loop_map.template operator()<DialogType2UITextKey>(patchData.m_type2Map, &DialogUITextKeyMgr::g_type2Keys, 2);
     return result;
 }
 
