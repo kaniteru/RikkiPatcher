@@ -1,5 +1,9 @@
 #include "i_data.hpp"
 
-bool IData::is_valid() {
+// ======================== C L A S S ========================
+// ===    IExtractor
+// ======================== C L A S S ========================
+
+bool IData::is_valid() const {
     return m_isValid;
 }
