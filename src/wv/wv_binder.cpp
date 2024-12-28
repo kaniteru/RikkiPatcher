@@ -9,6 +9,8 @@
 #include "rikki/extractor/dialogue_extractor.hpp"
 #include "rikki/patcher/ui_patcher.hpp"
 #include "rikki/extractor/ui_extractor.hpp"
+#include "rikki/patcher/copy_patcher.hpp"
+#include "rikki/extractor/copy_extractor.hpp"
 
 #include "utils/worker.hpp"
 #include "utils/dialog_util.hpp"
@@ -22,6 +24,7 @@
 void WvBinder::bind() {
     BIND_EVENT_HANDLER("INIT_PATCHER", this->init_patcher);
     BIND_EVENT_HANDLER("OPEN_GITHUB", this->open_github);
+    BIND_EVENT_HANDLER("OPEN_PROJECT_WEB", this->open_project_web);
     BIND_EVENT_HANDLER("SET_GMDIR_MANUALLY", this->set_gmdir_manually);
     BIND_EVENT_HANDLER("SET_GMDIR_AUTOMATICALLY", this->set_gmdir_automatically);
     BIND_EVENT_HANDLER("SELECT_PATCH_DATA_DIR", this->select_patch_data_dir);
@@ -63,7 +66,13 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
 
 std::string WvBinder::open_github(HANDLER_ARGS) {
     constexpr static auto URL = L"https://github.com/kaniteru/RikkiPatcher";
-    ShellExecute(nullptr, nullptr, URL, nullptr, nullptr, SW_SHOW);
+    ShellExecute(nullptr, nullptr, URL, nullptr, nullptr, SW_HIDE);
+    return { };
+}
+
+std::string WvBinder::open_project_web(HANDLER_ARGS) {
+    constexpr static auto URL = L"https://kaniteru.github.io/project/rikkipatcher/index.html?section=usage";
+    ShellExecute(nullptr, nullptr, URL, nullptr, nullptr, SW_HIDE);
     return { };
 }
 
@@ -202,8 +211,16 @@ std::string WvBinder::patch_extract(HANDLER_ARGS) {
     utExtractor.extract();
     WvInvoker::log(LOG_LV_ALERT, "Finished extract ui-texts from game");
 
+    // extract copy
+    WvInvoker::log(LOG_LV_ALERT, "Start extract copy patch files");
+    CopyExtractor cpyExtractor(dst);
+    cpyExtractor.extract();
+    WvInvoker::log(LOG_LV_ALERT, "Finished extract the copy patch files");
+
     // finished extract data
     WvInvoker::log(LOG_LV_ALERT, "Finished extract data from game");
+
+/*------------------------------------------------------------------------------------------------*/
 
     // start generate migration info
     WvInvoker::log(LOG_LV_ALERT, "Start generate migration info");
@@ -260,6 +277,12 @@ std::string WvBinder::patch_apply(HANDLER_ARGS) {
     UITextPatcher utPatcher(u8src);
     utPatcher.patch();
     WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-texts data into game");
+
+    // apply ui-texts
+    WvInvoker::log(LOG_LV_ALERT, "Start apply custom copy data into game");
+    CopyPatcher cpyPatcher(u8src);
+    cpyPatcher.patch();
+    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom copy data into game");
 
     // finished
     WvInvoker::log(LOG_LV_ALERT, "Finished apply custom data into game");
