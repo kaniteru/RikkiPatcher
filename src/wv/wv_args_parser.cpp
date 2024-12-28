@@ -1,7 +1,3 @@
-//
-// Created by Kaniteru on 2024-11-29.
-//
-
 #include "wv_args_parser.hpp"
 
 std::string WvArgsParser::get() const {

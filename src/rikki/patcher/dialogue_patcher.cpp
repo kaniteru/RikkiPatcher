@@ -76,10 +76,9 @@ PatcherResult DialoguePatcher::patch() {
         WvInvoker::log(LOG_LV_PROG, log);
     }
 
-    std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
+    const std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
                             + " | failed: " + std::to_string(failed);
     WvInvoker::log(LOG_LV_INFO, log);
-
     return result;
 }
 

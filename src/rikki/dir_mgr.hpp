@@ -14,6 +14,7 @@
 enum eDir {
     DIR_PROJ_BASE,
     DIR_PROJ_TEMP,
+
     DIR_PROJ_DATA_EXTRACED,
 
     DIR_PROJ_EXE_7ZIP,

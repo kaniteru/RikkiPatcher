@@ -22,10 +22,10 @@ DirMgr::DirMgr(const path_t& gmDir) {
     add(DIR_PROJ_BASE, std::filesystem::current_path());
     add_dir(DIR_PROJ_TEMP, DIR_PROJ_BASE, "temp");
     add_dir(DIR_PROJ_DATA_EXTRACED, DIR_PROJ_BASE, "extracted");
+
     add(DIR_PROJ_EXE_7ZIP, std::filesystem::current_path().append("7zip").append("7za.exe"));
 
     add(DIR_GAME_BASE, gmDir);
-
     // todo: improve
     const auto json = path_t(gmDir).append("asset").append("json");
     add(DIR_GAME_JSON_DIALOGUES, path_t(json).append("server").append("scene"));
