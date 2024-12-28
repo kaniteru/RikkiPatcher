@@ -1,4 +1,4 @@
-const RIKKI_PATCHER_VER = 241211;
+const RIKKI_PATCHER_VER = 241228;
 
 function onLoad() {
     Logger.INSTANCE.log(eLogLv.LOG_LV_INFO, `Rikki Patcher Version: ${RIKKI_PATCHER_VER}`);
@@ -11,7 +11,6 @@ function onLoad() {
         Logger.INSTANCE.log(eLogLv.LOG_LV_DEBUG, 'Rikki Patcher running in web');
         Control.INSTANCE.move(eCtrlLv.CTRL_LV_PATCH);
     }
-
 }
 
 document.getElementById('h4-kani').addEventListener('click', ev => {
