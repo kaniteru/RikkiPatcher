@@ -1,5 +1,4 @@
 #include "sevenzip_util.hpp"
-
 #include "string_util.hpp"
 
 bool SevenzipUtil::zip(const std::vector<path_t>& files, const path_t& dst, bool usePW, const std::u8string& pw) const {
@@ -17,6 +16,9 @@ bool SevenzipUtil::zip(const std::vector<path_t>& files, const path_t& dst, bool
     }
 
     cmd += u8"-y";
+
+    //const auto params =  L"/C " + std::wstring(cmd.begin(), cmd.end());
+    //ShellExecute(nullptr, L"open", L"cmd.exe", params.c_str(), nullptr, SW_HIDE);
     return system(StringUtil::u8_to_cstr(cmd)) == 0;
 }
 
@@ -33,6 +35,9 @@ bool SevenzipUtil::unzip(const path_t& src, const path_t& dst, bool usePW, const
     }
 
     cmd += u8"-aoa";
+
+    //const auto params =  L"/C " + std::wstring(cmd.begin(), cmd.end());
+    //ShellExecute(nullptr, L"open", L"cmd.exe", params.c_str(), nullptr, SW_HIDE);
     return system(StringUtil::u8_to_cstr(cmd)) == 0;
 }
 
