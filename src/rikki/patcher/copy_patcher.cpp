@@ -17,9 +17,15 @@ PatcherResult CopyPatcher::patch() {
     size_t& failed = result.m_failed;
     size_t& passed = result.m_passed;
 
+    const auto file = path_t(m_db).append(FILE_NAME);
+
+    if (!std::filesystem::exists(file)) {
+        return { };
+    }
+
     nlohmann::json j { };
 
-    if (!JsonUtil::load_from_file(j, path_t(m_db).append(FILE_NAME))) {
+    if (!JsonUtil::load_from_file(j, file)) {
         WvInvoker::log(LOG_LV_ERR, "Can't read the copy.json file");
         return { };
     }
@@ -27,17 +33,18 @@ PatcherResult CopyPatcher::patch() {
     const auto& gmdir = INSTFAC(DirMgr)->get(DIR_GAME_BASE);
 
     for (const auto& [k, v] : j.items()) {
-        const std::string vStr = v;
+        const auto u8K = StringUtil::str_to_u8(k);
+        const auto u8V = StringUtil::str_to_u8(v);
         total++;
 
-        if (k.empty() || vStr.empty()) {
+        if (u8K.empty() || u8V.empty()) {
             WvInvoker::log(LOG_LV_PROG, "Empty src or dst => Failed");
             failed++;
             continue;
         }
 
-        const path_t src = path_t(m_db).append(k);
-        const path_t dst = path_t(gmdir).append(vStr);
+        const path_t src = path_t(m_db).append(u8K);
+        const path_t dst = path_t(gmdir).append(u8V);
 
         if (const auto parent = dst.parent_path(); !std::filesystem::exists(parent)) {
             std::filesystem::create_directory(parent);
