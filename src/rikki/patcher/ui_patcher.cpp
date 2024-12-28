@@ -54,7 +54,7 @@ PatcherResult UITextPatcher::patch() {
         if (find_file(UITextPatchStream::FILE_IN_GAME)) {
             WvInvoker::log(LOG_LV_ALERT, u8"Start patch the in-game text");
 
-            InGameUITextPatcher patcher(ut, m_dir);
+            InGameUITextPatcher patcher(&ut, m_dir);
             auto res = patcher.patch();
 
             WvInvoker::log(LOG_LV_ALERT, u8"In-game text patch finished");
@@ -68,7 +68,7 @@ PatcherResult UITextPatcher::patch() {
         if (find_file(UITextPatchStream::FILE_SETTING)) {
             WvInvoker::log(LOG_LV_ALERT, u8"Start patch the setting text");
 
-            SettingUITextPatcher patcher(ut, m_dir);
+            SettingUITextPatcher patcher(&ut, m_dir);
             result += patcher.patch();
 
             WvInvoker::log(LOG_LV_ALERT, u8"Setting text patch finished");
@@ -81,7 +81,7 @@ PatcherResult UITextPatcher::patch() {
         if (find_file(UITextPatchStream::FILE_DIALOG)) {
             WvInvoker::log(LOG_LV_ALERT, u8"Start patch the dialog text");
 
-            DialogUITextPatcher patcher(ut, m_dir);
+            DialogUITextPatcher patcher(&ut, m_dir);
             result += patcher.patch();
 
             WvInvoker::log(LOG_LV_ALERT, u8"Dialog text patch finished");
@@ -116,7 +116,7 @@ PatcherResult UITextPatcher::generate_migration_info() {
     std::filesystem::create_directories(m_migrDB);
 
     // using migrate dir because currently, it's just wrapper of extractor not pure migr stream.
-    UITextMigrStream::save_migration_data(path_t(m_migrDB).parent_path().parent_path()); // migr dir
+    UITextMigrStream::save_migration_data(m_migrDir);
     return { };
 }
 

@@ -146,7 +146,7 @@ void UIText::find_in_game(const InGameUITextKey& key, const in_game_ui_text_call
 }
 
 void UIText::find_setting(const SettingUITextKey& key, const setting_ui_text_callback_t& callback) {
-    for (auto arr1 = m_j[key.m_iKey]["root"]["children"]; auto& arr1It : arr1) {
+    for (auto& arr1 = m_j[key.m_iKey]["root"]["children"]; auto& arr1It : arr1) {
         if (arr1It.contains("id") && arr1It["id"] != key.m_iiKey) {
             continue;
         }
@@ -155,7 +155,7 @@ void UIText::find_setting(const SettingUITextKey& key, const setting_ui_text_cal
             continue;
         }
 
-        for (auto arr2 = arr1It["children"]; auto& arr2It : arr2) {
+        for (auto& arr2 = arr1It["children"]; auto& arr2It : arr2) {
             if (arr2It.contains("id") && arr2It["id"] != key.m_iiiKey) {
                 continue;
             }

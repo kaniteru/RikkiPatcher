@@ -15,7 +15,7 @@
 // ===    IUITextPatcher
 // ======================== C L A S S ========================
 
-IUITextPatcher::IUITextPatcher(class UIText& ut, const path_t& src) :
+IUITextPatcher::IUITextPatcher(UIText* ut, const path_t& src) :
     IPatcher(src),
     m_ut(ut),
     m_base(path_t(src) / UITextPatchStream::FOLDER_BASE),
@@ -39,12 +39,16 @@ PatcherResult InGameUITextPatcher::patch() {
         total++;
         std::u8string log = StringUtil::cstr_to_u8(pKey) + u8"=>";
 
+        bool patched = false;
+
         if (const auto it = InGameUITextKeyMgr::g_keys.find(pKey); it != InGameUITextKeyMgr::g_keys.end()) {
-            m_ut.set_in_game(it->second, val);
+            patched = m_ut->set_in_game(it->second, val);
+        }
+
+        if (patched) {
             ok++;
             log += u8"OK";
-        }
-        else {
+        } else {
             failed++;
             log += u8"Failed";
         }
@@ -66,7 +70,7 @@ PatcherResult InGameUITextPatcher::generate_migration_info() {
     return { };
 }
 
-InGameUITextPatcher::InGameUITextPatcher(class UIText& ut, const path_t& src) :
+InGameUITextPatcher::InGameUITextPatcher(UIText* ut, const path_t& src) :
     IUITextPatcher(ut, src) { }
 
 // ======================== C L A S S ========================
@@ -88,14 +92,17 @@ PatcherResult SettingUITextPatcher::patch() {
             total++;
             std::u8string log = StringUtil::cstr_to_u8(pKey) + u8"=>";
 
+            bool patched = false;
+
             if (const auto it = SettingUITextKeyMgr::g_keys.find(pKey); it != SettingUITextKeyMgr::g_keys.end()) {
                 const SettingUITextEntry buf(val);
-                m_ut.set_setting(it->second, buf);
+                patched = m_ut->set_setting(it->second, buf);
+            }
 
+            if (patched) {
                 ok++;
                 log += u8"OK";
-            }
-            else {
+            } else {
                 failed++;
                 log += u8"Failed";
             }
@@ -121,7 +128,7 @@ PatcherResult SettingUITextPatcher::generate_migration_info() {
     return { };
 }
 
-SettingUITextPatcher::SettingUITextPatcher(class UIText& ut, const path_t& src) :
+SettingUITextPatcher::SettingUITextPatcher(UIText* ut, const path_t& src) :
     IUITextPatcher(ut, src) { }
 
 // ======================== C L A S S ========================
@@ -149,14 +156,17 @@ PatcherResult DialogUITextPatcher::patch() {
         total++;
         std::u8string log = StringUtil::cstr_to_u8(pKey) + u8"=>";
 
+        bool patched = false;
+
         if (const auto it = DialogUITextKeyMgr::g_type1Keys.find(pKey); it != DialogUITextKeyMgr::g_type1Keys.end()) {
             const auto buf = d_to_entry(val);
-            m_ut.set_dialog_type1(it->second, buf);
+            patched = m_ut->set_dialog_type1(it->second, buf);
+        }
 
+        if (patched) {
             ok++;
             log += u8"OK";
-        }
-        else {
+        } else {
             failed++;
             log += u8"Failed";
         }
@@ -168,14 +178,17 @@ PatcherResult DialogUITextPatcher::patch() {
         total++;
         std::u8string log = StringUtil::cstr_to_u8(pKey) + u8"=>";
 
+        bool patched = false;
+
         if (const auto it = DialogUITextKeyMgr::g_type2Keys.find(pKey); it != DialogUITextKeyMgr::g_type2Keys.end()) {
             const auto buf = d_to_entry(val);
-            m_ut.set_dialog_type2(it->second, buf);
+            patched = m_ut->set_dialog_type2(it->second, buf);
+        }
 
+        if (patched) {
             ok++;
             log += u8"OK";
-        }
-        else {
+        } else {
             failed++;
             log += u8"Failed";
         }
@@ -197,5 +210,5 @@ PatcherResult DialogUITextPatcher::generate_migration_info() {
     return { };
 }
 
-DialogUITextPatcher::DialogUITextPatcher(class UIText& ut, const path_t& src) :
+DialogUITextPatcher::DialogUITextPatcher(UIText* ut, const path_t& src) :
     IUITextPatcher(ut, src) { }

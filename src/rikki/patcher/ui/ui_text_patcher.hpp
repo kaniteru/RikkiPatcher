@@ -22,9 +22,9 @@ class UIText;
 
 class IUITextPatcher : protected IPatcher {
 public:
-    IUITextPatcher(UIText& ut, const path_t& src);
+    IUITextPatcher(UIText* ut, const path_t& src);
 protected:
-    UIText& m_ut;                  /* Reference of UIText */
+    UIText* const m_ut;         /* Reference of UIText */
     const path_t m_base;        /* Path of ui-texts custom patch dir */
     const path_t m_baseMigr; /* Path of ui-texts custom patch migration dir */
 };
@@ -41,7 +41,7 @@ class InGameUITextPatcher final : IUITextPatcher {
     PatcherResult generate_migration_info() final;
 
 private:
-    InGameUITextPatcher(UIText& ut, const path_t& src);
+    InGameUITextPatcher(UIText* ut, const path_t& src);
 
     friend UITextPatcher;
 };
@@ -58,7 +58,7 @@ class SettingUITextPatcher final : IUITextPatcher {
     PatcherResult generate_migration_info() final;
 
 private:
-    SettingUITextPatcher(UIText& ut, const path_t& src);
+    SettingUITextPatcher(UIText* ut, const path_t& src);
 
     friend UITextPatcher;
 };
@@ -75,7 +75,7 @@ class DialogUITextPatcher final : IUITextPatcher {
     PatcherResult generate_migration_info() final;
 
 private:
-    DialogUITextPatcher(UIText& ut, const path_t& src);
+    DialogUITextPatcher(UIText* ut, const path_t& src);
 
     friend UITextPatcher;
 };
