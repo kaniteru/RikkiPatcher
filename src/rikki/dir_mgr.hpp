@@ -2,15 +2,26 @@
 #define RIKKI_PATCHER_RIKKI_DIR_MGR_HPP
 #include "precompiled.hpp"
 
+/* dir_mgr.hpp
+ *  Included classes:
+ *      - DirMgr
+ */
+
+// ======================== C L A S S ========================
+// ===    DirMgr
+// ======================== C L A S S ========================
+
 enum eDir {
     DIR_PROJ_BASE,
-    DIR_PROJ_DATA,
-    DIR_PROJ_DATA_BACKUP,
-    DIR_PROJ_DATA_LANGUAGES,
+    DIR_PROJ_TEMP,
+
     DIR_PROJ_DATA_EXTRACED,
 
+    DIR_PROJ_EXE_7ZIP,
+
     DIR_GAME_BASE,
-    DIR_GAME_JSON_DIALOGUES
+    DIR_GAME_JSON_DIALOGUES,
+    DIR_GAME_JSON_STARTUP
 };
 
 /**
@@ -38,7 +49,7 @@ public:
      *
      * @param [in] gmDir Game directory path.
      */
-    explicit DirMgr(const path_t gmDir);
+    explicit DirMgr(const path_t& gmDir);
 private:
     std::unordered_map<eDir, path_t> m_dirs;
 };

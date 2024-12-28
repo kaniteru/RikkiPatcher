@@ -1,5 +1,6 @@
 #include "dialogue_patcher.hpp"
 #include "rikki/dir_mgr.hpp"
+#include "rikki/data/dialogue.hpp"
 #include "rikki/stream/dialogue_migr_stream.hpp"
 #include "rikki/stream/dialogue_patch_stream.hpp"
 
@@ -14,15 +15,16 @@
 // ===    DialoguePatcher
 // ======================== C L A S S ========================
 
-size_t DialoguePatcher::patch() {
-    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+PatcherResult DialoguePatcher::patch() {
+    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
+    PatcherResult result { };
 
-    size_t total = 0;
-    size_t failed = 0;
-    size_t passed = 0;
-    size_t ok = 0;
+    size_t& total =  result.m_total;
+    size_t& ok = result.m_ok;
+    size_t& failed = result.m_failed;
+    size_t& passed = result.m_passed;
 
-    for (const auto files = FilesystemUtil::sort_files(m_database); const auto& f : files) {
+    for (const auto files = FilesystemUtil::sort_files(m_db); const auto& f : files) {
         const auto fName = f.filename().generic_u8string();
         const auto fGame = path_t(gmdir).append(fName);
         auto log = fName + u8" => ";
@@ -74,22 +76,21 @@ size_t DialoguePatcher::patch() {
         WvInvoker::log(LOG_LV_PROG, log);
     }
 
-    std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
+    const std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
                             + " | failed: " + std::to_string(failed);
     WvInvoker::log(LOG_LV_INFO, log);
-
-    return ok;
+    return result;
 }
 
-bool DialoguePatcher::migration() {
-    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+PatcherResult DialoguePatcher::migration() {
+    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
 
     for (const auto& f : gmFiles) {
         const auto fName = f.filename().generic_u8string();
 
         // path_t
-        const auto fPatch = path_t(m_database).append(fName);
+        const auto fPatch = path_t(m_db).append(fName);
         const auto fMigr = path_t(m_migrDB).append(fName);
 
         // extract pure dialogues from game
@@ -190,21 +191,21 @@ bool DialoguePatcher::migration() {
         patchStream.save();
     }
 
-    return true;
+    return { };
 }
 
-bool DialoguePatcher::generate_migration_info() {
+PatcherResult DialoguePatcher::generate_migration_info() {
     std::filesystem::remove_all(m_migrDB);
     std::filesystem::create_directories(m_migrDB);
     DialogueMigrStream::save_migration_data(m_migrDB);
-    return true;
+    return { };
 }
 
 DialoguePatcher::DialoguePatcher(const path_t& src) :
     IPatcher(src) {
 
-    m_database = path_t(src).append(FOLDER_BASE);
-    std::filesystem::create_directories(m_database);
+    m_db = path_t(src).append(FOLDER_BASE);
+    std::filesystem::create_directories(m_db);
 
     m_migrDB = path_t(src).append(FOLDER_MIGRATE).append(FOLDER_BASE);
     std::filesystem::create_directories(m_migrDB);
@@ -216,15 +217,16 @@ DialoguePatcher::DialoguePatcher(const path_t& src) :
 // ===    ChoicePatcher
 // ======================== C L A S S ========================
 
-size_t ChoicePatcher::patch() {
-    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+PatcherResult ChoicePatcher::patch() {
+    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
+    PatcherResult result { };
 
-    size_t total = 0;
-    size_t failed = 0;
-    size_t passed = 0;
-    size_t ok = 0;
+    size_t& total =  result.m_total;
+    size_t& ok = result.m_ok;
+    size_t& failed = result.m_failed;
+    size_t& passed = result.m_passed;
 
-    for (const auto files = FilesystemUtil::sort_files(m_database); const auto& f : files) {
+    for (const auto files = FilesystemUtil::sort_files(m_db); const auto& f : files) {
         const auto fName = f.filename().generic_u8string();
         const auto fGame = path_t(gmdir).append(fName);
         auto log = fName + u8" => ";
@@ -280,11 +282,11 @@ size_t ChoicePatcher::patch() {
                             + " | failed: " + std::to_string(failed);
     WvInvoker::log(LOG_LV_INFO, log);
 
-    return ok;
+    return result;
 }
 
-bool ChoicePatcher::migration() {
-    const auto gmdir = InstanceFactory::instance().get<DirMgr>()->get(DIR_GAME_JSON_DIALOGUES);
+PatcherResult ChoicePatcher::migration() {
+    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
 
     const auto migrFiles = FilesystemUtil::sort_files(m_migrDB);
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
@@ -293,7 +295,7 @@ bool ChoicePatcher::migration() {
         const auto fName = f.filename().generic_u8string();
 
         // path_t
-        const auto fPatch = path_t(m_database).append(fName);
+        const auto fPatch = path_t(m_db).append(fName);
         const auto fMigr = path_t(m_migrDB).append(fName);
 
         // extract pure dialogues and choices from game
@@ -365,21 +367,21 @@ bool ChoicePatcher::migration() {
         patchStream.save();
     }
 
-    return true;
+    return { };
 }
 
-bool ChoicePatcher::generate_migration_info() {
+PatcherResult ChoicePatcher::generate_migration_info() {
     std::filesystem::remove_all(m_migrDB);
     std::filesystem::create_directories(m_migrDB);
     ChoiceMigrStream::save_migration_data(m_migrDB);
-    return true;
+    return { };
 }
 
 ChoicePatcher::ChoicePatcher(const path_t& src) :
     IPatcher(src) {
 
-    m_database = path_t(src).append(FOLDER_BASE);
-    std::filesystem::create_directories(m_database);
+    m_db = path_t(src).append(FOLDER_BASE);
+    std::filesystem::create_directories(m_db);
 
     m_migrDB = path_t(src).append(FOLDER_MIGRATE).append(FOLDER_BASE);
     std::filesystem::create_directories(m_migrDB);

@@ -20,7 +20,7 @@ public:
      *
      * @return Returns patched files count.
      */
-    size_t patch() final;
+    PatcherResult patch() final;
 
     /**
      * @brief Migrate custom data using game data.
@@ -28,27 +28,27 @@ public:
      *
      * @return Returns true if migrated successfully.
      */
-    bool migration() final;
+    PatcherResult migration() final;
 
     /**
      * @brief Generate migration info data.
-     *             This data will be used to migrate custom patch data to match the updated game in the future.
+     *             This data will be used to migrate custom patch data to match the updated game of features.
      *             Game data must be unmodified.
      *
-     * @return
+     * @return Returns true if generated migration info successfully.
      */
-    bool generate_migration_info() final;
+    PatcherResult generate_migration_info() final;
 
 public:
     /**
-     * @brief Initialize using custom data directory.
+     * @brief Initialize using custom patch data directory.
      *
-     * @param [in] src Custom data directory root path.
+     * @param [in] src Root path of custom patch data directory.
      */
     explicit DialoguePatcher(const path_t& src);
 private:
-    path_t m_database; /* Patch data folder of dialogue data files. */
-    path_t m_migrDB;    /* Migration folder of dialogue data files */
+    path_t m_db;        /* Patch data folder of dialogue data files. */
+    path_t m_migrDB; /* Migration folder of dialogue data files */
 
     constexpr static auto FOLDER_BASE = "dialogues";
 };
@@ -64,7 +64,7 @@ public:
      *
      * @return Returns patched files count.
      */
-    size_t patch() final;
+    PatcherResult patch() final;
 
     /**
      * @brief Migrate custom data using game data.
@@ -72,7 +72,7 @@ public:
      *
      * @return Returns true if migrated successfully.
      */
-    bool migration() final;
+    PatcherResult migration() final;
 
     /**
      * @brief Generate migration info data.
@@ -81,7 +81,7 @@ public:
      *
      * @return
      */
-    bool generate_migration_info() final;
+    PatcherResult generate_migration_info() final;
 
 public:
     /**
@@ -91,8 +91,8 @@ public:
      */
     explicit ChoicePatcher(const path_t& src);
 private:
-    path_t m_database; /* Patch data folder of Choice data files */
-    path_t m_migrDB;    /* Migration folder of choice data files */
+    path_t m_db;        /* Patch data folder of Choice data files */
+    path_t m_migrDB; /* Migration folder of choice data files */
 
     constexpr static auto FOLDER_BASE = "choices";
 };

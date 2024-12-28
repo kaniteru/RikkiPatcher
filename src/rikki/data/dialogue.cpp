@@ -15,10 +15,6 @@ bool DialogueSpan::operator==(const DialogueSpan& other) const {
 // ===    Dialogue
 // ======================== C L A S S ========================
 
-bool Dialogue::is_valid() {
-    return m_isValid;
-}
-
 dialogue_map_t Dialogue::extract_dialogues() {
     dialogue_map_t result { };
 
@@ -167,7 +163,6 @@ void Dialogue::find_choices(const choices_callback_t& callback) {
 }
 
 Dialogue::Dialogue(const path_t& file) :
-    m_isValid(false),
     m_file(file) {
 
     m_isValid = JsonUtil::load_from_file(m_j, m_file);

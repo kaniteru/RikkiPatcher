@@ -30,7 +30,7 @@ public:
      */
     explicit DialogueExtractor(const path_t& dst);
 private:
-    path_t m_dataBase; /* Using save the dialogue data path */
+    path_t m_db; /* Using save the dialogue data path */
 
     constexpr static auto FOLDER_BASE = "dialogues";
 };

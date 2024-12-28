@@ -1,0 +1,18 @@
+RikkiPatcher - Licenses for This Project and Included Software
+~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+## License for This Project
+This project is licensed under the GNU General Public License (GPL) v3.0.
+For the full text, visit: https://www.gnu.org/licenses/gpl-3.0.en.html
+
+## License for 7-Zip
+The 7-Zip executable included in this release is licensed under the GNU Lesser General Public License (LGPL).
+For the full text, visit: https://www.gnu.org/licenses/lgpl-3.0.en.html
+ 
+A copy of the 7-Zip license is also included in the '7zip/License.txt' file.
+
+For more information on the 7-Zip software, visit: https://www.7-zip.org/
+
+
+---
+End of document

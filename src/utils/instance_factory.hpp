@@ -2,6 +2,8 @@
 #define RIKKI_PATCHER_UTILS_INSTANCE_FACTORY_HPP
 #include "precompiled.hpp"
 
+#define INSTFAC(C) InstanceFactory::instance().get<C>()
+
 class InstanceFactory {
 public:
     static InstanceFactory& instance();

@@ -39,7 +39,7 @@ struct DialogueEntry {
 // ======================= S T R U C T =======================
 
 struct DialogueSpan {
-    std::string m_html;  /* CSS and JS.   ex) style="color: red; font-family: 'rikki'" onclick="..." */
+    std::string m_html;  /* CSS and JS.   ex) style="color: purple; font-family: 'kawaii-rikki'" onclick="..." */
     std::string m_text; /* Dialogue text. ex) Good morning, tomori-chan */
 
     bool operator==(const DialogueSpan&) const;
@@ -61,13 +61,6 @@ struct DialogueSpan {
  */
 class Dialogue : public IData {
 public:
-    /**
-     * @brief Check is dialogue data loaded successfully.
-     *
-     * @return Returns true if data loaded successfully.
-     */
-    bool is_valid() final;
-
     /**
      * @brief Extract all existing dialogues from data.
      *
@@ -187,11 +180,10 @@ public:
     /**
      * @brief Load dialogue from game data file.
      *
-     * @param [in] file asset/json/server/scene/*.json file path.
+     * @param [in] file 'asset/json/server/scene/*.json' file path.
      */
     explicit Dialogue(const path_t& file);
 private:
-    bool m_isValid;         /* Using is dialogue data loaded successful in constructor. */
     path_t m_file;          /* Target dialogue in game file path */
     nlohmann::json m_j; /* Loaded dialogue data */
 };

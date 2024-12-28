@@ -2,6 +2,7 @@
 #define RIKKI_PATCHER_WV_WV_INVOKER_HPP
 #include "precompiled.hpp"
 #include "wv_args_parser.hpp"
+#include "utils/string_util.hpp"
 #include "utils/instance_factory.hpp"
 
 enum eLogLV;
@@ -12,7 +13,7 @@ public:
     static webview::noresult call(std::string_view func, Args&&... args);
 
     static void init_success();
-    static void init_gmdir(const path_t gmdir);
+    static void init_gmdir(const path_t& gmdir);
 
     static void selected_patch_data_dir(const path_t& dir);
 
@@ -24,15 +25,15 @@ public:
 };
 
 template<typename... Args>
-webview::noresult WvInvoker::call(std::string_view func, Args&& ... args) {
-    WvArgsParser parser(args...);
-    std::string str = std::string(func) + "(" + parser.get() + ");";
+webview::noresult WvInvoker::call(const std::string_view func, Args&& ... args) {
+    const WvArgsParser parser(args...);
+    const std::string str = std::string(func) + "(" + parser.get() + ");";
     //std::cout << "str: " << str << std::endl;
 
-    auto u8str = reinterpret_cast<const char8_t*>(str.c_str());
-    auto js = reinterpret_cast<const char*>(u8str);
+    const auto u8str = StringUtil::str_to_u8(str);
+    const auto js = StringUtil::u8_to_cstr(u8str);
     //std::cout << "js: " << js << std::endl;
-    return InstanceFactory::instance().get<webview::webview>()->eval(js);
+    return INSTFAC(webview::webview)->eval(js);
 }
 
 

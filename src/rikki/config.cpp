@@ -1,6 +1,10 @@
 #include "config.hpp"
 #include "utils/json_util.hpp"
 
+// ======================== C L A S S ========================
+// ===    Config
+// ======================== C L A S S ========================
+
 bool Config::exists(const char* key) {
     return m_j.contains(key);
 }

@@ -3,13 +3,14 @@
 #include "rikki/dir_mgr.hpp"
 #include "rikki/config.hpp"
 #include "utils/string_util.hpp"
+#include "utils/temp_dir_mutex.hpp"
 
 void WvInvoker::init_success() {
     constexpr static auto FN = "_initSuccess";
     WvInvoker::call(FN);
 }
 
-void WvInvoker::init_gmdir(const path_t gmdir) {
+void WvInvoker::init_gmdir(const path_t& gmdir) {
     constexpr static auto FN = "_initGmdir";
 
     if (gmdir.empty()) {
@@ -20,14 +21,15 @@ void WvInvoker::init_gmdir(const path_t gmdir) {
     auto& instFac = InstanceFactory::instance();
     instFac.reset<DirMgr>();
     instFac.make<DirMgr>(gmdir);
+    instFac.reset<TempDirMutex>();
+    instFac.make<TempDirMutex>();
 
     const auto u8 = gmdir.generic_u8string();
     WvInvoker::log(LOG_LV_ALERT, u8"Game directory set: " + u8);
 
-    auto pConfig = instFac.get<Config>();
     auto u8str =  StringUtil::u8_to_cstr(u8);
-    pConfig->set(Config::KEY_GMDIR, u8str);
-    pConfig->save();
+    INSTFAC(Config)->set(Config::KEY_GMDIR, u8str);
+    INSTFAC(Config)->save();
     WvInvoker::call(FN, u8str);
 }
 

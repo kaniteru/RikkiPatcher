@@ -2,37 +2,61 @@
 #define RIKKI_PATCHER_RIKKI_PATCHER_I_PATCHER_HPP
 #include "precompiled.hpp"
 
-class IRikkiPatcher {
+/* i_patcher.hpp
+ *  Included classes:
+ *      - IPatcher
+ *
+ *   Included structs:
+ *      - PatcherResult
+ */
+
+// ======================== C L A S S ========================
+// ===    PatcherResult
+// ======================== C L A S S ========================
+
+struct PatcherResult {
+    size_t m_total;   /* Total count */
+    size_t m_ok;       /* OK count */
+    size_t m_failed;  /* Failed count */
+    size_t m_passed; /* Passed count */
+
+    PatcherResult& operator+=(const PatcherResult&);
+};
+
+// ======================== C L A S S ========================
+// ===    IPatcher
+// ======================== C L A S S ========================
+
+class IPatcher {
 public:
     /**
-     * @brief Check is patch available.
+     * @brief Check is patcher available.
      *
-     * @return Returns true if patch available.
+     * @return Returns true is patcher available.
      */
     bool is_available() const;
 
-public:
-    explicit IRikkiPatcher(const path_t& dir);
-    virtual ~IRikkiPatcher() = default;
-protected:
-    bool m_isAvailable;
-    path_t m_dir;
-};
-
-class IPatcher : public IRikkiPatcher {
-public:
-    virtual size_t patch() = 0;
-    virtual bool migration() = 0;
-    virtual bool generate_migration_info() = 0;
+    virtual PatcherResult patch() = 0;
+    virtual PatcherResult migration() = 0;
+    virtual PatcherResult generate_migration_info() = 0;
 
 public:
+    /**
+     * @brief Initializing patcher.
+     * <br>m_dir is point the root path of custom patch data.
+     * <br>m_migrDir is point the root path of custom patch migration data.
+     * 
+     * @param [in] dir Root path of custom patch data.
+     */
     explicit IPatcher(const path_t& dir);
+    virtual ~IPatcher() = default;
 protected:
-    path_t m_migrDir;
-
-    constexpr static auto FOLDER_MIGRATE = "migration";
+    bool m_isAvailable; /* Is patcher available? */
+    const path_t m_dir;          /* Root path of custom patch data */
+    const path_t m_migrDir;   /* Root path of custom patch migration data */
+protected:
+    constexpr static auto FOLDER_MIGRATE = "migration"; /* Migration data folder name */
 };
-
 
 
 #endif //RIKKI_PATCHER_RIKKI_PATCHER_I_PATCHER_HPP

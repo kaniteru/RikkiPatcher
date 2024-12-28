@@ -12,6 +12,7 @@ public:
 private:
     std::string init_patcher(HANDLER_ARGS);
     std::string open_github(HANDLER_ARGS);
+    std::string open_project_web(HANDLER_ARGS);
 
     std::string set_gmdir_manually(HANDLER_ARGS );
     std::string set_gmdir_automatically(HANDLER_ARGS);

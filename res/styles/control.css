@@ -67,6 +67,19 @@
     align-items: center;
 }
 
+#div-ctrl-options-top-bt {
+    width: 88.5%;
+}
+
+#bt-ctrl-options-apply {
+    width: 100%;
+    animation: bounce 2s infinite;
+}
+#bt-ctrl-options-apply:hover {
+    background-color: orangered;
+    animation: none;
+}
+
 #div-ctrl-options-center {
     flex: 80%;
 
@@ -83,7 +96,8 @@
     justify-content: space-between;
 }
 #div-ctrl-options-center-bt > button {
-    margin: 4vmin;
+    width: 100%;
+    margin: 4vmin 4vmin 0;
 }
 
 #bt-ctrl-setting {
@@ -95,6 +109,27 @@
 
 #div-ctrl-options-footer {
     flex: 20%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#div-ctrl-options-footer-bt {
+    display: flex;
+    align-items: baseline;
+    align-content: center;
+    justify-content: space-between;
+}
+#div-ctrl-options-footer-bt > button {
+    width: 100%;
+    margin: 0 4vmin 6.5vmin;
+}
+
+#bt-ctrl-options-setting:hover,
+#bt-ctrl-options-usage:hover {
+    background-color: darkgreen;
 }
 
 #div-ctrl-patch {
@@ -166,5 +201,17 @@
     }
     50% {
         transform: scale(1) rotate(180deg);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-0.5vmin);
+    }
+    60% {
+        transform: translateY(-0.35vmin);
     }
 }

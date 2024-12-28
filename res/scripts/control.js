@@ -83,7 +83,7 @@ document.getElementById('bt-ctrl-options-apply').addEventListener('click', e => 
     const desc = document.getElementById('p-ctrl-patch-desc');
     desc.innerHTML = 'Apply patch to game';
     const alert = document.getElementById('p-ctrl-patch-alert');
-    alert.innerHTML = 'Backup your save data before patch.'
+    alert.innerHTML = 'Backup your save data before patch.';
     const start = document.getElementById('bt-ctrl-patch-start');
     start.innerHTML = 'Start Patch'
     start.disabled = true;
@@ -101,6 +101,9 @@ document.getElementById('bt-ctrl-options-migrate').addEventListener('click', e =
 });
 document.getElementById('bt-ctrl-options-setting').addEventListener('click', e => {
    Control.INSTANCE.move(eCtrlLv.CTRL_LV_GMDIR);
+});
+document.getElementById('bt-ctrl-options-usage').addEventListener('click', e => {
+    window.OPEN_PROJECT_WEB();
 });
 
 document.getElementById('bt-ctrl-patch-select-dir').addEventListener('click', e => {
