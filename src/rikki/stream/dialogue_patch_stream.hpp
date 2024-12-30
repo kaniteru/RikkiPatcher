@@ -1,7 +1,7 @@
 #ifndef RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_STREAM_HPP
 #define RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_STREAM_HPP
 #include "precompiled.hpp"
-#include "rikki/data/dialogue.hpp"
+#include "rikki/data/dialogue/dialogue.hpp"
 
 /*dialogue_patch_stream.hpp
  * Included classes:
@@ -22,7 +22,7 @@ public:
      * @param [out] e Result reference.
      * @return Returns true if target dialogue exists.
      */
-    bool get_dialogue(dialogue_idx_t idx, DialogueEntry& e) const;
+    bool get_dialogue(dialogue_idx_t idx, j::Dialogue& e) const;
 
     /**
      * @brief Get loaded dialogues.
@@ -73,13 +73,8 @@ public:
      */
     explicit DialoguePatchStream(const path_t& file);
 private:
-    path_t m_file;
+    const path_t m_file; /* Custom dialogue patch file path */
     nlohmann::ordered_json m_j;
-
-    constexpr static auto KEY_SPEAKER    = "speaker";
-    constexpr static auto KEY_DIALOGUE = "dialogue";
-    constexpr static auto KEY_DIA_HTML = "html";
-    constexpr static auto KEY_DIA_TEXT = "text";
 };
 
 // ======================== C L A S S ========================
@@ -116,7 +111,7 @@ public:
 public:
     explicit ChoicePatchStream(const path_t& file);
 private:
-    path_t m_file;
+    const path_t m_file; /* Custom choice patch file path */
     nlohmann::ordered_json m_j;
 };
 

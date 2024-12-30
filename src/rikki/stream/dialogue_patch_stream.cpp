@@ -1,51 +1,29 @@
 #include "dialogue_patch_stream.hpp"
+#include "rikki/data/dialogue/dialogue_json.hpp"
 #include "utils/json_util.hpp"
 
 // ======================== C L A S S ========================
 // ===    DialoguePatchStream
 // ======================== C L A S S ========================
 
-bool DialoguePatchStream::get_dialogue(const dialogue_idx_t idx, DialogueEntry& e) const {
-    if (const auto strIdx = std::to_string(idx); !m_j.contains(strIdx)) {
+bool DialoguePatchStream::get_dialogue(const dialogue_idx_t idx, j::Dialogue& e) const {
+    const auto strIdx = std::to_string(idx);
+
+    if (!m_j.contains(strIdx)) {
         return false;
     }
 
-    auto& j = m_j[std::to_string(idx)];
-    e.m_speaker = j[KEY_SPEAKER];
-
-    for (const auto& d : j[KEY_DIALOGUE]) {
-        DialogueSpan span { };
-        span.m_html = d[KEY_DIA_HTML];
-        span.m_text = d[KEY_DIA_TEXT];
-
-        e.m_dialogues.emplace_back(std::move(span));
-    }
-
+    auto& j = m_j[strIdx];
+    e = j;
     return true;
 }
 
 dialogue_map_t DialoguePatchStream::get_dialogues() const {
     dialogue_map_t result { };
 
-    for (auto& it : m_j.items()) {
-        auto& k = it.key();
-        auto& v = it.value();
-
-        dialogue_idx_t idx = std::stoi(k);
-        const std::string spk = v[KEY_SPEAKER];
-        const auto& diaJ = v[KEY_DIALOGUE];
-
-        std::vector<DialogueSpan> dia { };
-
-        for (const auto& d : diaJ) {
-            DialogueSpan span { };
-            span.m_html = d[KEY_DIA_HTML];
-            span.m_text = d[KEY_DIA_TEXT];
-
-            dia.emplace_back(std::move(span));
-        }
-
-        result[idx] = { spk, dia };
+    for (auto& [k, v] : m_j.items()) {
+        const auto idx = std::stoi(k);
+        result[idx] = v;
     }
 
     return result;
@@ -56,16 +34,9 @@ bool DialoguePatchStream::is_idx_exists(const dialogue_idx_t idx) const {
 }
 
 void DialoguePatchStream::set_dialogues(const dialogue_map_t& map) {
-    for (const auto& [k, v] : map) {
-        const auto& idx = k;
-        const auto& [spk, dia] = v;
-
+    for (const auto& [idx, v] : map) {
         auto& j = m_j[std::to_string(idx)];
-        j[KEY_SPEAKER] = spk;
-
-        for (const auto& [html, text] : dia) {
-            j[KEY_DIALOGUE] += { { KEY_DIA_HTML, html }, { KEY_DIA_TEXT, text } };
-        }
+        j = v;
     }
 }
 
@@ -98,13 +69,9 @@ std::string ChoicePatchStream::get_choice(const choice_idx_t idx) const {
 choice_map_t ChoicePatchStream::get_choices() const {
     choice_map_t result { };
 
-    for (auto& it : m_j.items()) {
-        const auto& k = it.key();
-        const auto& v = it.value();
-
+    for (auto& [k, v] : m_j.items()) {
         const choice_idx_t idx = std::stoi(k);
-        const std::string cho = v;
-        result[idx] = cho;
+        result[idx] = v;
     }
 
     return result;
