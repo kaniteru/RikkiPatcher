@@ -1,10 +1,10 @@
 #include "dialogue_patcher.hpp"
 #include "rikki/dir_mgr.hpp"
-#include "rikki/data/dialogue.hpp"
-#include "rikki/stream/dialogue_migr_stream.hpp"
+#include "rikki/data/dialogue/dialogue.hpp"
+#include "rikki/data/dialogue/dialogue_json.hpp"
+#include "rikki/extractor/dialogue_extractor.hpp"
 #include "rikki/stream/dialogue_patch_stream.hpp"
 
-#include "utils/hash_util.hpp"
 #include "utils/filesystem_util.hpp"
 #include "utils/instance_factory.hpp"
 
@@ -83,7 +83,7 @@ PatcherResult DialoguePatcher::patch() {
 }
 
 PatcherResult DialoguePatcher::migration() {
-    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
+    /*const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
 
     for (const auto& f : gmFiles) {
@@ -189,16 +189,22 @@ PatcherResult DialoguePatcher::migration() {
         patchStream.set_dialogues(newMap);
         // save overwrote patch data
         patchStream.save();
-    }
+    }*/
 
     return { };
 }
 
 PatcherResult DialoguePatcher::generate_migration_info() {
     std::filesystem::remove_all(m_migrDB);
-    std::filesystem::create_directories(m_migrDB);
-    DialogueMigrStream::save_migration_data(m_migrDB);
-    return { };
+    //std::filesystem::create_directories(m_migrDB); // will do it in the extractor
+
+    DialogueExtractor extractor(m_migrDir); // using m_migrDir because extractor automatically appends folder name into arg
+    const auto ok = extractor.extract();
+
+    PatcherResult result { };
+    result.m_total = ok;
+    result.m_ok = ok;
+    return result;
 }
 
 DialoguePatcher::DialoguePatcher(const path_t& src) :
@@ -286,7 +292,7 @@ PatcherResult ChoicePatcher::patch() {
 }
 
 PatcherResult ChoicePatcher::migration() {
-    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
+    /*const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
 
     const auto migrFiles = FilesystemUtil::sort_files(m_migrDB);
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
@@ -365,16 +371,22 @@ PatcherResult ChoicePatcher::migration() {
         patchStream.set_choices(newChoMap);
         // save overwrote patch data
         patchStream.save();
-    }
+    } */
 
     return { };
 }
 
 PatcherResult ChoicePatcher::generate_migration_info() {
     std::filesystem::remove_all(m_migrDB);
-    std::filesystem::create_directories(m_migrDB);
-    ChoiceMigrStream::save_migration_data(m_migrDB);
-    return { };
+    //std::filesystem::create_directories(m_migrDB); // will do it in the extractor
+
+    ChoiceExtractor extractor(m_migrDir); // using m_migrDir because extractor automatically appends folder name into arg
+    const auto ok = extractor.extract();
+
+    PatcherResult result { };
+    result.m_total = ok;
+    result.m_ok = ok;
+    return result;
 }
 
 ChoicePatcher::ChoicePatcher(const path_t& src) :

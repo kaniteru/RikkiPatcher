@@ -2,7 +2,9 @@
 #define RIKKI_PATCHER_UTILS_DIALOGUE_UTIL_HPP
 #include "precompiled.hpp"
 
+namespace j {
 struct DialogueSpan;
+}
 
 class DialogueUtil {
 public:
@@ -19,7 +21,7 @@ public:
      * if (!extracted.empty()) { ... }
      * @endcode
      */
-    static std::vector<DialogueSpan> extract_texts_from_span(std::string_view span);
+    static std::vector<j::DialogueSpan> extract_texts_from_span(std::string_view span);
 
     /**
      * @brief Make DialogueSpan to span string.
@@ -28,12 +30,12 @@ public:
      * @return Returns span string.
      *
      * @code
-     * DialogueSpan span { "style=\"color: 'purple'\"",  "I'm a rikki." }
+     * DialogueSpan span { "style=\"color:#ffffff\"",  "I'm a rikki." }
      * auto result = DialogueUtil::insert_dialogue_into_span({ span });
      * // result == <span style="color: 'purple'"> I'm a rikki.</span>
      * @endcode
      */
-    static std::string insert_dialogue_into_span(const std::vector<DialogueSpan>& dialogues);
+    static std::string insert_dialogue_into_span(const std::vector<j::DialogueSpan>& dialogues);
 };
 
 
