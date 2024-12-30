@@ -1,7 +1,7 @@
 #ifndef RIKKI_PATCHER_RIKKI_DATA_UI_KEY_UI_TEXT_SETTING_KEY_HPP
 #define RIKKI_PATCHER_RIKKI_DATA_UI_KEY_UI_TEXT_SETTING_KEY_HPP
 #include "precompiled.hpp"
-#include "ui_key.hpp"
+#include "ui_text_key.hpp"
 
 /* ui_text_setting_key.hpp
  *  Included structs:

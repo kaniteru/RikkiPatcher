@@ -2,7 +2,7 @@
 #define RIKKI_PATCHER_RIKKI_DATA_UI_KEY_UI_KEY_HPP
 #include "precompiled.hpp"
 
-/* ui_key.hpp
+/* ui_text_key.hpp
  *  Included structs:
  *      - IUIKey
  *      - SettingUITextKey

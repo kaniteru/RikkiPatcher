@@ -1,7 +1,7 @@
 #ifndef RIKKI_PATCHER_RIKKI_DATA_UI_KEY_UI_TEXT_DIALOG_KEY_HPP
 #define RIKKI_PATCHER_RIKKI_DATA_UI_KEY_UI_TEXT_DIALOG_KEY_HPP
 #include "precompiled.hpp"
-#include "ui_key.hpp"
+#include "ui_text_key.hpp"
 
 /* ui_text_dialog_key.hpp
  *  Included structs:
@@ -25,7 +25,6 @@ struct DialogUITextKeyMgr {
 
     static constexpr auto KEY_SYSTEM = "system";
     static constexpr auto KEY_TEXT = "text";
-
 
     static const std::map<const char*, const DialogType1UITextKey&> g_type1Keys;
     static const std::map<const char*, const DialogType2UITextKey&> g_type2Keys;
