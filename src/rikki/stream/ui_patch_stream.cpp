@@ -1,5 +1,5 @@
 #include "ui_patch_stream.hpp"
-#include "rikki/data/ui/ui_json.hpp"
+#include "rikki/data/ui_text/ui_json.hpp"
 #include "utils/json_util.hpp"
 
 // ======================== C L A S S ========================

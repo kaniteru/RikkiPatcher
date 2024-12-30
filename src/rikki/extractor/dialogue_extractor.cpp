@@ -1,5 +1,7 @@
 #include "dialogue_extractor.hpp"
 #include "rikki/dir_mgr.hpp"
+#include "rikki/data/dialogue/dialogue.hpp"
+#include "rikki/data/dialogue/dialogue_json.hpp"
 #include "rikki/stream/dialogue_patch_stream.hpp"
 
 #include "utils/filesystem_util.hpp"
