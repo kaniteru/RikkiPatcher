@@ -56,12 +56,12 @@ public:
     explicit UITextPatchStream(const path_t& file);
 private:
     path_t m_file;
-    nlohmann::json m_j;
+    nlohmann::ordered_json m_j;
 
 public:
     static constexpr auto FILE_IN_GAME = "in_game.json"; /* In-game patch file name */
     static constexpr auto FILE_SETTING = "setting.json";   /* Setting patch file name */
-    static constexpr auto FILE_DIALOG = "dialog.json";        /* Dialog patch file name */
+    static constexpr auto FILE_DIALOG    = "dialog.json";     /* Dialog patch file name */
 
     static constexpr auto FOLDER_BASE = u8"ui/texts"; /* Folder name in custom patch dir */
 };
