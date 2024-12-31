@@ -1,4 +1,4 @@
-#include "ui_key.hpp"
+#include "ui_text_key.hpp"
 
 SettingUITextKey::SettingUITextKey(const char* a, const char* b, const char* c, const char* d) :
     m_iKey(a),

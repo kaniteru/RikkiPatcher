@@ -1,10 +1,10 @@
 #include "dialogue_patcher.hpp"
 #include "rikki/dir_mgr.hpp"
-#include "rikki/data/dialogue.hpp"
-#include "rikki/stream/dialogue_migr_stream.hpp"
+#include "rikki/data/dialogue/dialogue.hpp"
+#include "rikki/data/dialogue/dialogue_json.hpp"
+#include "rikki/extractor/dialogue_extractor.hpp"
 #include "rikki/stream/dialogue_patch_stream.hpp"
 
-#include "utils/hash_util.hpp"
 #include "utils/filesystem_util.hpp"
 #include "utils/instance_factory.hpp"
 
@@ -83,122 +83,194 @@ PatcherResult DialoguePatcher::patch() {
 }
 
 PatcherResult DialoguePatcher::migration() {
+    PatcherResult result { };
+    size_t& total   =  result.m_total;
+    size_t& ok       = result.m_ok;
+    size_t& failed  = result.m_failed;
+    size_t& passed = result.m_passed;
+
     const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
 
     for (const auto& f : gmFiles) {
         const auto fName = f.filename().generic_u8string();
-
-        // path_t
         const auto fPatch = path_t(m_db).append(fName);
-        const auto fMigr = path_t(m_migrDB).append(fName);
 
-        // extract pure dialogues from game
+        auto log = fName + u8" => ";
+        total++;
+
+        // pure map
         Dialogue pureDia(f);
-        auto pureMap = pureDia.extract_dialogues();
 
-        // delete patch data when pure data doesn't exists
-        if (pureMap.empty()) {
-            std::filesystem::remove(fPatch);
+        if (!pureDia.is_valid()) {
+            log += u8"Read failed (invalid gm data)";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            failed++;
             continue;
         }
 
-        // migration file stream
-        DialogueMigrStream migrStream(fMigr);
+        const auto pureMap = pureDia.extract_dialogues();
 
-        // check pure dialogue file is updated using hash
-        if (const auto pureHash = HashUtil::file_to_hash(f); pureHash == migrStream.get_file_hash()) {
-            // if not, doesn't need working.
-            //continue; todo: test
+        // delete patch data when pure data doesn't exists
+        if (pureMap.empty()) {
+            if (std::filesystem::exists(fPatch)) {
+                std::filesystem::remove(fPatch);
+            }
+
+            log += u8"OK";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            ok++;
+            continue;
         }
 
-        // pure dialogue file updated.
-
-        const auto migrMap = migrStream.get_dialogues();
-        dialogue_map_t newMap { };
-
-        // patch file stream
+        // patcher stream
         DialoguePatchStream patchStream(fPatch);
+
+        // create a pure patch file when doesn't exist
+        if (!std::filesystem::exists(fPatch)) {
+            patchStream.clear();
+            patchStream.set_dialogues(pureMap);
+
+            if (patchStream.save()) {
+                log += u8"OK";
+                ok++;
+            } else {
+                log += u8"Write failed";
+                failed++;
+            }
+
+            WvInvoker::log(LOG_LV_PROG, log);
+            continue;
+        }
+
+        const auto fMigr = path_t(m_migrDB).append(fName);
+
+        // delete and create a pure patch file when migr file doesn't exist.
+        if (!std::filesystem::exists(fMigr)) {
+            patchStream.clear();
+            patchStream.set_dialogues(pureMap);
+
+            if (patchStream.save()) {
+                log += u8"OK";
+                ok++;
+            } else {
+                log += u8"Write failed";
+                failed++;
+            }
+
+            WvInvoker::log(LOG_LV_PROG, log);
+            continue;
+        }
+
+        DialoguePatchStream migrStream(fMigr);
+
+        // migr map
+        const auto migrMap = migrStream.get_dialogues();
+        // patch map
         const auto patchMap = patchStream.get_dialogues();
 
+        // new map
+        dialogue_map_t newMap { };
+
         for (const auto& [idx, pureEntry] : pureMap) {
-            const auto& [pureSpk, pureDia] = pureEntry;
+            if (const auto migrIt = migrMap.find(idx); migrIt != migrMap.end()) {
+                const auto& migrEntry = migrIt->second;
 
-            // translation found boolean
-            bool foundSpk = false;
-            bool foundDia = false;
-
-            DialogueEntry newEntry { };
-
-            if (migrStream.get_dialogue(idx, newEntry)) {
-                auto& migrSpk = newEntry.m_speaker;
-                auto& migrDia = newEntry.m_dialogues;
-
-                if (patchStream.get_dialogue(idx, newEntry)) {
-                    foundSpk = migrSpk == pureSpk;
-                    foundDia  = migrDia == pureDia;
-                }
-
-                if (foundSpk && foundDia) {
-                    newMap[idx] = newEntry;
-                    continue;
+                // check is equals the pure-entry same as migr-entry
+                if (pureEntry == migrEntry) {
+                    // found translated entry
+                    if (const auto patchIt = patchMap.find(idx); patchIt != patchMap.end()) {
+                        newMap[idx] = patchIt->second;
+                        continue;
+                    }
                 }
             }
 
-            // find matching migration entry between pure entry.
-            for (const auto& [migrIdx, migrEntry] : migrMap) {
-                const auto& [migrSpk, migrDia] = migrEntry;
-                DialogueEntry bufEntry { };
+            // dialogue was updated
+            j::Dialogue newEntry = pureEntry;
+            bool foundSpk = false;
+            const auto lenPureSpans = pureEntry.spans.size();
+            std::vector<size_t> foundTexts { };
+            foundTexts.reserve(lenPureSpans);
 
-                if (!patchStream.get_dialogue(migrIdx, bufEntry)) {
-                    continue;
+            for (const auto& [migrIdx, migrEntry] : migrMap) {
+                // check is equals the migr-entry same as pure-entry
+                if (migrEntry == pureEntry) {
+                    // translated entry found
+                    newEntry = patchMap.at(migrIdx);
+                    break;
                 }
 
-                // is found translated speaker?
-                if (!foundSpk && pureSpk == migrSpk) {
-                    newEntry.m_speaker = bufEntry.m_speaker;
+                // found a translated speaker when not found
+                if (!foundSpk && migrEntry.speaker == pureEntry.speaker) {
+                    newEntry.speaker = patchMap.at(migrIdx).speaker;
                     foundSpk = true;
                 }
 
-                // is found translated dialogue?
-                if (!foundDia && pureDia == migrDia) {
-                    newEntry.m_dialogues = bufEntry.m_dialogues;
-                    foundDia = true;
+                // found translated texts when not found
+                if (!foundTexts.size() != lenPureSpans) {
+                    for (uint32_t i = 0; i < pureEntry.spans.size(); i++) {
+                        if (std::ranges::find(foundTexts, i) != foundTexts.end()) {
+                            continue;
+                        }
+
+                        const auto& pureText = pureEntry.spans[i].html;
+                        const auto& migrSpans = migrEntry.spans;
+
+                        for (uint32_t j = 0; j < migrSpans.size(); j++) {
+                            if (migrSpans[j].text == pureText) {
+                                foundTexts.push_back(i);
+                                newEntry.spans[i].text = patchMap.at(migrIdx).spans[j].text;
+                                break;
+                            }
+                        }
+                    }
                 }
 
-                // ok, maybe index changed after game update
-                if (foundSpk && foundDia) {
+                // escape the loop when found translated entry perfectly
+                if (foundSpk && foundTexts.size() == lenPureSpans) {
                     break;
                 }
-            }
-
-            if (!foundSpk) {
-                newEntry.m_speaker = pureSpk;
-            }
-
-            if (!foundDia) {
-                newEntry.m_dialogues = pureDia;
             }
 
             newMap[idx] = newEntry;
         }
 
-        // clear patch data
         patchStream.clear();
-        // overwrite patch data using migrated data
         patchStream.set_dialogues(newMap);
-        // save overwrote patch data
-        patchStream.save();
+
+        if (!patchStream.save()) {
+            log += u8"Write failed";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            failed++;
+        } else {
+            log += u8"OK";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            ok++;
+        }
     }
 
-    return { };
+    std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok)
+                            + " | failed: " + std::to_string(failed) + " | passed: " + std::to_string(passed);
+    WvInvoker::log(LOG_LV_INFO, log);
+    return result;
 }
 
 PatcherResult DialoguePatcher::generate_migration_info() {
     std::filesystem::remove_all(m_migrDB);
-    std::filesystem::create_directories(m_migrDB);
-    DialogueMigrStream::save_migration_data(m_migrDB);
-    return { };
+    //std::filesystem::create_directories(m_migrDB); // will do it in the extractor
+
+    DialogueExtractor extractor(m_migrDir); // using m_migrDir because extractor automatically appends folder name into arg
+    const auto ok = extractor.extract();
+
+    PatcherResult result { };
+    result.m_total = ok;
+    result.m_ok = ok;
+    return result;
 }
 
 DialoguePatcher::DialoguePatcher(const path_t& src) :
@@ -218,13 +290,13 @@ DialoguePatcher::DialoguePatcher(const path_t& src) :
 // ======================== C L A S S ========================
 
 PatcherResult ChoicePatcher::patch() {
-    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
     PatcherResult result { };
-
-    size_t& total =  result.m_total;
-    size_t& ok = result.m_ok;
-    size_t& failed = result.m_failed;
+    size_t& total   =  result.m_total;
+    size_t& ok       = result.m_ok;
+    size_t& failed  = result.m_failed;
     size_t& passed = result.m_passed;
+
+    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
 
     for (const auto files = FilesystemUtil::sort_files(m_db); const auto& f : files) {
         const auto fName = f.filename().generic_u8string();
@@ -286,95 +358,160 @@ PatcherResult ChoicePatcher::patch() {
 }
 
 PatcherResult ChoicePatcher::migration() {
-    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
+    PatcherResult result { };
+    size_t& total   =  result.m_total;
+    size_t& ok       = result.m_ok;
+    size_t& failed  = result.m_failed;
+    size_t& passed = result.m_passed;
 
-    const auto migrFiles = FilesystemUtil::sort_files(m_migrDB);
+    const auto gmdir = INSTFAC(DirMgr)->get(DIR_GAME_JSON_DIALOGUES);
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
 
     for (const auto& f : gmFiles) {
         const auto fName = f.filename().generic_u8string();
-
-        // path_t
         const auto fPatch = path_t(m_db).append(fName);
-        const auto fMigr = path_t(m_migrDB).append(fName);
 
-        // extract pure dialogues and choices from game
+        auto log = fName + u8" => ";
+        total++;
+
+        // pure map
         Dialogue pureDia(f);
+
+        if (!pureDia.is_valid()) {
+            log += u8"Read failed (invalid gm data)";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            failed++;
+            continue;
+        }
+
         const auto pureMap = pureDia.extract_choices();
 
         // delete patch data when pure data doesn't exists
         if (pureMap.empty()) {
-            std::filesystem::remove(fPatch);
+            if (std::filesystem::exists(fPatch)) {
+                std::filesystem::remove(fPatch);
+            }
+
+            log += u8"OK";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            ok++;
             continue;
         }
 
-        // migration file stream
-        ChoiceMigrStream migrStream(fMigr);
-        const auto migrMap = migrStream.get_choices();
-
-        // check pure dialogue file is updated using hash
-        if (const auto pureHash = HashUtil::file_to_hash(f); pureHash == migrStream.get_file_hash()) {
-            // if not, doesn't need working.
-            continue;
-        }
-
-        // pure dialogue file updated.
-
-        choice_map_t newChoMap { };
-
-        // patch file stream
+        // patcher stream
         ChoicePatchStream patchStream(fPatch);
+
+        // create a pure patch file when doesn't exist
+        if (!std::filesystem::exists(fPatch)) {
+            patchStream.clear();
+            patchStream.set_choices(pureMap);
+
+            if (patchStream.save()) {
+                log += u8"OK";
+                ok++;
+            } else {
+                log += u8"Write failed";
+                failed++;
+            }
+
+            WvInvoker::log(LOG_LV_PROG, log);
+            continue;
+        }
+
+        const auto fMigr = path_t(m_migrDB).append(fName);
+
+        // delete and create a pure patch file when migr file doesn't exist.
+        if (!std::filesystem::exists(fMigr)) {
+            patchStream.clear();
+            patchStream.set_choices(pureMap);
+
+            if (patchStream.save()) {
+                log += u8"OK";
+                ok++;
+            } else {
+                log += u8"Write failed";
+                failed++;
+            }
+
+            WvInvoker::log(LOG_LV_PROG, log);
+            continue;
+        }
+
+        ChoicePatchStream migrPatcher(fMigr);
+
+        // migr map
+        const auto migrMap = migrPatcher.get_choices();
+
+        // patch map
         const auto patchMap = patchStream.get_choices();
 
-        for (const auto& [pureIdx, pureCho] : pureMap) {
-            // translation found boolean
-            bool tranFound = false;
+        // new map
+        choice_map_t newMap { };
 
-            // find pure choice data exist from migration data
-            for (const auto& migrCho : migrMap | std::views::values) {
-                // choice string doesn't matched
-                if (pureCho != migrCho) {
-                    continue;
+        for (const auto& [idx, pureEntry] : pureMap) {
+            if (const auto migrIt = migrMap.find(idx); migrIt != migrMap.end()) {
+                const auto& migrEntry = migrIt->second;
+
+                // check is equals the pure-entry same as migr-entry
+                if (pureEntry == migrEntry) {
+                    // found translated entry
+                    if (const auto patchIt = patchMap.find(idx); patchIt != patchMap.end()) {
+                        newMap[idx] = patchIt->second;
+                        continue;
+                    }
                 }
+            }
 
-                // choice not found in patch data
-                if (!patchStream.is_idx_exists(pureIdx)) {
+            // choice was updated
+            j::Choice newEntry = pureEntry;
+
+            for (const auto& [migrIdx, migrEntry] : migrMap) {
+                // check is equals the migr-entry same as pure-entry
+                if (migrEntry == pureEntry) {
+                    // translated entry found
+                    newEntry = patchMap.at(migrIdx);
                     break;
                 }
-
-                // found translated dialogue from patch data!
-                tranFound = true;
-
-                // load translated dialogue from patch data
-                const auto tranCho = patchStream.get_choice(pureIdx);
-                newChoMap[pureIdx] = std::move(tranCho);
-                break;
             }
 
-            // already migrated, pass it
-            if (tranFound) {
-                continue;
-            }
-
-            newChoMap[pureIdx] = pureCho;
+            newMap[idx] = newEntry;
         }
 
-        // clear patch data
         patchStream.clear();
-        // overwrite patch data using migrated data
-        patchStream.set_choices(newChoMap);
-        // save overwrote patch data
-        patchStream.save();
+        patchStream.set_choices(newMap);
+
+        if (!patchStream.save()) {
+            log += u8"Write failed";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            failed++;
+        } else {
+            log += u8"OK";
+            WvInvoker::log(LOG_LV_PROG, log);
+
+            ok++;
+        }
     }
 
-    return { };
+    std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok)
+                        + " | failed: " + std::to_string(failed) + " | passed: " + std::to_string(passed);
+    WvInvoker::log(LOG_LV_INFO, log);
+    return result;
 }
 
 PatcherResult ChoicePatcher::generate_migration_info() {
     std::filesystem::remove_all(m_migrDB);
-    std::filesystem::create_directories(m_migrDB);
-    ChoiceMigrStream::save_migration_data(m_migrDB);
-    return { };
+    //std::filesystem::create_directories(m_migrDB); // will do it in the extractor
+
+    ChoiceExtractor extractor(m_migrDir); // using m_migrDir because extractor automatically appends folder name into arg
+    const auto ok = extractor.extract();
+
+    PatcherResult result { };
+    result.m_total = ok;
+    result.m_ok = ok;
+    return result;
 }
 
 ChoicePatcher::ChoicePatcher(const path_t& src) :

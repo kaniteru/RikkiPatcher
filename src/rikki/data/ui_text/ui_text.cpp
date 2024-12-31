@@ -1,5 +1,5 @@
-#include "ui.hpp"
-#include "key/ui_key.hpp"
+#include "ui_text.hpp"
+#include "key/ui_text_key.hpp"
 
 #include "utils/json_util.hpp"
 
@@ -22,9 +22,9 @@ SettingUITextEntry& SettingUITextEntry::operator=(const SettingUIText::FontStyle
     return *this;
 }
 
-// ======================= S T R U C T =======================
-// ===    DialogUITextEntry
-// ======================= S T R U C T =======================
+// ======================== C L A S S ========================
+// ===    UIText
+// ======================== C L A S S ========================
 
 bool UIText::get_in_game(const InGameUITextKey& key, std::string& result) {
     bool found = false;
@@ -211,7 +211,7 @@ void UIText::find_dialog_type2(const DialogType2UITextKey& key, const dialog_ui_
 }
 
 UIText::UIText(const path_t& file) :
-                                   m_file(file) {
+    m_file(file) {
 
     m_isValid = JsonUtil::load_from_file(m_j, file);
 }

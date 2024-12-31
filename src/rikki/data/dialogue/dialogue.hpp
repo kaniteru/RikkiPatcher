@@ -1,49 +1,28 @@
-#ifndef RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_HPP
-#define RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_HPP
+#ifndef RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_HPP
+#define RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_HPP
 #include "precompiled.hpp"
-#include "i_data.hpp"
+#include "rikki/data/i_data.hpp"
 
 /* dialogue.hpp
  *  Included classes:
  *      - Dialogue
- *
- *  Included structs:
- *      - DialogueEntry
- *      - DialogueSpan
  */
 
-struct DialogueEntry;
+namespace j {
+struct Dialogue;
 struct DialogueSpan;
+struct Choice;
+}
 
 using dialogue_idx_t = uint64_t; /* Dialogue index. */
-using choice_idx_t = uint64_t; /* Choice index. */
+using choice_idx_t = uint64_t;    /* Choice index. */
 
-using dialogue_map_t = std::map<dialogue_idx_t, DialogueEntry>;
-using choice_map_t = std::map<choice_idx_t, std::string>;
+using dialogue_map_t = std::map<dialogue_idx_t, j::Dialogue>;
+using choice_map_t = std::map<choice_idx_t, j::Choice>;
 
 using dialogue_iterate_t = std::function<void(const int64_t elementID, nlohmann::basic_json<>& array)>;
-using dialogue_callback_t = std::function<void(const dialogue_idx_t idx, DialogueEntry& entry)>;
-using choices_callback_t = std::function<void(const choice_idx_t idx, std::string& choice)>;
-
-// ======================= S T R U C T =======================
-// ===    DialogueEntry
-// ======================= S T R U C T =======================
-
-struct DialogueEntry {
-    std::string m_speaker; /* Speaker. ex) Rikki Shiina */
-    std::vector<DialogueSpan> m_dialogues;
-};
-
-// ======================= S T R U C T =======================
-// ===    DialogueSpan
-// ======================= S T R U C T =======================
-
-struct DialogueSpan {
-    std::string m_html;  /* CSS and JS.   ex) style="color: purple; font-family: 'kawaii-rikki'" onclick="..." */
-    std::string m_text; /* Dialogue text. ex) Good morning, tomori-chan */
-
-    bool operator==(const DialogueSpan&) const;
-};
+using dialogue_callback_t = std::function<void(const dialogue_idx_t idx, j::Dialogue& dia)>;
+using choices_callback_t = std::function<void(const choice_idx_t idx, j::Choice& choice)>;
 
 // ======================== C L A S S ========================
 // ===    Dialogue
@@ -59,7 +38,7 @@ struct DialogueSpan {
  * if (dialogue.is_valid()) { ... }
  * @endcode
  */
-class Dialogue : public IData {
+class Dialogue final : public IData {
 public:
     /**
      * @brief Extract all existing dialogues from data.
@@ -184,9 +163,9 @@ public:
      */
     explicit Dialogue(const path_t& file);
 private:
-    path_t m_file;          /* Target dialogue in game file path */
-    nlohmann::json m_j; /* Loaded dialogue data */
+    const path_t m_file; /* Target dialogue in game file path */
+    nlohmann::json m_j;  /* Loaded dialogue data */
 };
 
 
-#endif //RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_HPP
+#endif //RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_HPP

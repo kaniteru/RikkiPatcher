@@ -1,6 +1,6 @@
 #include "ui_patcher.hpp"
 #include "ui/ui_text_patcher.hpp"
-#include "rikki/data/ui/ui.hpp"
+#include "rikki/data/ui_text/ui_text.hpp"
 #include "rikki/stream/ui_migr_stream.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
 

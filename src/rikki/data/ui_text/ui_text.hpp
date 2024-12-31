@@ -3,9 +3,9 @@
 #include "precompiled.hpp"
 #include "rikki/data/i_data.hpp"
 #include "ui_json.hpp"
-#include "key/ui_key.hpp"
+#include "key/ui_text_key.hpp"
 
-/* ui.hpp
+/* ui_text.hpp
  *  Included classes:
  *      - UIText
  *
@@ -183,7 +183,7 @@ public:
      */
     explicit UIText(const path_t& file);
 private:
-    path_t m_file;         /* Target decrypted startup.json file path */
+    const path_t m_file;         /* Target decrypted startup.json file path */
     nlohmann::json m_j; /* Loaded startup.json data */
 };
 

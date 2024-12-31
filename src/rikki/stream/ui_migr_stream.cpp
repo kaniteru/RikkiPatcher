@@ -1,5 +1,5 @@
 #include "ui_migr_stream.hpp"
-#include "rikki/data/ui/ui.hpp"
+#include "rikki/data/ui_text/ui_text.hpp"
 #include "rikki/extractor/ui_extractor.hpp"
 
 #include "utils/json_util.hpp"

@@ -1,15 +1,8 @@
 #include "dialogue.hpp"
+#include "dialogue_json.hpp"
 
 #include "utils/json_util.hpp"
 #include "utils/dialogue_util.hpp"
-
-// ======================= S T R U C T =======================
-// ===    DialogueSpan
-// ======================= S T R U C T =======================
-
-bool DialogueSpan::operator==(const DialogueSpan& other) const {
-    return m_html == other.m_html && m_text == other.m_text;
-}
 
 // ======================== C L A S S ========================
 // ===    Dialogue
@@ -18,9 +11,9 @@ bool DialogueSpan::operator==(const DialogueSpan& other) const {
 dialogue_map_t Dialogue::extract_dialogues() {
     dialogue_map_t result { };
 
-    this->find_dialogues([&](const dialogue_idx_t idx, const DialogueEntry& e) {
-        DialogueEntry entry = e;
-        result[idx] = std::move(entry);
+    this->find_dialogues([&](const dialogue_idx_t idx, const j::Dialogue& dia) {
+        j::Dialogue buf = dia;
+        result[idx] = std::move(buf);
     });
 
     return result;
@@ -29,7 +22,7 @@ dialogue_map_t Dialogue::extract_dialogues() {
 choice_map_t Dialogue::extract_choices() {
     choice_map_t result { };
 
-    this->find_choices([&](const choice_idx_t idx, const std::string& c) {
+    this->find_choices([&](const choice_idx_t idx, const j::Choice& c) {
         result[idx] = c;
     });
 
@@ -39,7 +32,7 @@ choice_map_t Dialogue::extract_choices() {
 std::vector<dialogue_idx_t> Dialogue::update_dialogues(const dialogue_map_t& entries) {
     std::vector<dialogue_idx_t> result { };
 
-    this->find_dialogues([&](dialogue_idx_t idx, DialogueEntry& e) {
+    this->find_dialogues([&](dialogue_idx_t idx, j::Dialogue& e) {
         if (const auto it = entries.find(idx); it != entries.end()) {
             e = it->second;
 
@@ -53,7 +46,7 @@ std::vector<dialogue_idx_t> Dialogue::update_dialogues(const dialogue_map_t& ent
 std::vector<choice_idx_t> Dialogue::update_choices(const choice_map_t& entries) {
     std::vector<choice_idx_t> result { };
 
-    this->find_choices([&](const dialogue_idx_t idx, std::string& c) {
+    this->find_choices([&](const dialogue_idx_t idx, j::Choice& c) {
        if (const auto it = entries.find(idx); it != entries.end()) {
            c = it->second;
 
@@ -105,6 +98,8 @@ void Dialogue::find_dialogues(const dialogue_callback_t& callback) {
     constexpr static auto ID_DIALOGUE   = 11;
     constexpr static auto IDX_SPEAKER    = 3;
     constexpr static auto IDX_DIALOGUE = 6;
+    constexpr static auto IDX_ATTS          = 11;
+    constexpr static auto KEY_ATTS          = "atts";
 
     dialogue_idx_t nextIdx = 0;
 
@@ -118,17 +113,19 @@ void Dialogue::find_dialogues(const dialogue_callback_t& callback) {
 
         auto& spk  = elem[IDX_SPEAKER];
         auto& span = elem[IDX_DIALOGUE];
+        auto& atts = elem[IDX_ATTS][KEY_ATTS];
 
         if (!spk.is_string() || !span.is_string()) {
             return;
         }
 
-        DialogueEntry buf { spk, DialogueUtil::extract_texts_from_span(span) };
+        j::Dialogue buf { spk, DialogueUtil::extract_texts_from_span(span), atts };
 
         callback(idx, buf);
 
-        spk  = buf.m_speaker;
-        span = DialogueUtil::insert_dialogue_into_span(buf.m_dialogues);
+        spk   = buf.speaker;
+        span = DialogueUtil::insert_dialogue_into_span(buf.spans);
+        atts = buf.atts;
     });
 }
 
@@ -151,13 +148,13 @@ void Dialogue::find_choices(const choices_callback_t& callback) {
             return;
         }
 
-        const std::string orgCho(cho);
-        std::string buf(cho);
+        const j::Choice org { cho };
+        j::Choice buf = org;
 
         callback(nextIdx, buf);
 
-        if (orgCho != buf) {
-            cho = buf;
+        if (org != buf) {
+            cho = buf.text;
         }
     });
 }

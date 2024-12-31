@@ -1,5 +1,5 @@
 #include "ui_json.hpp"
-#include "ui.hpp"
+#include "ui_text.hpp"
 #include "key/ui_text_dialog_key.hpp"
 #include "key/ui_text_setting_key.hpp"
 #include "key/ui_text_in_game_key.hpp"
