@@ -124,7 +124,7 @@ void Dialogue::find_dialogues(const dialogue_callback_t& callback) {
         callback(idx, buf);
 
         spk   = buf.speaker;
-        span = DialogueUtil::insert_dialogue_into_span(buf.texts);
+        span = DialogueUtil::insert_dialogue_into_span(buf.spans);
         atts = buf.atts;
     });
 }
