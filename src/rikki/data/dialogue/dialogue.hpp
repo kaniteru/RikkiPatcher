@@ -97,21 +97,6 @@ private:
      * @brief iterate array elements in dialogue data.
      *
      * @param [in, out, optional] callback Retrieve or modify the data of elements.
-     *
-     * @code
-     * constexpr static auto ID_ANYTHING   = ...;
-     * constexpr static auto IDX_ANYTHING = ...;
-     *
-     * Dialogue dialogue(...);
-     * dialogue.iterate_elements([&](const auto id, auto& el) {
-     *      if (id != ID_ANYTHING) {
-     *          break;
-     *      }
-     *
-     *      auto& data = el[IDX_ANYTHING]; // nlohmann::json::basic_json<>&
-     *      ...
-     * }
-     * @endcode
      */
     void iterate_elements(const dialogue_iterate_t& callback);
 
@@ -120,22 +105,6 @@ private:
      *             Can get index and modify the data of spekaer and diagloue string.
      *
      * @param [in, out, optional] callback Retrieve or modify the data of spekaer and diagloue string.
-     *
-     * @code
-     * Dialogue dialogue(...);
-     * dialogue_map_t map { };
-     *
-     * dialogue.find_dialogues([&](const dialogue_idx_t idx, DialogueEntry& ety) {
-     *      auto& spk = ety.m_speaker;
-     *      auto& dia = ety.m_dialogues[0].m_text;
-     *
-     *      if (spk == "rikki") {
-     *          dia = "I'm a rikki, I will dead :c";
-     *      }
-     *
-     *      map[spk] = ety.m_dialogues[0];
-     * });
-     * @endcode
      */
     void find_dialogues(const dialogue_callback_t& callback);
 
@@ -144,15 +113,6 @@ private:
      *             Can get index and modify the data of choice string.
      *
      * @param [in, out, optional] callback Retrieve or modify the data of choice string.
-     *
-     * @code
-     * Dialogue dialogue(...);
-     * std::vector<std::string> choices { };
-     *
-     * dialogue.find_choices([&](const choice_idx_t idx, std::string& cho) {
-     *      choices.emplace_back(cho);
-     *      ...
-     * });
      */
     void find_choices(const choices_callback_t& callback);
 public:

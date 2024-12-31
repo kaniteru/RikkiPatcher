@@ -1,6 +1,9 @@
 #include "dialogue_patch_stream.hpp"
+#include "rikki/data/dialogue/dialogue.hpp"
 #include "rikki/data/dialogue/dialogue_json.hpp"
+
 #include "utils/json_util.hpp"
+#include "utils/string_util.hpp"
 
 // ======================== C L A S S ========================
 // ===    DialoguePatchStream

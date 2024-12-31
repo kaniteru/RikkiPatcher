@@ -195,6 +195,11 @@ PatcherResult DialoguePatcher::migration() {
             std::vector<size_t> foundTexts { };
             foundTexts.reserve(lenPureSpans);
 
+            // check is atts updated
+            if (migrMap.at(idx).atts == pureEntry.atts) {
+                newEntry.atts = patchMap.at(idx).atts;
+            }
+
             for (const auto& [migrIdx, migrEntry] : migrMap) {
                 // check is equals the migr-entry same as pure-entry
                 if (migrEntry == pureEntry) {
