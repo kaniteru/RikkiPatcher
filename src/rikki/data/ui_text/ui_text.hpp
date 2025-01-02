@@ -14,6 +14,8 @@
  *      - DialogUITextEntry
  */
 
+class UI;
+
 struct InGameUITextKey;
 struct SettingUITextKey;
 struct DialogType1UITextKey;
@@ -181,10 +183,9 @@ public:
      *
      * @param [in] file decrypted 'asset/json/startup.json' file path.
      */
-    explicit UIText(const path_t& file);
+    explicit UIText(UI* pUI);
 private:
-    const path_t m_file;         /* Target decrypted startup.json file path */
-    nlohmann::json m_j; /* Loaded startup.json data */
+    UI* const m_pUI;
 };
 
 

@@ -1,18 +1,18 @@
-#ifndef RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_KEY_MGR_HPP
-#define RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_KEY_MGR_HPP
+#ifndef RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_KEY_HPP
+#define RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_KEY_HPP
 #include "precompiled.hpp"
 
-/* dialogue_key_mgr.hpp
+/* dialogue_key.hpp
  *  Included structs:
- *      - DialogueKeyMgr
- *      - ChoiceKeyMgr
+ *      - DialogueKey
+ *      - ChoiceKey
  */
 
 // ======================= S T R U C T =======================
-// ===    DialogueKeyMgr
+// ===    DialogueKey
 // ======================= S T R U C T =======================
 
-struct DialogueKeyMgr {
+struct DialogueKey {
     static constexpr int32_t ID_DIALOGUE               = 11;
     static constexpr int32_t IDX_SPEAKER                = 3;
     static constexpr int32_t IDX_DIALOGUE_SPAN = 6; // DialogueUtil::extract_texts_from_span
@@ -22,13 +22,13 @@ struct DialogueKeyMgr {
 };
 
 // ======================= S T R U C T =======================
-// ===    ChoiceKeyMgr
+// ===    ChoiceKey
 // ======================= S T R U C T =======================
 
-struct ChoiceKeyMgr {
+struct ChoiceKey {
     static constexpr int32_t ID_CHOICE   = 4;
     static constexpr int32_t IDX_CHOICE = 1;
 };
 
 
-#endif //RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_KEY_MGR_HPP
+#endif //RIKKI_PATCHER_RIKKI_DATA_DIALOGUE_DIALOGUE_KEY_HPP

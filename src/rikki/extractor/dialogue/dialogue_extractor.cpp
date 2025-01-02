@@ -1,5 +1,6 @@
 #include "dialogue_extractor.hpp"
 #include "rikki/dir_mgr.hpp"
+#include "rikki/data/data_path.hpp"
 #include "rikki/data/dialogue/dialogue.hpp"
 #include "rikki/data/dialogue/dialogue_json.hpp"
 #include "rikki/stream/dialogue_patch_stream.hpp"
@@ -20,6 +21,8 @@ size_t DialogueExtractor::extract() {
     size_t total = 0;
     size_t failed = 0;
     size_t ok = 0;
+
+    FilesystemUtil::delete_and_create_directories(m_db);
 
     for (const auto& files = FilesystemUtil::sort_files(gmdir); const auto& f : files) {
         const auto fName = f.filename().generic_u8string();
@@ -65,11 +68,8 @@ size_t DialogueExtractor::extract() {
 }
 
 DialogueExtractor::DialogueExtractor(const path_t& dst) :
-    IExtractor() {
-
-    m_db = path_t(dst).append(FOLDER_BASE);
-    std::filesystem::create_directories(m_db);
-}
+    IExtractor(dst),
+    m_db(path_t(dst) / DialoguePath::PATCH_FOLDER_DIALOGUE) { }
 
 // ======================== C L A S S ========================
 // ===    ChoiceExtractor
@@ -81,6 +81,8 @@ size_t ChoiceExtractor::extract() {
     size_t total = 0;
     size_t failed = 0;
     size_t ok = 0;
+
+    FilesystemUtil::delete_and_create_directories(m_db);
 
     for (const auto& files = FilesystemUtil::sort_files(gmdir); const auto& f : files) {
         const auto fName = f.filename().generic_u8string();
@@ -107,7 +109,7 @@ size_t ChoiceExtractor::extract() {
             continue;
         }
 
-        ChoicePatchStream patchStream(path_t(m_dataBase).append(fName));
+        ChoicePatchStream patchStream(path_t(m_db).append(fName));
         patchStream.set_choices(dialogues);
 
         if (patchStream.save()) {
@@ -127,8 +129,5 @@ size_t ChoiceExtractor::extract() {
 }
 
 ChoiceExtractor::ChoiceExtractor(const path_t& dst) :
-    IExtractor() {
-
-    m_dataBase = path_t(dst).append(FOLDER_BASE);
-    std::filesystem::create_directories(m_dataBase);
-}
+    IExtractor(dst),
+    m_db(path_t(dst) / DialoguePath::PATCH_FOLDER_CHOICE) { }

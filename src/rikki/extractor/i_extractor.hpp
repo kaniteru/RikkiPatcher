@@ -11,7 +11,13 @@ public:
     virtual size_t extract() = 0;
 
 public:
+    /**
+     * @param [in] dst Root path of custom patch data.
+     */
+    explicit IExtractor(const path_t& dst);
     virtual ~IExtractor() = default;
+protected:
+    const path_t m_dir; /* Root path of custom patch data. */
 };
 
 

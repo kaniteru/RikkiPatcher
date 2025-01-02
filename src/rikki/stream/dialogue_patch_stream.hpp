@@ -1,6 +1,7 @@
 #ifndef RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_STREAM_HPP
 #define RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_STREAM_HPP
 #include "precompiled.hpp"
+#include "i_stream.hpp"
 #include "rikki/data/dialogue/dialogue.hpp"
 
 /*dialogue_patch_stream.hpp
@@ -13,7 +14,7 @@
 // ===    DialoguePatchStream
 // ======================== C L A S S ========================
 
-class DialoguePatchStream {
+class DialoguePatchStream final : public IRikkiStream {
 public:
     /**
      * @brief Find dialogue from index.
@@ -53,18 +54,6 @@ public:
      */
     void remove_dialogue(dialogue_idx_t idx);
 
-    /**
-     * @brief Clear dialogues from loaded data.
-     */
-    void clear();
-
-    /**
-     * @brief Save data into file.
-     *
-     * @return Returns ture if data saved successfully.
-     */
-    bool save() const;
-
 public:
     /**
      * @brief Load dialogues from custom patch file.
@@ -72,16 +61,13 @@ public:
      * @param [in] file Dialogue custom patch file path.
      */
     explicit DialoguePatchStream(const path_t& file);
-private:
-    const path_t m_file; /* Custom dialogue patch file path */
-    nlohmann::ordered_json m_j;
 };
 
 // ======================== C L A S S ========================
 // ===    ChoicePatchStream
 // ======================== C L A S S ========================
 
-class ChoicePatchStream {
+class ChoicePatchStream final : public IRikkiStream {
 public:
     /**
      * @brief Find choice from index.
@@ -104,15 +90,8 @@ public:
 
     void remove_choice(choice_idx_t idx);
 
-    void clear();
-
-    bool save() const;
-
 public:
     explicit ChoicePatchStream(const path_t& file);
-private:
-    const path_t m_file; /* Custom choice patch file path */
-    nlohmann::ordered_json m_j;
 };
 
 

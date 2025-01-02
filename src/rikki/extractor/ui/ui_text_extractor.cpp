@@ -1,4 +1,5 @@
-#include "ui_extractor.hpp"
+#include "ui_text_extractor.hpp"
+#include "rikki/data/data_path.hpp"
 #include "rikki/data/ui_text/ui_text.hpp"
 #include "rikki/data/ui_text/ui_json.hpp"
 #include "rikki/data/ui_text/key/ui_text_key.hpp"
@@ -7,7 +8,7 @@
 #include "rikki/data/ui_text/key/ui_text_in_game_key.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
 
-#include "utils/ui_text_util.hpp"
+#include "utils/filesystem_util.hpp"
 
 #include "wv/enums.hpp"
 #include "wv/wv_invoker.hpp"
@@ -17,44 +18,38 @@
 // ======================== C L A S S ========================
 
 size_t UITextExtractor::extract() {
-    path_t file { };
-
-    if (!UITextUtil::copy_startup_from_game_and_decrypt(file)) {
-        WvInvoker::log(LOG_LV_ERR, u8"Can't copied the game file from game directory");
-        return 0;
-    }
-
-    UIText ut(file);
-
-    UITextUtil::encrypt_startup_and_move_to_game();
+    UIText ut(m_pUI);
 
     if (!ut.is_valid()) {
-        WvInvoker::log(LOG_LV_ERR, u8"Can't read the game file");
+        WvInvoker::log(LOG_LV_ERR, u8"Can't read the game data");
         return 0;
     }
+
+    FilesystemUtil::delete_and_create_directories(path_t(m_dir) / UITextPath::PATCH_BASE);
 
     size_t result = 0;
 
     WvInvoker::log(LOG_LV_ALERT, u8"Start extract the in-game text");
-    InGameUITextExtractor inGame(ut, m_db);
+    InGameUITextExtractor inGame(ut, m_dir);
     result += inGame.extract();
     WvInvoker::log(LOG_LV_ALERT, u8"In-game text extract finished");
 
     WvInvoker::log(LOG_LV_ALERT, u8"Start extract the setting text");
-    SettingUITextExtractor setting(ut, m_db);
+    SettingUITextExtractor setting(ut, m_dir);
     result += setting.extract();
     WvInvoker::log(LOG_LV_ALERT, u8"Setting text extract finished");
 
     WvInvoker::log(LOG_LV_ALERT, u8"Start extract the dialog text");
-    DialogUITextExtractor dialog(ut, m_db);
+    DialogUITextExtractor dialog(ut, m_dir);
     result += dialog.extract();
     WvInvoker::log(LOG_LV_ALERT, u8"Dialog text extract finished");
 
     return result;
 }
 
-UITextExtractor::UITextExtractor(const path_t& dst) :
-    m_db(dst) { }
+UITextExtractor::UITextExtractor(const path_t& dst, UI* const pUI) :
+    IExtractor(dst),
+    m_pUI(pUI) { }
 
 // ======================== C L A S S ========================
 // ===    IUITextExtractor
@@ -109,12 +104,9 @@ size_t InGameUITextExtractor::extract() {
 }
 
 InGameUITextExtractor::InGameUITextExtractor(UIText& ut, const path_t& dst) :
-    IExtractor(),
-    IUITextExtractor(ut) {
-
-    std::filesystem::create_directories(path_t(dst).append(FOLDER_BASE));
-    m_db = path_t(dst).append(FOLDER_BASE).append(FILE_NAME);
-}
+    IExtractor(dst),
+    IUITextExtractor(ut),
+    m_db(path_t(dst) / UITextPath::PATCH_FILE_IN_GAME) { }
 
 // ======================== C L A S S ========================
 // ===    SettingUITextExtractor
@@ -185,12 +177,9 @@ size_t SettingUITextExtractor::extract() {
 }
 
 SettingUITextExtractor::SettingUITextExtractor(UIText& ut, const path_t& dst) :
-    IExtractor(),
-    IUITextExtractor(ut) {
-
-    std::filesystem::create_directories(path_t(dst).append(FOLDER_BASE));
-    m_db = path_t(dst).append(FOLDER_BASE).append(FILE_NAME);
-}
+    IExtractor(dst),
+    IUITextExtractor(ut),
+    m_db(path_t(dst) / UITextPath::PATCH_FILE_SETTING) { }
 
 // ======================== C L A S S ========================
 // ===    DialogUITextExtractor
@@ -261,9 +250,6 @@ size_t DialogUITextExtractor::extract() {
 }
 
 DialogUITextExtractor::DialogUITextExtractor(UIText& ut, const path_t& dst) :
-    IExtractor(),
-    IUITextExtractor(ut) {
-
-    std::filesystem::create_directories(path_t(dst).append(FOLDER_BASE));
-    m_db = path_t(dst).append(FOLDER_BASE).append(FILE_NAME);
-}
+    IExtractor(dst),
+    IUITextExtractor(ut),
+    m_db(path_t(dst) / UITextPath::PATCH_FILE_DIALOG) { }

@@ -1,6 +1,6 @@
 #include "dialogue.hpp"
 #include "dialogue_json.hpp"
-#include "dialogue_key_mgr.hpp"
+#include "dialogue_key.hpp"
 
 #include "utils/json_util.hpp"
 #include "utils/dialogue_util.hpp"

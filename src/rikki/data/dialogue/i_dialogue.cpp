@@ -1,6 +1,6 @@
 #include "i_dialogue.hpp"
 #include "dialogue_json.hpp"
-#include "dialogue_key_mgr.hpp"
+#include "dialogue_key.hpp"
 
 #include "utils/dialogue_util.hpp"
 
@@ -12,8 +12,7 @@ dialogue_map_t IDialogue::extract_dialogues() {
     dialogue_map_t result { };
 
     this->find_dialogues([&](const dialogue_idx_t idx, const j::Dialogue& dia) {
-        j::Dialogue buf = dia;
-        result[idx] = std::move(buf);
+        result[idx] = dia;
     });
 
     return result;
@@ -32,7 +31,7 @@ choice_map_t IDialogue::extract_choices() {
 std::vector<dialogue_idx_t> IDialogue::update_dialogues(const dialogue_map_t& entries) {
     std::vector<dialogue_idx_t> result { };
 
-    this->find_dialogues([&](dialogue_idx_t idx, j::Dialogue& e) {
+    this->find_dialogues([&](const dialogue_idx_t idx, j::Dialogue& e) {
         if (const auto it = entries.find(idx); it != entries.end()) {
             e = it->second;
 
@@ -61,16 +60,16 @@ void IDialogue::find_dialogues(const dialogue_callback_t& callback) {
     dialogue_idx_t nextIdx = 0;
 
     this->iterate_elements([&](const auto elID, auto& elem) {
-        if (elID != DialogueKeyMgr::ID_DIALOGUE) {
+        if (elID != DialogueKey::ID_DIALOGUE) {
             return;
         }
 
         const auto idx = nextIdx;
         nextIdx++;
 
-        auto& spk  = elem[DialogueKeyMgr::IDX_SPEAKER];
-        auto& span = elem[DialogueKeyMgr::IDX_DIALOGUE_SPAN];
-        auto& atts = elem[DialogueKeyMgr::IDX_ATTS][DialogueKeyMgr::KEY_ATTS];
+        auto& spk  = elem[DialogueKey::IDX_SPEAKER];
+        auto& span = elem[DialogueKey::IDX_DIALOGUE_SPAN];
+        auto& atts = elem[DialogueKey::IDX_ATTS][DialogueKey::KEY_ATTS];
 
         if (!spk.is_string() || !span.is_string()) {
             return;
@@ -90,13 +89,13 @@ void IDialogue::find_choices(const choices_callback_t& callback) {
     dialogue_idx_t nextIdx = 0;
 
     this->iterate_elements([&](const auto elID, auto& elem) {
-        if (elID != ChoiceKeyMgr::ID_CHOICE) {
+        if (elID != ChoiceKey::ID_CHOICE) {
             return;
         }
 
         nextIdx++;
 
-        auto& cho = elem[ChoiceKeyMgr::IDX_CHOICE];
+        auto& cho = elem[ChoiceKey::IDX_CHOICE];
 
         if (!cho.is_string()) {
             return;

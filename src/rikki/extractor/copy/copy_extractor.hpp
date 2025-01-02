@@ -1,7 +1,7 @@
 #ifndef RIKKI_PATCHER_RIKKI_EXTRACTOR_COPY_EXTRACTOR_HPP
 #define RIKKI_PATCHER_RIKKI_EXTRACTOR_COPY_EXTRACTOR_HPP
 #include "precompiled.hpp"
-#include "i_extractor.hpp"
+#include "rikki/extractor/i_extractor.hpp"
 
 /* copy_extractor.hpp
  *  Included classes:

@@ -1,7 +1,7 @@
 #ifndef RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_PATCHER_HPP
 #define RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_PATCHER_HPP
 #include "precompiled.hpp"
-#include "i_patcher.hpp"
+#include "rikki/patcher/i_patcher.hpp"
 
 /* dialogue_patcher.hpp
  *  Included classes:
@@ -47,10 +47,8 @@ public:
      */
     explicit DialoguePatcher(const path_t& src);
 private:
-    path_t m_db;        /* Patch data folder of dialogue data files. */
-    path_t m_migrDB; /* Migration folder of dialogue data files */
-
-    constexpr static auto FOLDER_BASE = "dialogues";
+    const path_t m_db;        /* Patch data folder of dialogue data files. */
+    const path_t m_migrDB; /* Migration folder of dialogue data files */
 };
 
 // ======================== C L A S S ========================
@@ -91,10 +89,8 @@ public:
      */
     explicit ChoicePatcher(const path_t& src);
 private:
-    path_t m_db;        /* Patch data folder of Choice data files */
-    path_t m_migrDB; /* Migration folder of choice data files */
-
-    constexpr static auto FOLDER_BASE = "choices";
+    const path_t m_db;        /* Patch data folder of Choice data files */
+    const path_t m_migrDB; /* Migration folder of choice data files */
 };
 
 

@@ -21,6 +21,7 @@ struct PatcherResult {
     size_t m_passed; /* Passed count */
 
     PatcherResult& operator+=(const PatcherResult&);
+    bool operator==(const PatcherResult&) const;
 };
 
 // ======================== C L A S S ========================
@@ -44,18 +45,15 @@ public:
     /**
      * @brief Initializing patcher.
      * <br>m_dir is point the root path of custom patch data.
-     * <br>m_migrDir is point the root path of custom patch migration data.
      * 
      * @param [in] dir Root path of custom patch data.
      */
     explicit IPatcher(const path_t& dir);
     virtual ~IPatcher() = default;
 protected:
-    bool m_isAvailable; /* Is patcher available? */
-    const path_t m_dir;          /* Root path of custom patch data */
-    const path_t m_migrDir;   /* Root path of custom patch migration data */
-protected:
-    constexpr static auto FOLDER_MIGRATE = "migration"; /* Migration data folder name */
+    bool m_isAvailable;         /* Is patcher available? */
+    const path_t m_dir;        /* Root path of custom patch data. */
+    const path_t m_migrDir; /* Root path of custom patch migration data */
 };
 
 

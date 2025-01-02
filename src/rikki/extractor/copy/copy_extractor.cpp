@@ -1,5 +1,5 @@
 #include "copy_extractor.hpp"
-#include "rikki/patcher/copy_patcher.hpp"
+#include "rikki/patcher/copy/copy_patcher.hpp"
 
 #include "utils/json_util.hpp"
 
@@ -26,5 +26,5 @@ size_t CopyExtractor::extract() {
 }
 
 CopyExtractor::CopyExtractor(const path_t& dst) :
-    IExtractor(),
+    IExtractor(dst),
     m_db(path_t(dst).append(CopyPatcher::FOLDER_BASE)) { }

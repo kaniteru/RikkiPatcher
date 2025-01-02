@@ -1,4 +1,5 @@
 #include "ui_text.hpp"
+#include "rikki/data/ui/ui.hpp"
 #include "key/ui_text_key.hpp"
 
 #include "utils/json_util.hpp"
@@ -115,28 +116,21 @@ bool UIText::set_dialog_type2(const DialogType2UITextKey& key, const DialogUITex
 }
 
 bool UIText::backup(const path_t& dir) {
-    try {
-        const auto fName = m_file.filename().u8string();
-        std::filesystem::copy(m_file, path_t(dir).append(fName), std::filesystem::copy_options::overwrite_existing);
-    }
-    catch (const std::exception& e) {
-        return false;
-    }
-
-    return true;
+    throw std::exception("Not Implemented. Use UI::backup().");
 }
 
 bool UIText::save() {
-    return this->save(m_file);
+    throw std::exception("Not Implemented. Use UI::save().");
 }
 
 bool UIText::save(const path_t& dir) {
-    return JsonUtil::save_into_file(m_j, dir);
+    throw std::exception("Not Implemented. Use UI::save().");
 }
 
 void UIText::find_in_game(const InGameUITextKey& key, const in_game_ui_text_callback_t& callback) {
     try {
-        auto& jText = m_j[key.m_iKey][key.m_iiKey]["commands"][key.m_iIdx][key.m_iiIdx][1][key.m_iiiKey][1][2]["atts"][key.m_iiiiKey][1]["text"];
+        auto& jText = m_pUI->get_json()
+        [key.m_iKey][key.m_iiKey]["commands"][key.m_iIdx][key.m_iiIdx][1][key.m_iiiKey][1][2]["atts"][key.m_iiiiKey][1]["text"];
 
         std::string buf = jText;
         callback(buf);
@@ -146,7 +140,7 @@ void UIText::find_in_game(const InGameUITextKey& key, const in_game_ui_text_call
 }
 
 void UIText::find_setting(const SettingUITextKey& key, const setting_ui_text_callback_t& callback) {
-    for (auto& arr1 = m_j[key.m_iKey]["root"]["children"]; auto& arr1It : arr1) {
+    for (auto& arr1 = m_pUI->get_json()[key.m_iKey]["root"]["children"]; auto& arr1It : arr1) {
         if (arr1It.contains("id") && arr1It["id"] != key.m_iiKey) {
             continue;
         }
@@ -182,7 +176,7 @@ void UIText::find_setting(const SettingUITextKey& key, const setting_ui_text_cal
 }
 
 void UIText::find_dialog_type1(const DialogType1UITextKey& key, const dialog_ui_text_callback_t& callback) {
-    auto& arr = m_j[key.m_ikey][key.m_iiKey]["commands"][0];
+    auto& arr = m_pUI->get_json()[key.m_ikey][key.m_iiKey]["commands"][0];
     auto& jSys = arr[3][5];
     auto& jText = arr[4][5];
 
@@ -194,7 +188,7 @@ void UIText::find_dialog_type1(const DialogType1UITextKey& key, const dialog_ui_
 }
 
 void UIText::find_dialog_type2(const DialogType2UITextKey& key, const dialog_ui_text_callback_t& callback) {
-    auto& arr = m_j[key.m_ikey]["commands"];
+    auto& arr = m_pUI->get_json()[key.m_ikey]["commands"];
 
     if (key.m_iIdx > -1) {
         arr[key.m_iIdx];
@@ -210,8 +204,8 @@ void UIText::find_dialog_type2(const DialogType2UITextKey& key, const dialog_ui_
     jText = buf.m_text;
 }
 
-UIText::UIText(const path_t& file) :
-    m_file(file) {
+UIText::UIText(UI* const pUI) :
+    m_pUI(pUI) {
 
-    m_isValid = JsonUtil::load_from_file(m_j, file);
+    m_isValid = m_pUI->is_valid();
 }
