@@ -116,7 +116,7 @@ PatcherResult UIPatcher::generate_migration_info() {
         WvInvoker::log(LOG_LV_ERR, u8"Can't copied the game file from game directory");
     }
 
-    UIExtractor extractor(path_t(m_dir) / UITextPath::MIGR_BASE);
+    UIExtractor extractor(path_t(m_dir) / MigrPath::BASE_FOLDER_NAME);
     extractor.extract();
     return { };
 }
