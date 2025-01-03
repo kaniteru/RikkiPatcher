@@ -1,4 +1,4 @@
-#include "ui_json.hpp"
+#include "ui_text_json.hpp"
 #include "ui_text.hpp"
 #include "key/ui_text_dialog_key.hpp"
 #include "key/ui_text_setting_key.hpp"
