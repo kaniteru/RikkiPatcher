@@ -11,6 +11,15 @@ std::vector<path_t> FilesystemUtil::sort_files(const path_t& dir) {
     return result;
 }
 
+void FilesystemUtil::delete_and_create_directories(const path_t& dir) {
+    try {
+        std::filesystem::remove_all(dir);
+    }
+    catch (const std::exception& e) { }
+
+    std::filesystem::create_directories(dir);
+}
+
 std::vector<int32_t> FilesystemUtil::extract_nums(std::u8string_view filename) {
     static const auto REGEX = std::regex("(\\d+)");
 

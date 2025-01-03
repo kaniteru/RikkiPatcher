@@ -20,17 +20,18 @@ enum eDir {
     DIR_PROJ_EXE_7ZIP,
 
     DIR_GAME_BASE,
-    DIR_GAME_JSON_DIALOGUES,
-    DIR_GAME_JSON_STARTUP
+    DIR_GAME_FONTS,
+    DIR_GAME_JSON_STARTUP,
+    DIR_GAME_JSON_DIALOGUES
 };
 
 /**
- * @brief Using get directory path.
+ * @brief Used get a dir path.
  */
 class DirMgr {
 public:
     /**
-     * @brief Get target path.
+     * @brief Get a target path.
      *
      * @param [in] type Target type.
      * @return Returns target path.

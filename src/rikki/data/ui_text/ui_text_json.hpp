@@ -1,9 +1,9 @@
-#ifndef RIKKI_PATCHER_RIKKI_DATA_UI_JSON_HPP
-#define RIKKI_PATCHER_RIKKI_DATA_UI_JSON_HPP
+#ifndef RIKKI_PATCHER_RIKKI_DATA_UI_TEXT_UI_TEXT_JSON_HPP
+#define RIKKI_PATCHER_RIKKI_DATA_UI_TEXT_UI_TEXT_JSON_HPP
 #include "precompiled.hpp"
 #include "utils/json_util.hpp"
 
-/* ui_json.hpp
+/* ui_text_json.hpp
  *  Included structs:
  *      - InGameUIText
  *      - DialogUIText

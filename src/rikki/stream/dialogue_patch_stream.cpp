@@ -1,9 +1,6 @@
 #include "dialogue_patch_stream.hpp"
-#include "rikki/data/dialogue/dialogue.hpp"
+#include "rikki/data/dialogue/i_dialogue.hpp"
 #include "rikki/data/dialogue/dialogue_json.hpp"
-
-#include "utils/json_util.hpp"
-#include "utils/string_util.hpp"
 
 // ======================== C L A S S ========================
 // ===    DialoguePatchStream
@@ -47,19 +44,8 @@ void DialoguePatchStream::remove_dialogue(const dialogue_idx_t idx) {
     m_j.erase(idx);
 }
 
-void DialoguePatchStream::clear() {
-    m_j.clear();
-}
-
-bool DialoguePatchStream::save() const {
-    return JsonUtil::save_into_file(m_j, m_file);
-}
-
 DialoguePatchStream::DialoguePatchStream(const path_t& file) :
-    m_file(file) {
-
-    JsonUtil::load_from_file(m_j, m_file);
-}
+    IRikkiStream(file) { }
 
 // ======================== C L A S S ========================
 // ===    ChoicePatchStream
@@ -95,16 +81,5 @@ void ChoicePatchStream::remove_choice(const choice_idx_t idx) {
     m_j.erase(idx);
 }
 
-void ChoicePatchStream::clear() {
-    m_j.clear();
-}
-
-bool ChoicePatchStream::save() const {
-    return JsonUtil::save_into_file(m_j, m_file);
-}
-
 ChoicePatchStream::ChoicePatchStream(const path_t& file) :
-    m_file(file) {
-
-    JsonUtil::load_from_file(m_j, m_file);
-}
+    IRikkiStream(file) { }

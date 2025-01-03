@@ -5,6 +5,7 @@
 class FilesystemUtil {
 public:
     static std::vector<path_t> sort_files(const path_t& dir);
+    static void delete_and_create_directories(const path_t& dir);
 
 private:
     static std::vector<int32_t> extract_nums(std::u8string_view filename);

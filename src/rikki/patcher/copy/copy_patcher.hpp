@@ -1,7 +1,7 @@
 #ifndef RIKKI_PATCHER_RIKKI_PATCHER_COPY_PATCHER_HPP
 #define RIKKI_PATCHER_RIKKI_PATCHER_COPY_PATCHER_HPP
 #include "precompiled.hpp"
-#include "i_patcher.hpp"
+#include "rikki/patcher/i_patcher.hpp"
 
 /* copy_patcher.hpp
  *  Included classes:

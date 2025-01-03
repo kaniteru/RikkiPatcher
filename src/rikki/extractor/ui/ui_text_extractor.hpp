@@ -1,9 +1,9 @@
-#ifndef RIKKI_PATCHER_RIKKI_EXTRACTOR_UI_EXTRACTOR_HPP
-#define RIKKI_PATCHER_RIKKI_EXTRACTOR_UI_EXTRACTOR_HPP
+#ifndef RIKKI_PATCHER_RIKKI_EXTRACTOR_UI_UI_TEXT_EXTRACTOR_HPP
+#define RIKKI_PATCHER_RIKKI_EXTRACTOR_UI_UI_TEXT_EXTRACTOR_HPP
 #include "precompiled.hpp"
-#include "i_extractor.hpp"
+#include "rikki/extractor/i_extractor.hpp"
 
-/* ui_extractor.hpp
+/* ui_text_extractor.hpp
  *  Included classes:
  *      - UITextExtractor
  *      - IUITextExtractor
@@ -12,6 +12,7 @@
  *      - DialogUITextExtractor
  */
 
+class UI;
 class UIText;
 
 // ======================== C L A S S ========================
@@ -23,9 +24,13 @@ public:
     size_t extract() final;
 
 public:
-    explicit UITextExtractor(const path_t& dst);
+    /**
+     * @param [in] dst Root path of custom patch data.
+     * @param [in] pUI Ptr of loaded UI.
+     */
+    explicit UITextExtractor(const path_t& dst, UI* pUI);
 private:
-    const path_t m_db;
+    UI* const m_pUI; /* Ptr of UI */
 };
 
 // ======================== C L A S S ========================
@@ -34,10 +39,12 @@ private:
 
 class IUITextExtractor {
 public:
+    /**
+     * @param [in] ut Ref of UIText.
+     */
     explicit IUITextExtractor(UIText& ut);
 protected:
-    UIText& m_ut;
-    constexpr static auto FOLDER_BASE = "ui/texts";
+    UIText& m_ut; /* Ref of UIText */
 };
 
 // ======================== C L A S S ========================
@@ -49,11 +56,13 @@ public:
     size_t extract() final;
 
 public:
+    /**
+     * @param [in] ut Ref of UIText. 
+     * @param [in] dst Root path of custom patch data.
+     */
     InGameUITextExtractor(UIText& ut, const path_t& dst);
 private:
-    path_t m_db;
-
-    constexpr static auto FILE_NAME = "in_game.json";
+    const path_t m_db; /* Path of in-game patch file */
 };
 
 // ======================== C L A S S ========================
@@ -65,11 +74,13 @@ public:
     size_t extract() final;
 
 public:
+    /**
+     * @param [in] ut Ref of UIText. 
+     * @param [in] dst Root path of custom patch data.
+     */
     SettingUITextExtractor(UIText& ut, const path_t& dst);
 private:
-    path_t m_db;
-
-    constexpr static auto FILE_NAME = "setting.json";
+    const path_t m_db; /* Path of setting patch file */
 };
 
 // ======================== C L A S S ========================
@@ -81,12 +92,14 @@ public:
     size_t extract() final;
 
 public:
+    /**
+     * @param [in] ut Ref of UIText.
+     * @param [in] dst Root path of custom patch data.
+     */
     DialogUITextExtractor(UIText& ut, const path_t& dst);
 private:
-    path_t m_db;
-
-    constexpr static auto FILE_NAME = "dialog.json";
+    const path_t m_db; /* Path of dialog data folder */
 };
 
 
-#endif //RIKKI_PATCHER_RIKKI_EXTRACTOR_UI_EXTRACTOR_HPP
+#endif //RIKKI_PATCHER_RIKKI_EXTRACTOR_UI_UI_TEXT_EXTRACTOR_HPP

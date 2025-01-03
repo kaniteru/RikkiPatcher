@@ -1,25 +1,85 @@
 #include "ui_text_patcher.hpp"
+
+#include "rikki/data/data_path.hpp"
+#include "rikki/data/ui/ui.hpp"
 #include "rikki/data/ui_text/ui_text.hpp"
-#include "rikki/data/ui_text/ui_json.hpp"
+#include "rikki/data/ui_text/ui_text_json.hpp"
 #include "rikki/data/ui_text/key/ui_text_dialog_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_setting_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_in_game_key.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
+#include "rikki/stream/ui_migr_stream.hpp"
+#include "utils/filesystem_util.hpp"
 
 #include "utils/string_util.hpp"
+#include "utils/ui_text_util.hpp"
 
 #include "wv/enums.hpp"
 #include "wv/wv_invoker.hpp"
 
 // ======================== C L A S S ========================
+// ===    UITextPatcher
+// ======================== C L A S S ========================
+
+PatcherResult UITextPatcher::patch() {
+    PatcherResult result { };
+    size_t& total   =  result.m_total;
+    size_t& ok       = result.m_ok;
+    size_t& failed  = result.m_failed;
+    size_t& passed = result.m_passed;
+
+    auto do_patch = [this](const path_t& f, IUITextPatcher& p, const std::u8string& str) -> PatcherResult {
+        if (const path_t file = (path_t(m_dir) / f); !std::filesystem::exists(file)) {
+            return { };
+        }
+
+        WvInvoker::log(LOG_LV_ALERT, u8"Start patch the " + str + u8" text");
+        const auto res = p.patch();
+        WvInvoker::log(LOG_LV_ALERT, str + u8" text patch finished");
+        return res;
+    };
+
+    // in-game text patch
+    InGameUITextPatcher ingame(m_dir, m_pUT);
+    result += do_patch(UITextPath::PATCH_FILE_IN_GAME, ingame, u8"in-game");
+
+    // setting text patch
+    SettingUITextPatcher setting(m_dir, m_pUT);
+    result += do_patch(UITextPath::PATCH_FILE_SETTING, setting, u8"setting");
+
+    // dialog text patch
+    DialogUITextPatcher dialog(m_dir, m_pUT);
+    result += do_patch(UITextPath::PATCH_FILE_DIALOG, dialog, u8"dialog");
+    return result;
+}
+
+PatcherResult UITextPatcher::migration() {
+    return { };
+}
+
+PatcherResult UITextPatcher::generate_migration_info() {
+    // using migrate dir because currently, it's just wrapper of extractor not pure migr stream.
+    //UITextMigrStream::save_migration_data(m_migrDir);
+    return { };
+}
+
+UITextPatcher::UITextPatcher(const path_t& src, UIText* const pUT) :
+    IPatcher(src),
+    m_pUT(pUT) {
+
+    m_isAvailable = true;
+}
+
+// ======================== C L A S S ========================
 // ===    IUITextPatcher
 // ======================== C L A S S ========================
 
-IUITextPatcher::IUITextPatcher(UIText* ut, const path_t& src) :
+IUITextPatcher::IUITextPatcher(const path_t& src, UIText* ut) :
     IPatcher(src),
-    m_ut(ut),
-    m_base(path_t(src) / UITextPatchStream::FOLDER_BASE),
-    m_baseMigr(path_t(m_migrDir) / UITextPatchStream::FOLDER_BASE) { }
+    m_ut(ut) {
+
+    m_isAvailable = true;
+}
 
 // ======================== C L A S S ========================
 // ===    InGameUITextPatcher
@@ -32,7 +92,7 @@ PatcherResult InGameUITextPatcher::patch() {
     size_t& failed  = result.m_failed;
     size_t& passed = result.m_passed;
 
-    const UITextPatchStream patchStream(path_t(m_base).append(UITextPatchStream::FILE_IN_GAME));
+    const UITextPatchStream patchStream(m_db);
     auto patchData = patchStream.get_texts<InGameUIText>();
 
     for (const auto& [pKey, val] : patchData.get_map()) {
@@ -56,8 +116,8 @@ PatcherResult InGameUITextPatcher::patch() {
         WvInvoker::log(LOG_LV_PROG, log);
     }
 
-    const std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
-                            + " | failed: " + std::to_string(failed);
+    const std::string log = "Total: " + std::to_string(total)      + " | ok: " + std::to_string(ok)
+                                     + " | failed: " + std::to_string(failed) + " | passed: " + std::to_string(passed);
     WvInvoker::log(LOG_LV_INFO, log);
     return result;
 }
@@ -70,8 +130,10 @@ PatcherResult InGameUITextPatcher::generate_migration_info() {
     return { };
 }
 
-InGameUITextPatcher::InGameUITextPatcher(UIText* ut, const path_t& src) :
-    IUITextPatcher(ut, src) { }
+InGameUITextPatcher::InGameUITextPatcher(const path_t& src, UIText* ut) :
+    IUITextPatcher(src, ut),
+    m_db(path_t(src) / UITextPath::PATCH_FILE_IN_GAME),
+    m_migrDB(path_t(src) / UITextPath::MIGR_FILE_IN_GAME) { }
 
 // ======================== C L A S S ========================
 // ===    SettingUITextPatcher
@@ -84,7 +146,7 @@ PatcherResult SettingUITextPatcher::patch() {
     size_t& failed  = result.m_failed;
     size_t& passed = result.m_passed;
 
-    const UITextPatchStream patchStream(path_t(m_base).append(UITextPatchStream::FILE_SETTING));
+    const UITextPatchStream patchStream(m_db);
     auto patchData = patchStream.get_texts<SettingUIText>();
 
     auto loop_map = [this, &total, &ok, &failed](const auto& m) {
@@ -114,8 +176,8 @@ PatcherResult SettingUITextPatcher::patch() {
     loop_map(patchData.get_map());
     loop_map(patchData.get_controls_usage_map());
 
-    const std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
-                        + " | failed: " + std::to_string(failed);
+    const std::string log = "Total: " + std::to_string(total)      + " | ok: " + std::to_string(ok)
+                                     + " | failed: " + std::to_string(failed) + " | passed: " + std::to_string(passed);
     WvInvoker::log(LOG_LV_INFO, log);
     return result;
 }
@@ -128,8 +190,10 @@ PatcherResult SettingUITextPatcher::generate_migration_info() {
     return { };
 }
 
-SettingUITextPatcher::SettingUITextPatcher(UIText* ut, const path_t& src) :
-    IUITextPatcher(ut, src) { }
+SettingUITextPatcher::SettingUITextPatcher(const path_t& src, UIText* ut) :
+    IUITextPatcher(src, ut),
+    m_db(path_t(src) / UITextPath::PATCH_FILE_SETTING),
+    m_migrDB(path_t(src) / UITextPath::MIGR_FILE_SETTING) { }
 
 // ======================== C L A S S ========================
 // ===    DialogUITextPatcher
@@ -142,7 +206,7 @@ PatcherResult DialogUITextPatcher::patch() {
     size_t& failed  = result.m_failed;
     size_t& passed = result.m_passed;
 
-    const UITextPatchStream patchStream(path_t(m_base).append(UITextPatchStream::FILE_DIALOG));
+    const UITextPatchStream patchStream(m_db);
     auto patchData = patchStream.get_texts<DialogUIText>();
 
     static auto d_to_entry = [](const DialogUIText::Dialog& d) {
@@ -196,8 +260,8 @@ PatcherResult DialogUITextPatcher::patch() {
         WvInvoker::log(LOG_LV_PROG, log);
     }
 
-    const std::string log = "Total: " + std::to_string(total) + " | ok: " + std::to_string(ok) + " | passed: " + std::to_string(passed)
-                        + " | failed: " + std::to_string(failed);
+    const std::string log = "Total: " + std::to_string(total)      + " | ok: " + std::to_string(ok)
+                                     + " | failed: " + std::to_string(failed) + " | passed: " + std::to_string(passed);
     WvInvoker::log(LOG_LV_INFO, log);
     return result;
 }
@@ -210,5 +274,7 @@ PatcherResult DialogUITextPatcher::generate_migration_info() {
     return { };
 }
 
-DialogUITextPatcher::DialogUITextPatcher(UIText* ut, const path_t& src) :
-    IUITextPatcher(ut, src) { }
+DialogUITextPatcher::DialogUITextPatcher(const path_t& src, UIText* ut) :
+    IUITextPatcher(src, ut),
+    m_db(path_t(src) / UITextPath::PATCH_FILE_DIALOG),
+    m_migrDB(path_t(src) / UITextPath::MIGR_FILE_DIALOG) { }

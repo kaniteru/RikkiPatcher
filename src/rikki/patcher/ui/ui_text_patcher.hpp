@@ -5,6 +5,7 @@
 
 /* ui_text_patcher.hpp
  *  Included classes:
+ *      - UITextPatcher
  *      - IUITextPatcher
  *      - InGameUITextPatcher
  *      - SettingUITextPatcher
@@ -13,71 +14,126 @@
  *   Note: Make child patcher private since it's only used in UIPatcher
  */
 
-class UITextPatcher;
 class UIText;
+
+// ======================== C L A S S ========================
+// ===    UITextPatcher
+// ======================== C L A S S ========================
+
+class UITextPatcher final : public IPatcher {
+public:
+    /**
+     * @brief Do custom patch into game data.
+     *
+     * @return Returns patched data count.
+     */
+    PatcherResult patch() final;
+
+    /**
+     * @brief Migrate custom data using data data.
+     *              Game data must be unmodified.
+     *
+     * @return Returns true if migrated successfully.
+     */
+    PatcherResult migration() final;
+
+    /**
+     * @brief Generate migration info data.
+     *              This data will be used to migrate custom patch data to match the updated game of features.
+     *              Game data must be unmodified.
+     *
+     * @return Returns true if generated migration info successfully.
+     */
+    PatcherResult generate_migration_info() final;
+
+public:
+    /**
+     * @brief Init using custom patch data directory.
+     *
+     * @param [in] src Root path of custom patch data directory.
+     * @param [in] pUT ptr of UIText.
+     */
+    UITextPatcher(const path_t& src, UIText* pUT);
+private:
+    UIText* const m_pUT; /* Ptr of UIText. */
+};
 
 // ======================== C L A S S ========================
 // ===    IUITextPatcher
 // ======================== C L A S S ========================
 
-class IUITextPatcher : protected IPatcher {
+class IUITextPatcher : public IPatcher {
 public:
-    IUITextPatcher(UIText* ut, const path_t& src);
+    /**
+     * @param [in] src Target root folder of custom patch data.
+     * @param [in] ut  Ptr of loaded UIText.
+     */
+    IUITextPatcher(const path_t& src, UIText* ut);
 protected:
-    UIText* const m_ut;         /* Reference of UIText */
-    const path_t m_base;        /* Path of ui-texts custom patch dir */
-    const path_t m_baseMigr; /* Path of ui-texts custom patch migration dir */
+    UIText* const m_ut; /* Reference of UIText */
 };
 
 // ======================== C L A S S ========================
 // ===    InGameUITextPatcher
 // ======================== C L A S S ========================
 
-class InGameUITextPatcher final : IUITextPatcher {
+class InGameUITextPatcher final : public IUITextPatcher {
+public:
     PatcherResult patch() final;
-
     PatcherResult migration() final;
-
     PatcherResult generate_migration_info() final;
 
+public:
+    /**
+     * @param [in] src Target root folder of custom patch data.
+     * @param [in] ut  Ptr of loaded UIText.
+     */
+    InGameUITextPatcher(const path_t& src, UIText* ut);
 private:
-    InGameUITextPatcher(UIText* ut, const path_t& src);
-
-    friend UITextPatcher;
+    const path_t m_db;         /* Path of in-game patch data folder */
+    const path_t m_migrDB; /* Path of in-game migration data folder */
 };
 
 // ======================== C L A S S ========================
 // ===    SettingUITextPatcher
 // ======================== C L A S S ========================
 
-class SettingUITextPatcher final : IUITextPatcher {
+class SettingUITextPatcher final : public IUITextPatcher {
+public:
     PatcherResult patch() final;
-
     PatcherResult migration() final;
-
     PatcherResult generate_migration_info() final;
 
+public:
+    /**
+     * @param [in] src Target root folder of custom patch data.
+     * @param [in] ut  Ptr of loaded UIText.
+     */
+    SettingUITextPatcher(const path_t& src, UIText* ut);
 private:
-    SettingUITextPatcher(UIText* ut, const path_t& src);
-
-    friend UITextPatcher;
+    const path_t m_db;         /* Path of setting patch data folder */
+    const path_t m_migrDB; /* Path of setting migration data folder */
 };
 
 // ======================== C L A S S ========================
 // ===    DialogUITextPatcher
 // ======================== C L A S S ========================
 
-class DialogUITextPatcher final : IUITextPatcher {
+class DialogUITextPatcher final : public IUITextPatcher {
+public:
     PatcherResult patch() final;
-
     PatcherResult migration() final;
-
     PatcherResult generate_migration_info() final;
 
+public:
+    /**
+     * @param [in] src Target root folder of custom patch data.
+     * @param [in] ut  Ptr of loaded UIText.
+     */
+    DialogUITextPatcher(const path_t& src, UIText* ut);
 private:
-    DialogUITextPatcher(UIText* ut, const path_t& src);
-
-    friend UITextPatcher;
+    const path_t m_db;         /* Path of dialog patch data folder */
+    const path_t m_migrDB; /* Path of dialog migration data folder */
 };
 
 

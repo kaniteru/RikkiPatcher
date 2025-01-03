@@ -12,7 +12,7 @@
 // ===    UITextMigrStream
 // ======================== C L A S S ========================
 
-class UITextMigrStream : public IMigrStream {
+class UITextMigrStream : public IRikkiStream {
 public:
     /**
      * @brief Get pure ui-texts from data.
@@ -48,9 +48,6 @@ public:
      * @endcode
      */
     explicit UITextMigrStream(const path_t& file);
-private:
-    nlohmann::json m_j;
-    const path_t m_file; /* path of json file. */
 };
 
 

@@ -27,7 +27,8 @@ DirMgr::DirMgr(const path_t& gmDir) {
 
     add(DIR_GAME_BASE, gmDir);
     // todo: improve
+    add(DIR_GAME_FONTS, path_t(gmDir).append("asset").append("font"));
     const auto json = path_t(gmDir).append("asset").append("json");
-    add(DIR_GAME_JSON_DIALOGUES, path_t(json).append("server").append("scene"));
     add(DIR_GAME_JSON_STARTUP, path_t(json).append("startup.json"));
+    add(DIR_GAME_JSON_DIALOGUES, path_t(json).append("server").append("scene"));
 }

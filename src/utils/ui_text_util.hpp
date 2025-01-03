@@ -9,7 +9,7 @@ public:
 
     static constexpr auto FILE_NAME = "startup.json";
     static constexpr auto ZIP_FILE_NAME = "startup.zip";
-    static constexpr auto TEMP_FOLDER_NAME = "uitext";
+    static constexpr auto TEMP_FOLDER_NAME = "ui";
 private:
     static constexpr auto PW = u8"gc_zip";
 };
