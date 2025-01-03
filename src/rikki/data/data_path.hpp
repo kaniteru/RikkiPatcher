@@ -93,7 +93,7 @@ private:
 };
 
 // ======================= S T R U C T =======================
-// ===    UIFont
+// ===    UIFontPath
 // ======================= S T R U C T =======================
 
 struct UIFontPath {
@@ -110,7 +110,7 @@ private:
     static constexpr auto BASE_FOLDER_NAME = u8"font";
 
     constexpr static auto FONTS_FILES_FOLDER_NAME = u8"fonts";
-    constexpr static auto FONTS_INFO_FILE_NAME = "fonts.json";
+    constexpr static auto FONTS_INFO_FILE_NAME = u8"fonts.json";
 };
 
 

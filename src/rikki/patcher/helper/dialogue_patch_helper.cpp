@@ -36,9 +36,11 @@ PatcherResult DialoguePatchHelper::do_migrate(const path_t& fPatch, const path_t
     DialoguePatchStream patchStream(fPatch);
     const auto patchMap = patchStream.get_dialogues();
 
-    if (!std::filesystem::exists(fMigr)) {
+    if (!std::filesystem::exists(fPatch) || !std::filesystem::exists(fMigr)) {
         patchStream.clear();
         patchStream.set_dialogues(pureMap);
+
+        std::filesystem::create_directories(path_t(fPatch).parent_path());
 
         if (!patchStream.save()) {
             return DialoguePatchHelperResult::_FAILED_SAVE;
@@ -169,9 +171,11 @@ PatcherResult ChoicePatchHelper::do_migrate(const path_t& fPatch, const path_t& 
     ChoicePatchStream patchStream(fPatch);
     const auto patchMap = patchStream.get_choices();
 
-    if (!std::filesystem::exists(fMigr)) {
+    if (!std::filesystem::exists(fPatch) || !std::filesystem::exists(fMigr)) {
         patchStream.clear();
         patchStream.set_choices(pureMap);
+
+        std::filesystem::create_directories(path_t(fPatch).parent_path());
 
         if (!patchStream.save()) {
             return DialoguePatchHelperResult::_FAILED_SAVE;

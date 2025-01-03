@@ -37,6 +37,10 @@ public:
     virtual PatcherResult generate_migration_info() override;
 
 public:
+    /**
+     * @param [in] src Root path of custom patch data directory.
+     * @param [in] pUI ptr of UI.
+     */
     UIDialoguePatcher(const path_t& src, UI* pUI);
 private:
     const path_t m_db;         /* Path of ui dialogue-dialogues patch folder */
@@ -56,6 +60,10 @@ public:
     virtual PatcherResult generate_migration_info() override;
 
 public:
+    /**
+     * @param [in] src Root path of custom patch data directory.
+     * @param [in] pUI ptr of UI.
+     */
     UIChoicePatcher(const path_t& src, UI* pUI);
 private:
     const path_t m_db;         /* Path of ui dialogue-choices patch folder */

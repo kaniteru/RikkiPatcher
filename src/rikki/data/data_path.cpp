@@ -40,11 +40,12 @@ const path_t UIDialoguePath::MIGR_BASE = path_t(UIPath::MIGR_BASE).append(UIDial
 
 const path_t UIDialoguePath::PATCH_FOLDER_DIALOGUE = path_t(UIDialoguePath::PATCH_BASE).append(UIDialoguePath::DIALOGUE_FOLDER_NAME);
 const path_t UIDialoguePath::PATCH_FOLDER_CHOICE = path_t(UIDialoguePath::PATCH_BASE).append(UIDialoguePath::CHOICE_FOLDER_NAME);
+
 const path_t UIDialoguePath::MIGR_FOLDER_DIALOGUE = path_t(UIDialoguePath::MIGR_BASE).append(UIDialoguePath::DIALOGUE_FOLDER_NAME);
 const path_t UIDialoguePath::MIGR_FOLDER_CHOICE = path_t(UIDialoguePath::MIGR_BASE).append(UIDialoguePath::CHOICE_FOLDER_NAME);
 
 // ======================= S T R U C T =======================
-// ===    UIFont
+// ===    UIFontPath
 // ======================= S T R U C T =======================
 
 const path_t UIFontPath::PATCH_BASE = path_t(UIPath::PATCH_BASE).append(UIFontPath::BASE_FOLDER_NAME);
