@@ -122,6 +122,7 @@ PatcherResult UIDialoguePatcher::migration() {
 }
 
 PatcherResult UIDialoguePatcher::generate_migration_info() {
+    WvInvoker::log(LOG_LV_WARN, "ui-dialogue dialogues doesn't support generate the migration info");
     return { };
 }
 
@@ -234,7 +235,7 @@ PatcherResult UIChoicePatcher::migration() {
 }
 
 PatcherResult UIChoicePatcher::generate_migration_info() {
-
+    WvInvoker::log(LOG_LV_WARN, "ui-dialogue choices doesn't support generate the migration info");
     return { };
 }
 

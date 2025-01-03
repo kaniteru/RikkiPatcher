@@ -21,6 +21,10 @@ public:
     PatcherResult generate_migration_info() final;
 
 public:
+    /**
+     * @param [in] src Root path of custom patch data directory.
+     * @param [in] pUI ptr of UI.
+     */
     UIFontPatcher(const path_t& src, UI* pUI);
 private:
     UI* const m_pUI;
