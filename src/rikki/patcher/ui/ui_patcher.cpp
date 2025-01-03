@@ -6,6 +6,7 @@
 #include "rikki/data/ui_dialogue/ui_dialogue_key.hpp"
 #include "ui_text_patcher.hpp"
 #include "ui_dialogue_patcher.hpp"
+#include "ui_font_patcher.hpp"
 #include "rikki/extractor/ui/ui_extractor.hpp"
 
 #include "utils/ui_text_util.hpp"
@@ -34,10 +35,9 @@ PatcherResult UIPatcher::patch() { // todo: check file exists
     {
         UIText ut(m_pUI.get());
 
-        // apply ui-texts
         WvInvoker::log(LOG_LV_ALERT, "Start apply custom ui-texts data into game");
-        UITextPatcher textPatcher(m_dir, &ut);
-        result += textPatcher.patch();
+        UITextPatcher patcher(m_dir, &ut);
+        result += patcher.patch();
         WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-texts data into game");
     }
 
@@ -51,6 +51,13 @@ PatcherResult UIPatcher::patch() { // todo: check file exists
         UIChoicePatcher choPatcher(m_dir, m_pUI.get());
         result += choPatcher.patch();
         WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-choices data into game");
+    }
+
+    {
+        WvInvoker::log(LOG_LV_ALERT, "Start apply custom ui-fonts data into game");
+        UIFontPatcher patcher(m_dir, m_pUI.get());
+        result += patcher.patch();
+        WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-fonts data into game");
     }
 
     return result;
@@ -74,8 +81,8 @@ PatcherResult UIPatcher::migration() {
 
         // apply ui-texts
         WvInvoker::log(LOG_LV_ALERT, "Start the migration of ui-texts data");
-        UITextPatcher textPatcher(m_dir, &ut);
-        result += textPatcher.migration();
+        UITextPatcher patcher(m_dir, &ut);
+        result += patcher.migration();
         WvInvoker::log(LOG_LV_ALERT, "Finished the migration of ui-texts data");
     }
 
@@ -89,6 +96,13 @@ PatcherResult UIPatcher::migration() {
         UIChoicePatcher choPatcher(m_dir, m_pUI.get());
         result += choPatcher.migration();
         WvInvoker::log(LOG_LV_ALERT, "Finished the migration of ui-choices data");
+    }
+
+    {
+        WvInvoker::log(LOG_LV_ALERT, "Start the migration of ui-fonts data");
+        UIFontPatcher patcher(m_dir, m_pUI.get());
+        result += patcher.migration();
+        WvInvoker::log(LOG_LV_ALERT, "Finished the migration of ui-fonts data");
     }
 
     return result;

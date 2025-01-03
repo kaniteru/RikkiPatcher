@@ -2,6 +2,15 @@
 #define RIKKI_PATCHER_RIKKI_DATA_DATA_PATH_HPP
 #include "precompiled.hpp"
 
+/* data_path.hpp
+ *  Included structs:
+ *      - MigrPath
+ *      - DialoguePath
+ *      - UIPath
+ *      - UITextPath
+ *      - UIDialoguePath
+ */
+
 // ======================= S T R U C T =======================
 // ===    MigrPath
 // ======================= S T R U C T =======================
@@ -81,6 +90,27 @@ private:
 
     static constexpr auto DIALOGUE_FOLDER_NAME = u8"dialogues";
     static constexpr auto CHOICE_FOLDER_NAME = u8"choices";
+};
+
+// ======================= S T R U C T =======================
+// ===    UIFont
+// ======================= S T R U C T =======================
+
+struct UIFontPath {
+    static const path_t PATCH_BASE;
+    static const path_t MIGR_BASE;
+
+    static const path_t PATCH_FOLDER_FONTS_FILES;
+    static const path_t PATCH_FILE_FONTS_INFO;
+
+    static const path_t MIGR_FOLDER_FONTS_FILES;
+    static const path_t MIGR_FILE_FONTS_INFO;
+
+private:
+    static constexpr auto BASE_FOLDER_NAME = u8"font";
+
+    constexpr static auto FONTS_FILES_FOLDER_NAME = u8"fonts";
+    constexpr static auto FONTS_INFO_FILE_NAME = "fonts.json";
 };
 
 

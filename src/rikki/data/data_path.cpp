@@ -42,3 +42,16 @@ const path_t UIDialoguePath::PATCH_FOLDER_DIALOGUE = path_t(UIDialoguePath::PATC
 const path_t UIDialoguePath::PATCH_FOLDER_CHOICE = path_t(UIDialoguePath::PATCH_BASE).append(UIDialoguePath::CHOICE_FOLDER_NAME);
 const path_t UIDialoguePath::MIGR_FOLDER_DIALOGUE = path_t(UIDialoguePath::MIGR_BASE).append(UIDialoguePath::DIALOGUE_FOLDER_NAME);
 const path_t UIDialoguePath::MIGR_FOLDER_CHOICE = path_t(UIDialoguePath::MIGR_BASE).append(UIDialoguePath::CHOICE_FOLDER_NAME);
+
+// ======================= S T R U C T =======================
+// ===    UIFont
+// ======================= S T R U C T =======================
+
+const path_t UIFontPath::PATCH_BASE = path_t(UIPath::PATCH_BASE).append(UIFontPath::BASE_FOLDER_NAME);
+const path_t UIFontPath::MIGR_BASE = path_t(UIPath::MIGR_BASE).append(UIFontPath::BASE_FOLDER_NAME);
+
+const path_t UIFontPath::PATCH_FOLDER_FONTS_FILES = path_t(UIFontPath::PATCH_BASE).append(UIFontPath::FONTS_FILES_FOLDER_NAME);
+const path_t UIFontPath::PATCH_FILE_FONTS_INFO = path_t(UIFontPath::PATCH_BASE).append(UIFontPath::FONTS_INFO_FILE_NAME);
+
+const path_t UIFontPath::MIGR_FOLDER_FONTS_FILES = path_t(UIFontPath::MIGR_BASE).append(UIFontPath::FONTS_FILES_FOLDER_NAME);
+const path_t UIFontPath::MIGR_FILE_FONTS_INFO = path_t(UIFontPath::MIGR_BASE).append(UIFontPath::FONTS_INFO_FILE_NAME);

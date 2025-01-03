@@ -4,6 +4,7 @@
 #include "rikki/data/ui_text/ui_text.hpp"
 #include "ui_text_extractor.hpp"
 #include "ui_dialogue_extractor.hpp"
+#include "ui_font_extractor.hpp"
 
 #include "utils/ui_text_util.hpp"
 #include "utils/filesystem_util.hpp"
@@ -34,16 +35,28 @@ size_t UIExtractor::extract() {
 
     FilesystemUtil::delete_and_create_directories(path_t(m_dir) / UIPath::PATCH_BASE);
 
+    auto do_extract = [this](IExtractor* p, const std::string& s) {
+        WvInvoker::log(LOG_LV_ALERT, "Start extract " + s + " from game");
+        const auto res = p->extract();
+        WvInvoker::log(LOG_LV_ALERT, "Finished extract " + s + " data from game");
+        return res;
+    };
+
     size_t result = 0;
 
     {
         UITextExtractor extractor(m_dir, &ui);
-        result += extractor.extract();
+        result += do_extract(&extractor, "ui-text");
     }
 
     {
         UIDialogueExtractor extractor(m_dir, &ui);
-        result += extractor.extract();
+        result += do_extract(&extractor, "ui-dialogue");
+    }
+
+    {
+        UIFontExtractor extractor(m_dir, &ui);
+        result += do_extract(&extractor, "ui-font");
     }
 
     return result;
