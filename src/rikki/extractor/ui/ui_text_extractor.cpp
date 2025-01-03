@@ -1,7 +1,7 @@
 #include "ui_text_extractor.hpp"
 #include "rikki/data/data_path.hpp"
 #include "rikki/data/ui_text/ui_text.hpp"
-#include "rikki/data/ui_text/ui_json.hpp"
+#include "rikki/data/ui_text/ui_text_json.hpp"
 #include "rikki/data/ui_text/key/ui_text_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_dialog_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_setting_key.hpp"
@@ -113,9 +113,9 @@ InGameUITextExtractor::InGameUITextExtractor(UIText& ut, const path_t& dst) :
 // ======================== C L A S S ========================
 
 size_t SettingUITextExtractor::extract() {
-    size_t total = 0;
+    size_t total  = 0;
     size_t failed = 0;
-    size_t ok = 0;
+    size_t ok      = 0;
 
     SettingUIText s { };
 

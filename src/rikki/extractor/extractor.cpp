@@ -30,7 +30,7 @@ void Extractor::do_extract(const path_t& dst) {
     ChoiceExtractor choExtractor(dst);
     extract_process(&choExtractor, "choices");
 
-    // extract ui-texts
+    // extract ui
     UIExtractor uiExtractor(dst);
     extract_process(&uiExtractor, "ui");
 
@@ -66,7 +66,7 @@ void Extractor::do_generate_migration_info(const path_t& dst) {
     ChoicePatcher choPatcher(dst);
     generate_process(&choPatcher, "choices");
 
-    // generate ui-text migration info
+    // generate ui migration info
     UIPatcher uiPatcher(dst);
     generate_process(&uiPatcher, "ui");
     uiPatcher.close();

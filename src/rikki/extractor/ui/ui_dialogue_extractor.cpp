@@ -21,6 +21,7 @@ size_t UIDialogueExtractor::extract() {
     size_t result = 0;
 
     // dialogues
+    WvInvoker::log(LOG_LV_ALERT, "Start extract ui-dialogues data from game");
     FilesystemUtil::delete_and_create_directories(m_dbDia);
 
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
@@ -53,7 +54,10 @@ size_t UIDialogueExtractor::extract() {
         WvInvoker::log(LOG_LV_PROG, log);
     }
 
+    WvInvoker::log(LOG_LV_ALERT, "Finished extract ui-dialogues data from game");
+
     // choices
+    WvInvoker::log(LOG_LV_ALERT, "Start extract ui-choices data from game");
     FilesystemUtil::delete_and_create_directories(m_dbCho);
 
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
@@ -85,6 +89,8 @@ size_t UIDialogueExtractor::extract() {
 
         WvInvoker::log(LOG_LV_PROG, log);
     }
+
+    WvInvoker::log(LOG_LV_ALERT, "Finished extract ui-choices data from game");
 
     return result;
 }

@@ -30,7 +30,7 @@ public:
      */
     explicit UITextExtractor(const path_t& dst, UI* pUI);
 private:
-    UI* const m_pUI;               /* Ptr of UI */
+    UI* const m_pUI; /* Ptr of UI */
 };
 
 // ======================== C L A S S ========================

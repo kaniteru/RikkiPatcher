@@ -122,7 +122,6 @@ PatcherResult UIDialoguePatcher::migration() {
 }
 
 PatcherResult UIDialoguePatcher::generate_migration_info() {
-
     return { };
 }
 

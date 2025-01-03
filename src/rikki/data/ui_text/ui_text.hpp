@@ -2,7 +2,7 @@
 #define RIKKI_PATCHER_RIKKI_DATA_UI_HPP
 #include "precompiled.hpp"
 #include "rikki/data/i_data.hpp"
-#include "ui_json.hpp"
+#include "ui_text_json.hpp"
 #include "key/ui_text_key.hpp"
 
 /* ui_text.hpp

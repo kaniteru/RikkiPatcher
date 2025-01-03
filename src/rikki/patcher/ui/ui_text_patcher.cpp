@@ -3,7 +3,7 @@
 #include "rikki/data/data_path.hpp"
 #include "rikki/data/ui/ui.hpp"
 #include "rikki/data/ui_text/ui_text.hpp"
-#include "rikki/data/ui_text/ui_json.hpp"
+#include "rikki/data/ui_text/ui_text_json.hpp"
 #include "rikki/data/ui_text/key/ui_text_dialog_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_setting_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_in_game_key.hpp"
