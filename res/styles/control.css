@@ -76,7 +76,7 @@
     animation: bounce 2s infinite;
 }
 #bt-ctrl-options-apply:hover {
-    background-color: orangered;
+    background-color: tomato;
     animation: none;
 }
 
@@ -104,7 +104,7 @@
     background-color: grey;
 }
 #bt-ctrl-setting:hover {
-    background-color: darkmagenta;
+    background-color: rebeccapurple;
 }
 
 #div-ctrl-options-footer {
@@ -129,7 +129,7 @@
 
 #bt-ctrl-options-setting:hover,
 #bt-ctrl-options-usage:hover {
-    background-color: darkgreen;
+    background-color: rebeccapurple;
 }
 
 #div-ctrl-patch {
