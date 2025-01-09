@@ -23,10 +23,6 @@ using font_iterator_t = std::function<void(nlohmann::basic_json<>& array)>;
 
 class UIFont final : public IData {
 public:
-    bool backup(const path_t& dir) final;
-    bool save() final;
-    bool save(const path_t& dir) final;
-
     /**
      * @brief Get all added fonts from json.
      *
@@ -41,6 +37,10 @@ public:
      * @param [in] fonts Fonts to add.
      */
     void set_fonts(const font_vector_t& fonts);
+
+    bool backup(const path_t& dir) final;
+    bool save() final;
+    bool save(const path_t& dir) final;
 private:
     void iterate_elements(const font_iterator_t& callback);
     nlohmann::json& get_json_font_arr();
