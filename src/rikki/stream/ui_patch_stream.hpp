@@ -10,6 +10,7 @@
 struct InGameUITextKey;
 struct SettingUITextKey;
 struct DialogUITextKey;
+struct TitleUITextKey;
 
 // ======================== C L A S S ========================
 // ===    UITextPatchStream

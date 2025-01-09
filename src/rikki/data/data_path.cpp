@@ -26,10 +26,12 @@ const path_t UITextPath::MIGR_BASE = path_t(UIPath::MIGR_BASE).append(UITextPath
 const path_t UITextPath::PATCH_FILE_IN_GAME = path_t(UITextPath::PATCH_BASE) / UITextPath::IN_GAME_FILE_NAME;
 const path_t UITextPath::PATCH_FILE_SETTING = path_t(UITextPath::PATCH_BASE) / UITextPath::SETTING_FILE_NAME;
 const path_t UITextPath::PATCH_FILE_DIALOG = path_t(UITextPath::PATCH_BASE) / UITextPath::DIALOG_FILE_NAME;
+const path_t UITextPath::PATCH_FILE_TITLE = path_t(UITextPath::PATCH_BASE) / UITextPath::TITLE_FILE_NAME;
 
 const path_t UITextPath::MIGR_FILE_IN_GAME = path_t(UITextPath::MIGR_BASE) / UITextPath::IN_GAME_FILE_NAME;
 const path_t UITextPath::MIGR_FILE_SETTING = path_t(UITextPath::MIGR_BASE) / UITextPath::SETTING_FILE_NAME;
 const path_t UITextPath::MIGR_FILE_DIALOG = path_t(UITextPath::MIGR_BASE) / UITextPath::DIALOG_FILE_NAME;
+const path_t UITextPath::MIGR_FILE_TITLE = path_t(UITextPath::MIGR_BASE) / UITextPath::TITLE_FILE_NAME;
 
 // ======================= S T R U C T =======================
 // ===    UIDialoguePath
