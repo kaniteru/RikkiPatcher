@@ -51,6 +51,10 @@ PatcherResult UITextPatcher::patch() {
     // dialog text patch
     DialogUITextPatcher dialog(m_dir, m_pUT);
     result += do_patch(UITextPath::PATCH_FILE_DIALOG, dialog, u8"dialog");
+
+    // title text patch
+    TitleUITextPatcher title(m_dir, m_pUT);
+    result += do_patch(UITextPath::PATCH_FILE_DIALOG, title, u8"title");
     return result;
 }
 
