@@ -2,10 +2,14 @@
 #include "ui_text.hpp"
 #include "key/ui_text_dialog_key.hpp"
 #include "key/ui_text_setting_key.hpp"
+#include "key/ui_text_msg_box_text.hpp"
 #include "key/ui_text_in_game_key.hpp"
+#include "key/ui_text_title_key.hpp"
 
 #define PAIR_AND_ADD_A(MAP, PKEY, VAL) MAP.emplace(PKEY, VAL);
 #define PAIR_AND_ADD(PKEY, VAL) PAIR_AND_ADD_A(m_map, PKEY, VAL);
+
+namespace j {
 
 // ======================= S T R U C T =======================
 // ===    InGameUIText
@@ -30,12 +34,6 @@ std::map<const char*, std::string&> InGameUIText::get_map() {
 // ===    DialogUIText
 // ======================= S T R U C T =======================
 
-DialogUIText::Dialog& DialogUIText::Dialog::operator=(const DialogUITextEntry& other) {
-    system = other.m_system;
-    text = other.m_text;
-    return *this;
-}
-
 std::map<const char*, DialogUIText::Dialog&> DialogUIText::get_type1_map() {
     std::map<const char*, DialogUIText::Dialog&> result { };
     PAIR_AND_ADD_A(result, DialogUITextKeyMgr::KEY_DELETE_SAVE_FILE, delete_save_file);
@@ -58,19 +56,44 @@ std::vector<std::pair<uint8_t, std::map<const char*, DialogUIText::Dialog&>>> Di
 }
 
 // ======================= S T R U C T =======================
+// ===    MsgBoxText
+// ======================= S T R U C T =======================
+
+bool MsgBoxText::operator==(const MsgBoxText& rhs) const {
+    return font == rhs.font && color == rhs.color && size == rhs.size && x == rhs.x && y == rhs.y && width == rhs.width
+        && show == rhs.show && text == rhs.text;
+}
+
+void MsgBoxText::into_json_array(nlohmann::basic_json<>& j) {
+    j[MsgBoxUITextKey::KEY_FONT] = font;
+    j[MsgBoxUITextKey::KEY_COLOR] = color;
+    j[MsgBoxUITextKey::KEY_FONT_SIZE] = size;
+    j[MsgBoxUITextKey::KEY_X] = x;
+    j[MsgBoxUITextKey::KEY_Y] = y;
+    j[MsgBoxUITextKey::KEY_WIDTH] = width;
+    j[MsgBoxUITextKey::KEY_SHOW] = show;
+    j[MsgBoxUITextKey::KEY_TEXT] = text;
+}
+
+MsgBoxText MsgBoxText::from_json_array(const nlohmann::basic_json<>& j) {
+    MsgBoxText result { };
+    result.font = j[MsgBoxUITextKey::KEY_FONT];
+    result.color = j[MsgBoxUITextKey::KEY_COLOR];
+    result.size = j[MsgBoxUITextKey::KEY_FONT_SIZE];
+    result.x = j[MsgBoxUITextKey::KEY_X];
+    result.y = j[MsgBoxUITextKey::KEY_Y];
+    result.width = j[MsgBoxUITextKey::KEY_WIDTH];
+    result.show = j[MsgBoxUITextKey::KEY_SHOW];
+    result.text = j[MsgBoxUITextKey::KEY_TEXT];
+    return result;
+}
+
+// ======================= S T R U C T =======================
 // ===    SettingUIText
 // ======================= S T R U C T =======================
 
-SettingUIText::FontStyle& SettingUIText::FontStyle::operator=(const SettingUITextEntry& rhs) {
-    font  = rhs.m_font;
-    color = rhs.m_color;
-    size   = rhs.m_size;
-    text  = rhs.m_text;
-    return *this;
-}
-
-std::map<const char*, SettingUIText::FontStyle&> SettingUIText::get_map() {
-    std::map<const char*, SettingUIText::FontStyle&> result { };
+std::map<const char*, MsgBoxText&> SettingUIText::get_map() {
+    std::map<const char*, MsgBoxText&> result { };
     PAIR_AND_ADD_A(result, SettingUITextKeyMgr::KEY_FULLSCREEN, fullscreen);
     PAIR_AND_ADD_A(result, SettingUITextKeyMgr::KEY_SKIP_SEEN_DIALOGUES, skip_seen_dialogues);
     PAIR_AND_ADD_A(result, SettingUITextKeyMgr::KEY_REVERSE_MOUSE_WHEEL, reverse_mouse_wheel);
@@ -87,8 +110,8 @@ std::map<const char*, SettingUIText::FontStyle&> SettingUIText::get_map() {
     return result;
 }
 
-std::map<const char*, SettingUIText::FontStyle&> SettingUIText::get_controls_usage_map() {
-    std::map<const char*, SettingUIText::FontStyle&> result { };
+std::map<const char*, MsgBoxText&> SettingUIText::get_controls_usage_map() {
+    std::map<const char*, MsgBoxText&> result { };
     PAIR_AND_ADD_A(result, SettingUITextKeyMgr::KEY_CONTROLS_USAGE_TITLE, controls_usage.title);
     PAIR_AND_ADD_A(result, SettingUITextKeyMgr::KEY_CONTROLS_USAGE_LINE_1, controls_usage.line_1);
     PAIR_AND_ADD_A(result, SettingUITextKeyMgr::KEY_CONTROLS_USAGE_LINE_2, controls_usage.line_2);
@@ -97,4 +120,17 @@ std::map<const char*, SettingUIText::FontStyle&> SettingUIText::get_controls_usa
     PAIR_AND_ADD_A(result, SettingUITextKeyMgr::KEY_CONTROLS_USAGE_LINE_5, controls_usage.line_5);
     PAIR_AND_ADD_A(result, SettingUITextKeyMgr::KEY_CONTROLS_USAGE_LINE_6, controls_usage.line_6);
     return result;
+}
+
+// ======================= S T R U C T =======================
+// ===    TitleUIText
+// ======================= S T R U C T =======================
+
+std::map<const char*, MsgBoxText&> TitleUIText::get_map() {
+    std::map<const char*, MsgBoxText&> result { };
+    PAIR_AND_ADD_A(result, TitleUITextKeyMgr::KEY_UNLOCKED_SELECT_CHAPTER_MSGBOX_TITLE, unlocked_select_chapter_msgbox.title);
+    PAIR_AND_ADD_A(result, TitleUITextKeyMgr::KEY_UNLOCKED_SELECT_CHAPTER_MSGBOX_LINE1, unlocked_select_chapter_msgbox.line_1);
+    PAIR_AND_ADD_A(result, TitleUITextKeyMgr::KEY_UNLOCKED_SELECT_CHAPTER_MSGBOX_LINE2, unlocked_select_chapter_msgbox.line_2);
+    return result;
+}
 }

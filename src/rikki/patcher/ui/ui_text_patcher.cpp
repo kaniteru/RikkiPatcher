@@ -4,9 +4,10 @@
 #include "rikki/data/ui/ui.hpp"
 #include "rikki/data/ui_text/ui_text.hpp"
 #include "rikki/data/ui_text/ui_text_json.hpp"
-#include "rikki/data/ui_text/key/ui_text_dialog_key.hpp"
-#include "rikki/data/ui_text/key/ui_text_setting_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_in_game_key.hpp"
+#include "rikki/data/ui_text/key/ui_text_setting_key.hpp"
+#include "rikki/data/ui_text/key/ui_text_dialog_key.hpp"
+#include "rikki/data/ui_text/key/ui_text_title_key.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
 #include "rikki/stream/ui_migr_stream.hpp"
 #include "utils/filesystem_util.hpp"
@@ -93,7 +94,7 @@ PatcherResult InGameUITextPatcher::patch() {
     size_t& passed = result.m_passed;
 
     const UITextPatchStream patchStream(m_db);
-    auto patchData = patchStream.get_texts<InGameUIText>();
+    auto patchData = patchStream.get_texts<j::InGameUIText>();
 
     for (const auto& [pKey, val] : patchData.get_map()) {
         total++;
@@ -147,7 +148,7 @@ PatcherResult SettingUITextPatcher::patch() {
     size_t& passed = result.m_passed;
 
     const UITextPatchStream patchStream(m_db);
-    auto patchData = patchStream.get_texts<SettingUIText>();
+    auto patchData = patchStream.get_texts<j::SettingUIText>();
 
     auto loop_map = [this, &total, &ok, &failed](const auto& m) {
         for (const auto& [pKey, val] : m) {
@@ -157,7 +158,7 @@ PatcherResult SettingUITextPatcher::patch() {
             bool patched = false;
 
             if (const auto it = SettingUITextKeyMgr::g_keys.find(pKey); it != SettingUITextKeyMgr::g_keys.end()) {
-                const SettingUITextEntry buf(val);
+                const setting_ui_text_t buf(val);
                 patched = m_ut->set_setting(it->second, buf);
             }
 
@@ -207,12 +208,12 @@ PatcherResult DialogUITextPatcher::patch() {
     size_t& passed = result.m_passed;
 
     const UITextPatchStream patchStream(m_db);
-    auto patchData = patchStream.get_texts<DialogUIText>();
+    auto patchData = patchStream.get_texts<j::DialogUIText>();
 
-    static auto d_to_entry = [](const DialogUIText::Dialog& d) {
-        DialogUITextEntry res { };
-        res.m_system = d.system;
-        res.m_text = d.text;
+    static auto d_to_entry = [](const j::DialogUIText::Dialog& d) {
+        dialog_ui_text_t res { };
+        res.system = d.system;
+        res.text = d.text;
         return res;
     };
 
@@ -278,3 +279,57 @@ DialogUITextPatcher::DialogUITextPatcher(const path_t& src, UIText* ut) :
     IUITextPatcher(src, ut),
     m_db(path_t(src) / UITextPath::PATCH_FILE_DIALOG),
     m_migrDB(path_t(src) / UITextPath::MIGR_FILE_DIALOG) { }
+
+// ======================== C L A S S ========================
+// ===    TitleUITextPatcher
+// ======================== C L A S S ========================
+
+PatcherResult TitleUITextPatcher::patch() {
+    PatcherResult result { };
+    size_t& total   = result.m_total;
+    size_t& ok       = result.m_ok;
+    size_t& failed  = result.m_failed;
+    size_t& passed = result.m_passed;
+
+    const UITextPatchStream patchStream(m_db);
+    auto patchData = patchStream.get_texts<j::TitleUIText>();
+
+    for (const auto& [pKey, val] : patchData.get_map()) {
+        total++;
+        std::u8string log = StringUtil::cstr_to_u8(pKey) + u8"=>";
+
+        bool patched = false;
+
+        if (const auto it = TitleUITextKeyMgr::g_keys.find(pKey); it != TitleUITextKeyMgr::g_keys.end()) {
+            patched = m_ut->set_title(it->second, val);
+        }
+
+        if (patched) {
+            ok++;
+            log += u8"OK";
+        } else {
+            failed++;
+            log += u8"Failed";
+        }
+
+        WvInvoker::log(LOG_LV_PROG, log);
+    }
+
+    const std::string log = "Total: " + std::to_string(total)      + " | ok: " + std::to_string(ok)
+                                     + " | failed: " + std::to_string(failed) + " | passed: " + std::to_string(passed);
+    WvInvoker::log(LOG_LV_INFO, log);
+    return result;
+}
+
+PatcherResult TitleUITextPatcher::migration() {
+    return { };
+}
+
+PatcherResult TitleUITextPatcher::generate_migration_info() {
+    return { };
+}
+
+TitleUITextPatcher::TitleUITextPatcher(const path_t& src, UIText* ut) :
+    IUITextPatcher(src, ut),
+    m_db(path_t(src) / UITextPath::PATCH_FILE_TITLE),
+    m_migrDB(path_t(src) / UITextPath::MIGR_FILE_TITLE) { }

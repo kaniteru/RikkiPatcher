@@ -3,20 +3,8 @@
 #include "rikki/data/ui/ui.hpp"
 
 // ======================== C L A S S ========================
-// ===    UIDialogue
+// ===    UIFont
 // ======================== C L A S S ========================
-
-bool UIFont::backup(const path_t& dir) {
-    throw std::exception("Not Implemented. Use UI::backup().");
-}
-
-bool UIFont::save() {
-    throw std::exception("Not Implemented. Use UI::backup().");
-}
-
-bool UIFont::save(const path_t& dir) {
-    throw std::exception("Not Implemented. Use UI::backup().");
-}
 
 font_vector_t UIFont::get_fonts() {
     font_vector_t result { };
@@ -37,6 +25,18 @@ void UIFont::set_fonts(const font_vector_t& fonts) {
     for (const auto& it : fonts) {
         j.emplace_back(it);
     }
+}
+
+bool UIFont::backup(const path_t& dir) {
+    throw std::exception("Not Implemented. Use UI::backup().");
+}
+
+bool UIFont::save() {
+    throw std::exception("Not Implemented. Use UI::save().");
+}
+
+bool UIFont::save(const path_t& dir) {
+    throw std::exception("Not Implemented. Use UI::save().");
 }
 
 void UIFont::iterate_elements(const font_iterator_t& callback) {

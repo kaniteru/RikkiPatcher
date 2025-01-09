@@ -11,18 +11,20 @@ T UITextPatchStream::get_texts() const {
     return JsonUtil::from_json<T>(m_j);
 }
 
-template InGameUIText UITextPatchStream::get_texts<InGameUIText>() const;
-template SettingUIText UITextPatchStream::get_texts<SettingUIText>() const;
-template DialogUIText UITextPatchStream::get_texts<DialogUIText>() const;
+template j::InGameUIText UITextPatchStream::get_texts<j::InGameUIText>() const;
+template j::SettingUIText UITextPatchStream::get_texts<j::SettingUIText>() const;
+template j::DialogUIText UITextPatchStream::get_texts<j::DialogUIText>() const;
+template j::TitleUIText UITextPatchStream::get_texts<j::TitleUIText>() const;
 
 template<class T>
 void UITextPatchStream::set_texts(const T& t) {
     JsonUtil::to_json(m_j, t);
 }
 
-template void UITextPatchStream::set_texts<InGameUIText>(const InGameUIText& t);
-template void UITextPatchStream::set_texts<SettingUIText>(const SettingUIText& t);
-template void UITextPatchStream::set_texts<DialogUIText>(const DialogUIText& t);
+template void UITextPatchStream::set_texts<j::InGameUIText>(const j::InGameUIText& t);
+template void UITextPatchStream::set_texts<j::SettingUIText>(const j::SettingUIText& t);
+template void UITextPatchStream::set_texts<j::DialogUIText>(const j::DialogUIText& t);
+template void UITextPatchStream::set_texts<j::TitleUIText>(const j::TitleUIText& t);
 
 void UITextPatchStream::clear() {
     m_j.clear();

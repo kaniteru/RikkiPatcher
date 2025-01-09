@@ -6,6 +6,7 @@
 #include "rikki/data/ui_text/key/ui_text_dialog_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_setting_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_in_game_key.hpp"
+#include "rikki/data/ui_text/key/ui_text_title_key.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
 
 #include "utils/filesystem_util.hpp"
@@ -44,6 +45,11 @@ size_t UITextExtractor::extract() {
     result += dialog.extract();
     WvInvoker::log(LOG_LV_ALERT, u8"Dialog text extract finished");
 
+    WvInvoker::log(LOG_LV_ALERT, u8"Start extract the title text");
+    TitleUITextExtractor title(ut, m_dir);
+    result += title.extract();
+    WvInvoker::log(LOG_LV_ALERT, u8"Title text extract finished");
+
     return result;
 }
 
@@ -67,7 +73,7 @@ size_t InGameUITextExtractor::extract() {
     size_t failed = 0;
     size_t ok = 0;
 
-    InGameUIText ig { };
+    j::InGameUIText ig { };
 
     for (auto& [pKey, val] : ig.get_map()) {
         auto log = StringUtil::cstr_to_u8(pKey) + std::u8string(u8" => ");
@@ -91,7 +97,7 @@ size_t InGameUITextExtractor::extract() {
     }
 
     UITextPatchStream patchStream(m_db);
-    patchStream.set_texts<InGameUIText>(ig);
+    patchStream.set_texts<j::InGameUIText>(ig);
 
     if (!patchStream.save()) {
         WvInvoker::log(LOG_LV_ERR, "Can't write extracted in-game text data");
@@ -117,7 +123,7 @@ size_t SettingUITextExtractor::extract() {
     size_t failed = 0;
     size_t ok      = 0;
 
-    SettingUIText s { };
+    j::SettingUIText s { };
 
     for (const auto& [pKey, val] : s.get_map()) {
         auto log = StringUtil::cstr_to_u8(pKey) + std::u8string(u8" => ");
@@ -126,7 +132,7 @@ size_t SettingUITextExtractor::extract() {
         try {
             const auto& key = SettingUITextKeyMgr::g_keys.at(pKey);
 
-            SettingUITextEntry buf { };
+            setting_ui_text_t buf { };
             m_ut.get_setting(key, buf);
             val = buf;
 
@@ -148,7 +154,7 @@ size_t SettingUITextExtractor::extract() {
         try {
             const auto& key = SettingUITextKeyMgr::g_keys.at(pKey);
 
-            SettingUITextEntry buf { };
+            setting_ui_text_t buf { };
             m_ut.get_setting(key, buf);
             val = buf;
 
@@ -164,7 +170,7 @@ size_t SettingUITextExtractor::extract() {
     }
 
     UITextPatchStream patchStream(m_db);
-    patchStream.set_texts<SettingUIText>(s);
+    patchStream.set_texts<j::SettingUIText>(s);
 
     if (!patchStream.save()) {
         WvInvoker::log(LOG_LV_ERR, "Can't write extracted setting text data");
@@ -190,7 +196,7 @@ size_t DialogUITextExtractor::extract() {
     size_t failed = 0;
     size_t ok = 0;
 
-    DialogUIText d { };
+    j::DialogUIText d { };
 
     for (const auto& [pKey, val] : d.get_type1_map()) {
         auto log = StringUtil::cstr_to_u8(pKey) + std::u8string(u8" => ");
@@ -199,7 +205,7 @@ size_t DialogUITextExtractor::extract() {
         try {
             const auto& key = DialogUITextKeyMgr::g_type1Keys.at(pKey);
 
-            DialogUITextEntry buf { };
+            dialog_ui_text_t buf { };
             m_ut.get_dialog_type1(key, buf);
             val = buf;
 
@@ -221,7 +227,7 @@ size_t DialogUITextExtractor::extract() {
         try {
             const auto& key = DialogUITextKeyMgr::g_type2Keys.at(pKey);
 
-            DialogUITextEntry buf { };
+            dialog_ui_text_t buf { };
             m_ut.get_dialog_type2(key, buf);
             val = buf;
 
@@ -237,7 +243,7 @@ size_t DialogUITextExtractor::extract() {
     }
 
     UITextPatchStream patchStream(m_db);
-    patchStream.set_texts<DialogUIText>(d);
+    patchStream.set_texts<j::DialogUIText>(d);
 
     if (!patchStream.save()) {
         WvInvoker::log(LOG_LV_ERR, "Can't write extracted dialog text data");
@@ -253,3 +259,53 @@ DialogUITextExtractor::DialogUITextExtractor(UIText& ut, const path_t& dst) :
     IExtractor(dst),
     IUITextExtractor(ut),
     m_db(path_t(dst) / UITextPath::PATCH_FILE_DIALOG) { }
+
+// ======================== C L A S S ========================
+// ===    TitleUITextExtractor
+// ======================== C L A S S ========================
+
+size_t TitleUITextExtractor::extract() {
+    size_t total = 0;
+    size_t failed = 0;
+    size_t ok = 0;
+
+    j::TitleUIText t { };
+
+    for (auto& [pKey, val] : t.get_map()) {
+        auto log = StringUtil::cstr_to_u8(pKey) + std::u8string(u8" => ");
+        total++;
+
+        try {
+            const auto key = TitleUITextKeyMgr::g_keys.at(pKey);
+            title_ui_text_t buf { };
+            m_ut.get_title(key, buf);
+            val = buf;
+
+            log += u8"OK";
+            ok++;
+        }
+        catch (...) {
+            log += u8"Failed";
+            failed++;
+        }
+
+        WvInvoker::log(LOG_LV_PROG, log);
+    }
+
+    UITextPatchStream patchStream(m_db);
+    patchStream.set_texts<j::TitleUIText>(t);
+
+    if (!patchStream.save()) {
+        WvInvoker::log(LOG_LV_ERR, "Can't write extracted in-game text data");
+        return 0;
+    }
+
+    const auto log = "Total: " + std::to_string(total) + " | extracted: " + std::to_string(ok) + " | Failed: " + std::to_string(failed);
+    WvInvoker::log(LOG_LV_INFO, log);
+    return ok;
+}
+
+TitleUITextExtractor::TitleUITextExtractor(UIText& ut, const path_t& dst) :
+    IExtractor(dst),
+    IUITextExtractor(ut),
+    m_db(path_t(dst) / UITextPath::PATCH_FILE_TITLE) { }

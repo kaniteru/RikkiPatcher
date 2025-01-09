@@ -10,8 +10,7 @@
  *      - InGameUITextPatcher
  *      - SettingUITextPatcher
  *      - DialogUITextPatcher
- *
- *   Note: Make child patcher private since it's only used in UIPatcher
+ *      - TitleUITextPatcher
  */
 
 class UIText;
@@ -134,6 +133,27 @@ public:
 private:
     const path_t m_db;         /* Path of dialog patch data folder */
     const path_t m_migrDB; /* Path of dialog migration data folder */
+};
+
+// ======================== C L A S S ========================
+// ===    TitleUITextPatcher
+// ======================== C L A S S ========================
+
+class TitleUITextPatcher final : public IUITextPatcher {
+public:
+    PatcherResult patch() final;
+    PatcherResult migration() final;
+    PatcherResult generate_migration_info() final;
+
+public:
+    /**
+     * @param [in] src Target root folder of custom patch data.
+     * @param [in] ut  Ptr of loaded UIText.
+     */
+    TitleUITextPatcher(const path_t& src, UIText* ut);
+private:
+    const path_t m_db;         /* Path of title patch data folder */
+    const path_t m_migrDB; /* Path of title migration data folder */
 };
 
 

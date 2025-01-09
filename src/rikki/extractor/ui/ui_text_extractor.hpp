@@ -10,6 +10,7 @@
  *      - InGameUITextExtractor
  *      - SettingUITextExtractor
  *      - DialogUITextExtractor
+ *      - TitleUITextExtractor
  */
 
 class UI;
@@ -99,6 +100,24 @@ public:
     DialogUITextExtractor(UIText& ut, const path_t& dst);
 private:
     const path_t m_db; /* Path of dialog data folder */
+};
+
+// ======================== C L A S S ========================
+// ===    TitleUITextExtractor
+// ======================== C L A S S ========================
+
+class TitleUITextExtractor final : public IExtractor, IUITextExtractor {
+public:
+    size_t extract() final;
+
+public:
+    /**
+     * @param [in] ut Ref of UIText.
+     * @param [in] dst Root path of custom patch data.
+     */
+    TitleUITextExtractor(UIText& ut, const path_t& dst);
+private:
+    const path_t m_db; /* Path of title data folder */
 };
 
 
