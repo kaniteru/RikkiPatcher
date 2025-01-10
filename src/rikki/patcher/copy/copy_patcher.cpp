@@ -51,12 +51,15 @@ PatcherResult CopyPatcher::patch() {
         }
 
         bool success = false;
-        auto log = src.generic_u8string() + u8" [";
+        auto log = src.filename().generic_u8string() + u8" [";
 
         if (std::filesystem::is_directory(src)) {
             log += u8"directory] => ";
-            std::filesystem::copy(src, dst, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
-            success = true;
+            try {
+                std::filesystem::copy(src, dst, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
+                success = true;
+            } catch (const std::filesystem::filesystem_error& e) { }
+
         } else {
             log += u8"file] => ";
             success = std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);
