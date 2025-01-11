@@ -2,8 +2,6 @@
 #define RIKKI_PATCHER_PRECOMPILED_HPP
 #include <webview.h>
 #include <nlohmann/json.hpp>
-#include <SHA512.hpp>
-
 
 #include <windows.h>
 #include <shellapi.h>
@@ -33,7 +31,8 @@
 #include <filesystem>
 #include <functional>
 
-using path_t = std::filesystem::path;
+namespace fs = std::filesystem;
+using path_t = fs::path;
 
 
 #endif //RIKKI_PATCHER_PRECOMPILED_HPP

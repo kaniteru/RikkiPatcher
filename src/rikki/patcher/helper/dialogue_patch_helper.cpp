@@ -30,7 +30,7 @@ PatcherResult DialoguePatchHelper::do_migrate(const path_t& fPatch, const path_t
             std::filesystem::remove(fPatch);
         }
 
-        return DialoguePatchHelperResult::_OK_NO_DATA;
+        return DialoguePatchHelperResult::PATCHER_RESULT_OK_NO_DATA;
     }
 
     DialoguePatchStream patchStream(fPatch);
@@ -43,7 +43,7 @@ PatcherResult DialoguePatchHelper::do_migrate(const path_t& fPatch, const path_t
         std::filesystem::create_directories(path_t(fPatch).parent_path());
 
         if (!patchStream.save()) {
-            return DialoguePatchHelperResult::_FAILED_SAVE;
+            return DialoguePatchHelperResult::PATCHER_RESULT_FAILED_SAVE;
         }
 
         const auto size = pureMap.size();
@@ -130,7 +130,7 @@ PatcherResult DialoguePatchHelper::do_migrate(const path_t& fPatch, const path_t
     patchStream.set_dialogues(newMap);
 
     if (!patchStream.save()) {
-        return DialoguePatchHelperResult::_FAILED_SAVE;
+        return DialoguePatchHelperResult::PATCHER_RESULT_FAILED_SAVE;
     }
 
     return result;
@@ -165,7 +165,7 @@ PatcherResult ChoicePatchHelper::do_migrate(const path_t& fPatch, const path_t& 
             std::filesystem::remove(fPatch);
         }
 
-        return DialoguePatchHelperResult::_OK_NO_DATA;
+        return DialoguePatchHelperResult::PATCHER_RESULT_OK_NO_DATA;
     }
 
     ChoicePatchStream patchStream(fPatch);
@@ -178,7 +178,7 @@ PatcherResult ChoicePatchHelper::do_migrate(const path_t& fPatch, const path_t& 
         std::filesystem::create_directories(path_t(fPatch).parent_path());
 
         if (!patchStream.save()) {
-            return DialoguePatchHelperResult::_FAILED_SAVE;
+            return DialoguePatchHelperResult::PATCHER_RESULT_FAILED_SAVE;
         }
 
         const auto size = pureMap.size();
@@ -223,7 +223,7 @@ PatcherResult ChoicePatchHelper::do_migrate(const path_t& fPatch, const path_t& 
     patchStream.set_choices(newMap);
 
     if (!patchStream.save()) {
-        return DialoguePatchHelperResult::_FAILED_SAVE;
+        return DialoguePatchHelperResult::PATCHER_RESULT_FAILED_SAVE;
     }
 
     return result;

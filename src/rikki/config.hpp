@@ -1,5 +1,5 @@
-#ifndef RIKKY_PATCHER_RIKKY_CONFIG_HPP
-#define RIKKY_PATCHER_RIKKY_CONFIG_HPP
+#ifndef RIKKY_PATCHER_RIKKI_CONFIG_HPP
+#define RIKKY_PATCHER_RIKKI_CONFIG_HPP
 #include "precompiled.hpp"
 
 /* config.hpp
@@ -50,7 +50,7 @@ public:
      * @param [in] key Target key.
      * @return Returns true if key exists.
      */
-    bool exists(const char* key);
+    bool exists(const char* key) const;
 
     /**
      * @brief Set config value with key. If key exists, it will overwrite.
@@ -102,4 +102,4 @@ void Config::set(const char* key, T&& value) {
 }
 
 
-#endif //RIKKY_PATCHER_RIKKY_CONFIG_HPP
+#endif //RIKKY_PATCHER_RIKKI_CONFIG_HPP

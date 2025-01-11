@@ -5,7 +5,7 @@
 // ===    Config
 // ======================== C L A S S ========================
 
-bool Config::exists(const char* key) {
+bool Config::exists(const char* key) const {
     return m_j.contains(key);
 }
 

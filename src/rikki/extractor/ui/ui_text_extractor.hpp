@@ -20,7 +20,7 @@ class UIText;
 // ===    UITextExtractor
 // ======================== C L A S S ========================
 
-class UITextExtractor : public IExtractor {
+class UITextExtractor final : public IExtractor {
 public:
     size_t extract() final;
 

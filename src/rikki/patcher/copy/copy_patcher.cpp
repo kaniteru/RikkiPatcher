@@ -55,11 +55,11 @@ PatcherResult CopyPatcher::patch() {
 
         if (std::filesystem::is_directory(src)) {
             log += u8"directory] => ";
+
             try {
                 std::filesystem::copy(src, dst, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
                 success = true;
             } catch (const std::filesystem::filesystem_error& e) { }
-
         } else {
             log += u8"file] => ";
             success = std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);

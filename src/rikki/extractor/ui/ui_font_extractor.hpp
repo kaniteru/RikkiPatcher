@@ -14,7 +14,7 @@ class UI;
 // ===    UIFontExtractor
 // ======================== C L A S S ========================
 
-class UIFontExtractor : public IExtractor {
+class UIFontExtractor final : public IExtractor {
 public:
     size_t extract() final;
 

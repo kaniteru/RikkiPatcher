@@ -7,7 +7,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out")
 
 include(json)
 include(webview)
-include(sha)
 include(7zip)
 
 set(7ZIP_VER "2409")
@@ -36,7 +35,6 @@ target_include_directories(RikkiPatcher
 
 target_link_libraries(RikkiPatcher
         PRIVATE webview::core
-        PRIVATE SHA::static
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /utf-8")

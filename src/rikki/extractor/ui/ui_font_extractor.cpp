@@ -9,6 +9,10 @@
 #include "wv/enums.hpp"
 #include "wv/wv_invoker.hpp"
 
+// ======================== C L A S S ========================
+// ===    UIFontExtractor
+// ======================== C L A S S ========================
+
 size_t UIFontExtractor::extract() {
     FilesystemUtil::delete_and_create_directories(path_t(m_dir) / UIFontPath::PATCH_BASE);
 

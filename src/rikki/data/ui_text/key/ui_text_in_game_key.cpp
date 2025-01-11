@@ -1,5 +1,9 @@
 #include "ui_text_in_game_key.hpp"
 
+// ======================= S T R U C T =======================
+// ===    InGameUITextKeyMgr
+// ======================= S T R U C T =======================
+
 const InGameUITextKey InGameUITextKeyMgr::previous_dialogue = {
     "asset/json/server/ui/sui3.json",
     "88195832281_0.5124109114928297",
