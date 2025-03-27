@@ -15,7 +15,7 @@ A simple patch tool to modify the game《 [鼓手余命十日谭 (Shiina Taki's 
 
 [Translation Patches Repo](https://github.com/kaniteru/RikkiPatcher-Patches)
 
-## Branches Info
+## Branches
 - **main**: The latest release source
 - **develop**: The development and testing source
 

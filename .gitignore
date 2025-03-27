@@ -4,6 +4,8 @@ vcpkg/
 # Kani
 build-release/
 build-debug/
+build-rel/
+build-deb/
 
 # Build results
 [Dd]ebug/
