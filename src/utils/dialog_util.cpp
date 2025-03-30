@@ -1,7 +1,3 @@
-//
-// Created by Kaniteru on 2024-11-29.
-//
-
 #include "dialog_util.hpp"
 
 bool DialogUtil::folder_select_dialog(path_t& dir) {
