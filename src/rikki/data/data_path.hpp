@@ -9,6 +9,7 @@
  *      - UIPath
  *      - UITextPath
  *      - UIDialoguePath
+ *      - CopyPath
  */
 
 // ======================= S T R U C T =======================
@@ -31,6 +32,8 @@ struct DialoguePath {
     static const path_t MIGR_FOLDER_CHOICE;
 
 private:
+    static constexpr auto BASE_FOLDER_NAME = u8"dialogue";
+
     static constexpr auto DIALOGUE_FOLDER_NAME = u8"dialogues";
     static constexpr auto CHOICE_FOLDER_NAME = u8"choices";
 };
@@ -112,8 +115,22 @@ struct UIFontPath {
 private:
     static constexpr auto BASE_FOLDER_NAME = u8"font";
 
-    constexpr static auto FONTS_FILES_FOLDER_NAME = u8"fonts";
-    constexpr static auto FONTS_INFO_FILE_NAME = u8"fonts.json";
+    static constexpr auto FONTS_FILES_FOLDER_NAME = u8"fonts";
+    static constexpr auto FONTS_INFO_FILE_NAME = u8"fonts.json";
+};
+
+// ======================= S T R U C T =======================
+// ===    CopyPath
+// ======================= S T R U C T =======================
+
+struct CopyPath {
+    static const path_t PATCH_BASE;
+
+    static const path_t PATCH_CONFIG_FILE;
+
+    static constexpr auto CONFIG_FILE_NAME = u8"copy.json";
+private:
+    static constexpr auto BASE_FOLDER_NAME = u8"copy";
 };
 
 

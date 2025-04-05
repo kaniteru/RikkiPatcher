@@ -1,26 +1,40 @@
 #include "dir_mgr.hpp"
+#include "dir_mgr_enum.hpp"
 
-// ======================== C L A S S ========================
-// ===    DirMgr
-// ======================== C L A S S ========================
+// ======================= S T R U C T =======================
+// ===    DirMgr::impl
+// ======================= S T R U C T =======================
 
-const path_t& DirMgr::get(const eDir type) {
-    return m_dirs[type];
-}
+class DirMgr::impl {
+public:
+    void init(const path_t& gmDir);
+    const path_t& get(eDir type);
 
-DirMgr::DirMgr(const path_t& gmDir) {
+private:
+    std::shared_mutex m_mtx;
+    std::unordered_map<eDir, path_t> m_dirs;
+};
+
+void DirMgr::impl::init(const path_t& gmDir) {
+    std::lock_guard lock(m_mtx);
+    m_dirs.clear();
+
     auto add = [this](const eDir e, const std::filesystem::path& d) {
         m_dirs[e] = d;
     };
 
     auto add_dir = [this](const eDir e, eDir parent, const char* s) {
         const auto dir = path_t(m_dirs[parent]).append(s);
-        std::filesystem::create_directories(dir);
+        fs::create_directories(dir);
         m_dirs[e] = dir;
     };
 
     add(DIR_PROJ_BASE, std::filesystem::current_path());
     add_dir(DIR_PROJ_TEMP, DIR_PROJ_BASE, "temp");
+
+    add(DIR_PROJ_CONFIG, std::filesystem::current_path().append("config.json"));
+    add(DIR_PROJ_LOG, std::filesystem::current_path().append("log.txt"));
+
     add_dir(DIR_PROJ_DATA_EXTRACED, DIR_PROJ_BASE, "extracted");
 
     add(DIR_PROJ_EXE_7ZIP, std::filesystem::current_path().append("7zip").append("7za.exe"));
@@ -32,3 +46,30 @@ DirMgr::DirMgr(const path_t& gmDir) {
     add(DIR_GAME_JSON_STARTUP, path_t(json).append("startup.json"));
     add(DIR_GAME_JSON_DIALOGUES, path_t(json).append("server").append("scene"));
 }
+
+const path_t& DirMgr::impl::get(const eDir type) {
+    std::shared_lock lock(m_mtx);
+    return m_dirs.at(type);
+}
+
+// ======================== C L A S S ========================
+// ===    DirMgr
+// ======================== C L A S S ========================
+
+void DirMgr::init(const path_t& gmDir) {
+    DirMgr::instance().m_pImpl->init(gmDir);
+}
+
+const path_t& DirMgr::get(const eDir type) {
+    return DirMgr::instance().m_pImpl->get(type);
+}
+
+DirMgr& DirMgr::instance() {
+    static DirMgr mgr;
+    return mgr;
+}
+
+DirMgr::DirMgr() :
+    m_pImpl(std::make_unique<DirMgr::impl>()) { }
+
+DirMgr::~DirMgr() { }

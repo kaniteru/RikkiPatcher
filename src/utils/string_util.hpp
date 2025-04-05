@@ -2,10 +2,15 @@
 #define RIKKI_PATCHER_UTILS_STRING_UTIL_HPP
 #include "precompiled.hpp"
 
+// ======================== C L A S S ========================
+// ===    StringUtil
+// ======================== C L A S S ========================
+
 class StringUtil {
 public:
     static void replace(std::string& str, std::string_view oldSub, std::string_view newSub);
-    static const char* u8_to_cstr(std::u8string_view str);
+    static const char* str_to_u8_then_cstr(const std::string& str);
+    static const char* u8_to_cstr(const std::u8string& str);
     static std::u8string cstr_to_u8(const char* str);
     static std::u8string str_to_u8(std::string_view str);
 };

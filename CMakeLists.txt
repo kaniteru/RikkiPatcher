@@ -8,6 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out")
 include(json)
 include(webview)
 include(7zip)
+include(threadpool)
+include(consolestream)
 
 set(7ZIP_VER "2409")
 download_7zip("${7ZIP_VER}")
@@ -24,17 +26,19 @@ else()
     add_executable(RikkiPatcher WIN32 "${SRC_FILES}")
 endif()
 
-target_precompile_headers(RikkiPatcher
-        PRIVATE "${PROJECT_SOURCE_DIR}/src/precompiled.hpp"
+target_precompile_headers(RikkiPatcher PRIVATE
+        "${PROJECT_SOURCE_DIR}/src/precompiled.hpp"
 )
 
-target_include_directories(RikkiPatcher
-        PRIVATE "${PROJECT_SOURCE_DIR}/src"
-        PRIVATE "${json_SOURCE_DIR}/single_include"
+target_include_directories(RikkiPatcher PRIVATE
+        "${PROJECT_SOURCE_DIR}/src"
 )
 
-target_link_libraries(RikkiPatcher
-        PRIVATE webview::core
+target_link_libraries(RikkiPatcher PRIVATE
+        webview::core
+        nlohmann_json::nlohmann_json
+        ThreadPool
+        ConsoleStream
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /utf-8")

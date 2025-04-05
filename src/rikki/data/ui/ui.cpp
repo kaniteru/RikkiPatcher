@@ -5,10 +5,6 @@
 // ===    UI
 // ======================== C L A S S ========================
 
-bool UI::backup(const path_t& dir) {
-    throw std::exception("Not Implemented. Use save().");
-}
-
 bool UI::save() {
     return this->save(m_file);
 }

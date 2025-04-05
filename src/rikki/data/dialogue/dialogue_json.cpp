@@ -1,6 +1,6 @@
 #include "dialogue_json.hpp"
 
-namespace j {
+using namespace j;
 
 // ======================= S T R U C T =======================
 // ===    j::DialogueSpan
@@ -24,5 +24,4 @@ bool Dialogue::operator==(const Dialogue& rhs) const {
 
 bool Choice::operator==(const Choice& rhs) const {
     return text == rhs.text;
-}
 }

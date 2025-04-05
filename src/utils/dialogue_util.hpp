@@ -6,6 +6,10 @@ namespace j {
 struct DialogueSpan;
 }
 
+// ======================== C L A S S ========================
+// ===    DialogueUtil
+// ======================== C L A S S ========================
+
 class DialogueUtil {
 public:
     /**

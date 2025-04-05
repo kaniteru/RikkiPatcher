@@ -9,8 +9,6 @@
 class IData {
 public:
     bool is_valid() const;
-
-    virtual bool backup(const path_t& dir) = 0;
     virtual bool save() = 0;
     virtual bool save(const path_t& dir) = 0;
 

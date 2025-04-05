@@ -8,14 +8,17 @@
  *      - UI
  */
 
+class UI;
+using ui_ptr_t = std::shared_ptr<UI>;
+
 // ======================== C L A S S ========================
 // ===    UI
 // ======================== C L A S S ========================
 
 class UI : public IData {
 public:
-    bool backup(const path_t& dir) final;
     bool save() final;
+
     bool save(const path_t& dir) final;
 
     /**

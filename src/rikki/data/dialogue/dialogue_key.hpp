@@ -13,8 +13,8 @@
 // ======================= S T R U C T =======================
 
 struct DialogueKey {
-    static constexpr int32_t ID_DIALOGUE               = 11;
-    static constexpr int32_t IDX_SPEAKER                = 3;
+    static constexpr int32_t ID_DIALOGUE                = 11;
+    static constexpr int32_t IDX_SPEAKER                 = 3;
     static constexpr int32_t IDX_DIALOGUE_SPAN = 6; // DialogueUtil::extract_texts_from_span
 
     static constexpr int32_t IDX_ATTS = 11;

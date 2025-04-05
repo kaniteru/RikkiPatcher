@@ -1,5 +1,9 @@
 #include "filesystem_util.hpp"
 
+// ======================== C L A S S ========================
+// ===    FilesystemUtil
+// ======================== C L A S S ========================
+
 std::vector<path_t> FilesystemUtil::sort_files(const path_t& dir) {
     std::vector<path_t> result { };
 

@@ -1,6 +1,10 @@
 #include "sevenzip_util.hpp"
 #include "string_util.hpp"
 
+// ======================== C L A S S ========================
+// ===    SevenzipUtil
+// ======================== C L A S S ========================
+
 bool SevenzipUtil::zip(const std::vector<path_t>& files, const path_t& dst, bool usePW, const std::u8string& pw) const {
     auto cmd = this->get_cmd_prefix()
     + u8"a "

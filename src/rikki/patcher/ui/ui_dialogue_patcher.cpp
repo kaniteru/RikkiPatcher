@@ -6,17 +6,17 @@
 #include "rikki/data/dialogue/dialogue_json.hpp"
 #include "rikki/data/ui_dialogue/ui_dialogue.hpp"
 #include "rikki/data/ui_dialogue/ui_dialogue_key.hpp"
-#include "rikki/extractor/ui/ui_dialogue_extractor.hpp"
 #include "rikki/patcher/helper/dialogue_patch_helper.hpp"
 
-#include "wv/enums.hpp"
+#include "utils/filesystem_util.hpp"
+
 #include "wv/wv_invoker.hpp"
 
 // ======================== C L A S S ========================
 // ===    IUIDialoguePatcher
 // ======================== C L A S S ========================
 
-IUIDialoguePatcher::IUIDialoguePatcher(UI* pUI) :
+IUIDialoguePatcher::IUIDialoguePatcher(std::shared_ptr<UI> pUI) :
     m_pUI(pUI) { }
 
 // ======================== C L A S S ========================
@@ -25,10 +25,11 @@ IUIDialoguePatcher::IUIDialoguePatcher(UI* pUI) :
 
 PatcherResult UIDialoguePatcher::patch() {
     PatcherResult result { };
-    size_t& total   = result.m_total;
-    size_t& ok       = result.m_ok;
-    size_t& failed  = result.m_failed;
-    size_t& passed = result.m_passed;
+    auto& ok        = result.m_ok;
+    auto& failed  = result.m_failed;
+    auto& passed = result.m_passed;
+
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::PATCH_UI_DIALOGUE_START);
 
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
         const auto fPatch = path_t(m_db).append(pFile);
@@ -37,54 +38,39 @@ PatcherResult UIDialoguePatcher::patch() {
             continue;
         }
 
-        auto log = StringUtil::cstr_to_u8(pFile) + u8" => ";
-
-        total++;
-
         UIDialogue dia(m_pUI, pKey);
 
         if (!dia.is_valid()) {
-            log += u8"Failed (invalid gm data)";
-            WvInvoker::log(LOG_LV_PROG, log);
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_UI_DIALOGUE_FAILED_READ, pFile);
 
             failed++;
             continue;
         }
 
         const auto res = DialoguePatchHelper::do_patch(fPatch, &dia);
-        const auto lenPatched   = std::to_string(res.m_ok);
-        const auto lenDialogues = std::to_string(res.m_total);
 
-        log += std::u8string(lenPatched.begin(), lenPatched.end())
-              + u8" / "
-              + std::u8string(lenDialogues.begin(), lenDialogues.end())
-              + u8"";
-        WvInvoker::log(LOG_LV_PROG, log);
+        WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_UI_DIALOGUE_OK, pFile, res.total(), res.m_ok);
 
         ok++;
     }
 
-    const std::string log = "Total: " + std::to_string(total);
-    WvInvoker::log(LOG_LV_INFO, log);
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::PATCH_UI_DIALOGUE_RESULT, result.total(), ok, failed, passed);
     return result;
 }
 
 PatcherResult UIDialoguePatcher::migration() {
     PatcherResult result { };
-    size_t& total   = result.m_total;
-    size_t& ok       = result.m_ok;
-    size_t& failed  = result.m_failed;
-    size_t& passed = result.m_passed;
+    auto& ok        = result.m_ok;
+    auto& failed  = result.m_failed;
+    auto& passed = result.m_passed;
+
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::MIGR_UI_DIALOGUE_START);
 
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
-        auto log = StringUtil::cstr_to_u8(pFile) + u8" => ";
-        total++;
-
         UIDialogue dia(m_pUI, pKey);
 
         if (!dia.is_valid()) {
-            log += u8"Failed (invalid gm data)";
-            WvInvoker::log(LOG_LV_PROG, log);
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::MIGR_UI_DIALOGUE_FAILED_READ, pFile);
 
             failed++;
             continue;
@@ -97,36 +83,83 @@ PatcherResult UIDialoguePatcher::migration() {
 
         switch (DialoguePatchHelperResult::to_result(res)) {
         case DialoguePatchHelperResult::OK_NO_DATA :
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::MIGR_UI_DIALOGUE_OK_NO_GM_DATA, pFile);
             ok++;
-            log += u8"OK (no data)";
             break;
 
         case DialoguePatchHelperResult::FAILED_SAVE :
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::MIGR_UI_DIALOGUE_FAILED_WRITE, pFile);
             failed++;
-            log += u8"Write failed";
             break;
 
         default:
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::MIGR_UI_DIALOGUE_OK, pFile, res.total(), res.m_ok);
             ok++;
-            log += u8"OK";
             break;
         }
-
-        WvInvoker::log(LOG_LV_PROG, log);
     }
 
-    const std::string log = "Total: " + std::to_string(total)      + " | ok: " + std::to_string(ok)
-                                     + " | failed: " + std::to_string(failed) + " | passed: " + std::to_string(passed);
-    WvInvoker::log(LOG_LV_INFO, log);
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::MIGR_UI_DIALOGUE_RESULT, result.total(), ok, failed, passed);
+
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::MIGR_UI_DIALOGUE_EXTRACT);
+    UIDialoguePatcher::extract(m_migrDB, m_pUI);
     return result;
 }
 
-PatcherResult UIDialoguePatcher::generate_migration_info() {
-    WvInvoker::log(LOG_LV_WARN, "ui-dialogue dialogues doesn't support generate the migration info");
-    return { };
+PatcherResult UIDialoguePatcher::extract() {
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::EXTRACT_UI_DIALOGUE_START);
+    UIDialoguePatcher::extract(m_db, m_pUI);
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::MIGR_UI_DIALOGUE_EXTRACT);
+    UIDialoguePatcher::extract(m_migrDB, m_pUI);
+    return { }; // todo: handle result
 }
 
-UIDialoguePatcher::UIDialoguePatcher(const path_t& src, UI* pUI) :
+PatcherResult UIDialoguePatcher::extract(const path_t& dir, std::shared_ptr<UI> pUI) {
+    PatcherResult result { };
+    auto& ok        = result.m_ok;
+    auto& failed  = result.m_failed;
+    auto& passed = result.m_passed;
+
+    FilesystemUtil::delete_and_create_directories(dir);
+
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::EXTRACT_UI_DIALOGUE_START);
+
+    for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
+        UIDialogue dia(pUI, pKey);
+
+        if (!dia.is_valid()) {
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::EXTRACT_UI_DIALOGUE_FAILED_READ, pFile);
+
+            failed++;
+            continue;
+        }
+
+        const auto dialogues = dia.extract_dialogues();
+
+        if (dialogues.empty()) {
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::EXTRACT_UI_DIALOGUE_PASS_NO_GM_DATA, pFile);
+
+            passed++;
+            continue;
+        }
+
+        DialoguePatchStream patchStream(path_t(dir).append(pFile));
+        patchStream.set_dialogues(dialogues);
+
+        if (patchStream.save()) {
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::EXTRACT_UI_DIALOGUE_OK, pFile, dialogues.size());
+            ok++;
+        } else {
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::EXTRACT_UI_DIALOGUE_FAILED_WRITE, pFile);
+            failed++;
+        }
+    }
+
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::EXTRACT_UI_DIALOGUE_RESULT, result.total(), ok, failed, passed);
+    return result;
+}
+
+UIDialoguePatcher::UIDialoguePatcher(const path_t& src, std::shared_ptr<UI> pUI) :
     IPatcher(src),
     IUIDialoguePatcher(pUI),
     m_db(path_t(src) / UIDialoguePath::PATCH_FOLDER_DIALOGUE),
@@ -138,10 +171,9 @@ UIDialoguePatcher::UIDialoguePatcher(const path_t& src, UI* pUI) :
 
 PatcherResult UIChoicePatcher::patch() {
     PatcherResult result { };
-    size_t& total   = result.m_total;
-    size_t& ok       = result.m_ok;
-    size_t& failed  = result.m_failed;
-    size_t& passed = result.m_passed;
+    auto& ok        = result.m_ok;
+    auto& failed  = result.m_failed;
+    auto& passed = result.m_passed;
 
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
         const auto fPatch = path_t(m_db).append(pFile);
@@ -150,54 +182,39 @@ PatcherResult UIChoicePatcher::patch() {
             continue;
         }
 
-        auto log = StringUtil::cstr_to_u8(pFile) + u8" => ";
-
-        total++;
-
         UIDialogue dia(m_pUI, pKey);
 
         if (!dia.is_valid()) {
-            log += u8"Failed (invalid gm data)";
-            WvInvoker::log(LOG_LV_PROG, log);
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_UI_CHOICE_FAILED_READ, pFile);
 
             failed++;
             continue;
         }
 
         const auto res = ChoicePatchHelper::do_patch(fPatch, &dia);
-        const auto lenPatched   = std::to_string(res.m_ok);
-        const auto lenDialogues = std::to_string(res.m_total);
 
-        log += std::u8string(lenPatched.begin(), lenPatched.end())
-              + u8" / "
-              + std::u8string(lenDialogues.begin(), lenDialogues.end())
-              + u8"";
-        WvInvoker::log(LOG_LV_PROG, log);
+        WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_UI_CHOICE_OK, pFile, res.total(), res.m_ok);
 
         ok++;
     }
 
-    const std::string log = "Total: " + std::to_string(total);
-    WvInvoker::log(LOG_LV_INFO, log);
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::PATCH_UI_CHOICE_RESULT, result.total(), ok, failed, passed);
     return result;
 }
 
 PatcherResult UIChoicePatcher::migration() {
     PatcherResult result { };
-    size_t& total   = result.m_total;
-    size_t& ok       = result.m_ok;
-    size_t& failed  = result.m_failed;
-    size_t& passed = result.m_passed;
+    auto& ok        = result.m_ok;
+    auto& failed  = result.m_failed;
+    auto& passed = result.m_passed;
+
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::MIGR_UI_CHOICE_START);
 
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
-        auto log = StringUtil::cstr_to_u8(pFile) + u8" => ";
-        total++;
-
         UIDialogue dia(m_pUI, pKey);
 
         if (!dia.is_valid()) {
-            log += u8"Failed (invalid gm data)";
-            WvInvoker::log(LOG_LV_PROG, log);
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::MIGR_UI_CHOICE_FAILED_READ, pFile);
 
             failed++;
             continue;
@@ -210,36 +227,83 @@ PatcherResult UIChoicePatcher::migration() {
 
         switch (DialoguePatchHelperResult::to_result(res)) {
         case DialoguePatchHelperResult::OK_NO_DATA :
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::MIGR_UI_CHOICE_OK_NO_GM_DATA, pFile);
             ok++;
-            log += u8"OK (no data)";
             break;
 
         case DialoguePatchHelperResult::FAILED_SAVE :
-                failed++;
-            log += u8"Write failed";
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::MIGR_UI_CHOICE_FAILED_WRITE, pFile);
+            failed++;
             break;
 
         default:
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::MIGR_UI_CHOICE_OK, pFile, res.total(), res.m_ok);
             ok++;
-            log += u8"OK";
             break;
         }
-
-        WvInvoker::log(LOG_LV_PROG, log);
     }
 
-    const std::string log = "Total: " + std::to_string(total)      + " | ok: " + std::to_string(ok)
-                                     + " | failed: " + std::to_string(failed) + " | passed: " + std::to_string(passed);
-    WvInvoker::log(LOG_LV_INFO, log);
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::MIGR_UI_CHOICE_RESULT, result.total(), ok, failed, passed);
+
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::MIGR_UI_CHOICE_EXTRACT);
+    UIChoicePatcher::extract(m_migrDB, m_pUI);
     return result;
 }
 
-PatcherResult UIChoicePatcher::generate_migration_info() {
-    WvInvoker::log(LOG_LV_WARN, "ui-dialogue choices doesn't support generate the migration info");
-    return { };
+PatcherResult UIChoicePatcher::extract() {
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::EXTRACT_UI_CHOICE_START);
+    UIChoicePatcher::extract(m_db, m_pUI);
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::MIGR_UI_CHOICE_EXTRACT);
+    UIChoicePatcher::extract(m_migrDB, m_pUI);
+    return { }; // todo: handle result
 }
 
-UIChoicePatcher::UIChoicePatcher(const path_t& src, UI* pUI) :
+PatcherResult UIChoicePatcher::extract(const path_t& src, std::shared_ptr<UI> pUI) {
+    PatcherResult result { };
+    auto& ok        = result.m_ok;
+    auto& failed  = result.m_failed;
+    auto& passed = result.m_passed;
+
+    FilesystemUtil::delete_and_create_directories(src);
+
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::EXTRACT_UI_CHOICE_START);
+
+    for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
+        UIDialogue dia(pUI,  pKey);
+
+        if (!dia.is_valid()) {
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::EXTRACT_UI_CHOICE_FAILED_READ, pFile);
+
+            failed++;
+            continue;
+        }
+
+        const auto choices = dia.extract_choices();
+
+        if (choices.empty()) {
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::EXTRACT_UI_CHOICE_PASS_NO_GM_DATA, pFile);
+
+            passed++;
+            continue;
+        }
+
+        ChoicePatchStream patchStream(path_t(src).append(pFile));
+        patchStream.set_choices(choices);
+
+        if (patchStream.save()) {
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::EXTRACT_UI_CHOICE_OK, pFile, choices.size());
+            ok++;
+        } else {
+            WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::EXTRACT_UI_CHOICE_FAILED_WRITE, pFile);
+            failed++;
+        }
+    }
+
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::EXTRACT_UI_CHOICE_RESULT, result.total(), ok, failed, passed);
+    return result;
+}
+
+UIChoicePatcher::UIChoicePatcher(const path_t& src, std::shared_ptr<UI> pUI) :
     IPatcher(src),
     IUIDialoguePatcher(pUI),
     m_db(path_t(src) / UIDialoguePath::PATCH_FOLDER_CHOICE),

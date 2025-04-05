@@ -3,7 +3,10 @@
 
 #include "utils/sevenzip_util.hpp"
 #include "utils/temp_dir_mutex.hpp"
-#include "utils/instance_factory.hpp"
+
+// ======================== C L A S S ========================
+// ===    UITextUtil
+// ======================== C L A S S ========================
 
 bool UITextUtil::copy_startup_from_game_and_decrypt(path_t& file) {
     if (!INSTFAC(TempDirMutex)->lock(TEMP_FOLDER_NAME)) {

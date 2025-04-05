@@ -7,12 +7,9 @@
 #include "ui_text_patcher.hpp"
 #include "ui_dialogue_patcher.hpp"
 #include "ui_font_patcher.hpp"
-#include "rikki/extractor/ui/ui_extractor.hpp"
 
 #include "utils/ui_text_util.hpp"
-#include "utils/filesystem_util.hpp"
 
-#include "wv/enums.hpp"
 #include "wv/wv_invoker.hpp"
 
 // ======================== C L A S S ========================
@@ -20,124 +17,132 @@
 // ======================== C L A S S ========================
 
 PatcherResult UIPatcher::patch() { // todo: check file exists
-    if (!m_isAvailable) {
-        WvInvoker::log(LOG_LV_ERR, u8"Can't copied the game file from game directory");
-        return { };
-    }
-
-    if (!m_pUI->is_valid()) {
-        WvInvoker::log(LOG_LV_ERR, u8"Can't read the game data");
+    if (!this->is_ready()) {
         return { };
     }
 
     PatcherResult result { };
 
     {
-        UIText ut(m_pUI.get());
+        auto pUT = std::make_shared<UIText>(m_pUI);
 
-        WvInvoker::log(LOG_LV_ALERT, "Start apply custom ui-texts data into game");
-        UITextPatcher patcher(m_dir, &ut);
+        UITextPatcher patcher(m_dir, pUT);
         result += patcher.patch();
-        WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-texts data into game");
     }
 
     {
-        WvInvoker::log(LOG_LV_ALERT, "Start apply custom ui-dialogues data into game");
-        UIDialoguePatcher diaPatcher(m_dir, m_pUI.get());
+        UIDialoguePatcher diaPatcher(m_dir, m_pUI);
         result += diaPatcher.patch();
-        WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-dialogues data into game");
 
-        WvInvoker::log(LOG_LV_ALERT, "Start apply custom ui-choices data into game");
-        UIChoicePatcher choPatcher(m_dir, m_pUI.get());
+        UIChoicePatcher choPatcher(m_dir, m_pUI);
         result += choPatcher.patch();
-        WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-choices data into game");
     }
 
     {
-        WvInvoker::log(LOG_LV_ALERT, "Start apply custom ui-fonts data into game");
-        UIFontPatcher patcher(m_dir, m_pUI.get());
+        UIFontPatcher patcher(m_dir, m_pUI);
         result += patcher.patch();
-        WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui-fonts data into game");
     }
 
     return result;
 }
 
 PatcherResult UIPatcher::migration() {
-    if (!m_isAvailable) {
-        WvInvoker::log(LOG_LV_ERR, u8"Can't copied the game file from game directory");
-        return { };
-    }
-
-    if (!m_pUI->is_valid()) {
-        WvInvoker::log(LOG_LV_ERR, u8"Can't read the game data");
+    if (!this->is_ready()) {
         return { };
     }
 
     PatcherResult result { };
 
     {
-        UIText ut(m_pUI.get());
+        auto pUT = std::make_shared<UIText>(m_pUI);
 
-        // apply ui-texts
-        WvInvoker::log(LOG_LV_ALERT, "Start the migration of ui-texts data");
-        UITextPatcher patcher(m_dir, &ut);
+        UITextPatcher patcher(m_dir, pUT);
         result += patcher.migration();
-        WvInvoker::log(LOG_LV_ALERT, "Finished the migration of ui-texts data");
     }
 
     {
-        WvInvoker::log(LOG_LV_ALERT, "Start the migration of ui-dialogues data");
-        UIDialoguePatcher diaPatcher(m_dir, m_pUI.get());
+        UIDialoguePatcher diaPatcher(m_dir, m_pUI);
         result += diaPatcher.migration();
-        WvInvoker::log(LOG_LV_ALERT, "Finished the migration of ui-dialogues data");
 
-        WvInvoker::log(LOG_LV_ALERT, "Start the migration of ui-choices data");
-        UIChoicePatcher choPatcher(m_dir, m_pUI.get());
+        UIChoicePatcher choPatcher(m_dir, m_pUI);
         result += choPatcher.migration();
-        WvInvoker::log(LOG_LV_ALERT, "Finished the migration of ui-choices data");
     }
 
     {
-        WvInvoker::log(LOG_LV_ALERT, "Start the migration of ui-fonts data");
-        UIFontPatcher patcher(m_dir, m_pUI.get());
+        UIFontPatcher patcher(m_dir, m_pUI);
         result += patcher.migration();
-        WvInvoker::log(LOG_LV_ALERT, "Finished the migration of ui-fonts data");
     }
 
     return result;
 }
 
-PatcherResult UIPatcher::generate_migration_info() {
-    if (m_isAvailable) {
-        this->close();
-    }
-    else {
-        WvInvoker::log(LOG_LV_ERR, u8"Can't copied the game file from game directory");
+PatcherResult UIPatcher::extract() {
+    if (!this->is_ready()) {
+        return { };
     }
 
-    UIExtractor extractor(path_t(m_dir) / MigrPath::BASE_FOLDER_NAME);
-    extractor.extract();
-    return { };
+    PatcherResult result { };
+
+    {
+        auto pUT = std::make_shared<UIText>(m_pUI);
+
+        UITextPatcher patcher(m_dir, pUT);
+        result += patcher.extract();
+        patcher.migration();
+    }
+
+    {
+        UIDialoguePatcher diaPatcher(m_dir, m_pUI);
+        result += diaPatcher.extract();
+
+        UIChoicePatcher choPatcher(m_dir, m_pUI);
+        result += choPatcher.extract();
+    }
+
+    {
+        UIFontPatcher patcher(m_dir, m_pUI);
+        result += patcher.extract();
+    }
+
+    return result;
 }
 
 bool UIPatcher::close() {
-    if (m_isAvailable && m_pUI) {
-        if (!m_pUI->save()) {
-            WvInvoker::log(LOG_LV_ERR, u8"Can't save the patched game file");
-        }
-
-        const auto s = UITextUtil::encrypt_startup_and_move_to_game();
-
-        if (!s) {
-            WvInvoker::log(LOG_LV_ERR, u8"Can't copied the patched game file to game directory");
-        }
-
-        m_pUI.reset();
-        return s;
+    if (!m_pUI) {
+        return false;
     }
 
-    return false;
+    if (!m_isAvailable) {
+        m_pUI.reset();
+        return false;
+    }
+
+    if (!m_pUI->save()) {
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::PATCH_UI_FAILED_WRITE);
+        m_pUI.reset();
+        return false;
+    }
+
+    if (!UITextUtil::encrypt_startup_and_move_to_game()) {
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::PATCH_UI_FAILED_COPY_TO_GAME);
+    }
+
+    m_pUI.reset();
+    return true;
+}
+
+bool UIPatcher::is_ready() const {
+    if (!m_isAvailable) {
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::PATCH_UI_FAILED_COPY);
+        return false;
+    }
+
+    if (!m_pUI->is_valid()) {
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::PATCH_UI_FAILED_READ);
+        return false;
+    }
+
+    return true;
 }
 
 UIPatcher::UIPatcher(const path_t& src) :

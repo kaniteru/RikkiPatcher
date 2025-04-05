@@ -36,14 +36,7 @@ public:
      */
     PatcherResult migration() final;
 
-    /**
-     * @brief Generate migration info data.
-     *              This data will be used to migrate custom patch data to match the updated game of features.
-     *              Game data must be unmodified.
-     *
-     * @return Returns true if generated migration info successfully.
-     */
-    PatcherResult generate_migration_info() final;
+    PatcherResult extract() final;
 
 public:
     /**
@@ -52,9 +45,9 @@ public:
      * @param [in] src Root path of custom patch data directory.
      * @param [in] pUT ptr of UIText.
      */
-    UITextPatcher(const path_t& src, UIText* pUT);
+    UITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
 private:
-    UIText* const m_pUT; /* Ptr of UIText. */
+    std::shared_ptr<UIText> m_pUT; /* Ptr of UIText. */
 };
 
 // ======================== C L A S S ========================
@@ -67,9 +60,9 @@ public:
      * @param [in] src Target root folder of custom patch data.
      * @param [in] ut  Ptr of loaded UIText.
      */
-    IUITextPatcher(const path_t& src, UIText* ut);
+    IUITextPatcher(const path_t& src, std::shared_ptr<UIText> ut);
 protected:
-    UIText* const m_ut; /* Reference of UIText */
+    std::shared_ptr<UIText> m_pUT; /* Reference of UIText */
 };
 
 // ======================== C L A S S ========================
@@ -79,15 +72,17 @@ protected:
 class InGameUITextPatcher final : public IUITextPatcher {
 public:
     PatcherResult patch() final;
+
     PatcherResult migration() final;
-    PatcherResult generate_migration_info() final;
+
+    PatcherResult extract() final;
 
 public:
     /**
      * @param [in] src Target root folder of custom patch data.
      * @param [in] ut  Ptr of loaded UIText.
      */
-    InGameUITextPatcher(const path_t& src, UIText* ut);
+    InGameUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
 private:
     const path_t m_db;         /* Path of in-game patch data folder */
     const path_t m_migrDB; /* Path of in-game migration data folder */
@@ -100,15 +95,17 @@ private:
 class SettingUITextPatcher final : public IUITextPatcher {
 public:
     PatcherResult patch() final;
+
     PatcherResult migration() final;
-    PatcherResult generate_migration_info() final;
+
+    PatcherResult extract() final;
 
 public:
     /**
      * @param [in] src Target root folder of custom patch data.
      * @param [in] ut  Ptr of loaded UIText.
      */
-    SettingUITextPatcher(const path_t& src, UIText* ut);
+    SettingUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
 private:
     const path_t m_db;         /* Path of setting patch data folder */
     const path_t m_migrDB; /* Path of setting migration data folder */
@@ -121,15 +118,17 @@ private:
 class DialogUITextPatcher final : public IUITextPatcher {
 public:
     PatcherResult patch() final;
+
     PatcherResult migration() final;
-    PatcherResult generate_migration_info() final;
+
+    PatcherResult extract() final;
 
 public:
     /**
      * @param [in] src Target root folder of custom patch data.
      * @param [in] ut  Ptr of loaded UIText.
      */
-    DialogUITextPatcher(const path_t& src, UIText* ut);
+    DialogUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
 private:
     const path_t m_db;         /* Path of dialog patch data folder */
     const path_t m_migrDB; /* Path of dialog migration data folder */
@@ -143,14 +142,14 @@ class TitleUITextPatcher final : public IUITextPatcher {
 public:
     PatcherResult patch() final;
     PatcherResult migration() final;
-    PatcherResult generate_migration_info() final;
+    PatcherResult extract() final;
 
 public:
     /**
      * @param [in] src Target root folder of custom patch data.
      * @param [in] ut  Ptr of loaded UIText.
      */
-    TitleUITextPatcher(const path_t& src, UIText* ut);
+    TitleUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
 private:
     const path_t m_db;         /* Path of title patch data folder */
     const path_t m_migrDB; /* Path of title migration data folder */

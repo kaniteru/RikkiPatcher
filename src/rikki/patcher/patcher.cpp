@@ -3,78 +3,77 @@
 #include "ui/ui_patcher.hpp"
 #include "rikki/patcher/copy/copy_patcher.hpp"
 
-#include "wv/enums.hpp"
 #include "wv/wv_invoker.hpp"
 
 // ======================== C L A S S ========================
 // ===    Patcher
 // ======================== C L A S S ========================
 
-void Patcher::do_patch(const path_t& src) {
-    // start apply custom data
-    WvInvoker::log(LOG_LV_ALERT, "Start apply custom patch data into game");
-
+void Patcher::do_patch() const {
     // apply dialogues
-    WvInvoker::log(LOG_LV_ALERT, "Start apply custom dialogues data into game");
-    DialoguePatcher diaPatcher(src);
+    DialoguePatcher diaPatcher(m_dir);
     diaPatcher.patch();
-    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom dialogues data into game");
 
     // apply choices
-    WvInvoker::log(LOG_LV_ALERT, "Start apply custom choices data into game");
-    ChoicePatcher choPatcher(src);
+    ChoicePatcher choPatcher(m_dir);
     choPatcher.patch();
-    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom choices data into game");
 
     // apply ui-texts
-    WvInvoker::log(LOG_LV_ALERT, "Start apply custom ui data into game");
-    UIPatcher uiPatcher(src);
+    UIPatcher uiPatcher(m_dir);
     uiPatcher.patch();
     uiPatcher.close();
-    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom ui data into game");
 
     // apply copy patches
-    WvInvoker::log(LOG_LV_ALERT, "Start apply custom copy data into game");
-    CopyPatcher cpyPatcher(src);
+    CopyPatcher cpyPatcher(m_dir);
     cpyPatcher.patch();
-    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom copy data into game");
-
-    // finished
-    WvInvoker::log(LOG_LV_ALERT, "Finished apply custom patch data into game");
 }
 
-void Patcher::do_migration(const path_t& dir) {
-    constexpr auto migrate_process = [&](IPatcher* p, const std::string& str) {
+void Patcher::do_migration() const {
+    constexpr auto migrate_process = [&](IPatcher* p) {
         if (!p->is_available()) {
-            WvInvoker::log(LOG_LV_ERR, "Can't migrate the " + str + " data");
             return false;
         }
 
-        WvInvoker::log(LOG_LV_ALERT, "Start the migration of " + str + " data");
         p->migration();
-        p->generate_migration_info();
-        WvInvoker::log(LOG_LV_ALERT, "Finished the migration of " + str + " data");
         return true;
     };
 
-    // start migrate custom data
-    WvInvoker::log(LOG_LV_ALERT, "Start the migration of custom data");
-
     // migrate dialogues data
-    DialoguePatcher diaPatcher(dir);
-    migrate_process(&diaPatcher, "dialogues");
+    DialoguePatcher diaPatcher(m_dir);
+    migrate_process(&diaPatcher);
 
     // migrate choices data
-    ChoicePatcher choPatcher(dir);
-    migrate_process(&choPatcher, "choices");
+    ChoicePatcher choPatcher(m_dir);
+    migrate_process(&choPatcher);
 
     // migrate ui data
-    UIPatcher uiPatcher(dir);
-    migrate_process(&uiPatcher, "ui");
+    UIPatcher uiPatcher(m_dir);
+    migrate_process(&uiPatcher);
     uiPatcher.close();
 
-    WvInvoker::log(LOG_LV_INFO, "Currently, copy patch doesn't support the migration");
-
-    // finished
-    WvInvoker::log(LOG_LV_ALERT, "Finished the migration of custom data");
+    // copy patcher doesn't support the migrating.
 }
+
+void Patcher::do_extract() const {
+    // extract dialogues
+    DialoguePatcher diaPatcher(m_dir);
+    diaPatcher.extract();
+
+    // extract choices
+    ChoicePatcher choPatcher(m_dir);
+    choPatcher.extract();
+
+    // extract ui-texts
+    UIPatcher uiPatcher(m_dir);
+    uiPatcher.extract();
+    uiPatcher.close();
+
+    // extract copy patches
+    CopyPatcher cpyPatcher(m_dir);
+    cpyPatcher.extract();
+}
+
+Patcher::Patcher(const path_t& dir) :
+    m_dir(dir) { }
+
+Patcher::~Patcher() { }

@@ -85,8 +85,8 @@ struct DialoguePatchHelperResult {
         return DialoguePatchHelperResult::OK;
     }
 
-    static constexpr PatcherResult PATCHER_RESULT_OK_NO_DATA =  { 0, 1, 0, 0 };
-    static constexpr PatcherResult PATCHER_RESULT_FAILED_SAVE = { 0, 0, 1, 0 };
+    static constexpr PatcherResult PATCHER_RESULT_OK_NO_DATA =  { -1, 0, 0 };
+    static constexpr PatcherResult PATCHER_RESULT_FAILED_SAVE = { 0, -1, 0 };
 };
 
 

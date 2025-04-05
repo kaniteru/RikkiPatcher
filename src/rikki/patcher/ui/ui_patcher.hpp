@@ -17,16 +17,21 @@ class UI;
 class UIPatcher final : public IPatcher {
 public:
     PatcherResult patch() final;
+
     PatcherResult migration() final;
-    PatcherResult generate_migration_info() final;
+
+    PatcherResult extract() final;
 
     bool close();
+private:
+    bool is_ready() const;
+
 public:
     explicit UIPatcher(const path_t& src);
-    ~UIPatcher() final;
+    ~UIPatcher() override;
 private:
-    std::unique_ptr<UI> m_pUI;
+    std::shared_ptr<UI> m_pUI;
 };
 
 
-#endif //RIKKI_PATCHER_RIKKI_PATCHER_UI_PATCHER_HPP
+#endif //RIKKI_PATCHER_RIKKI_PATCHER_UI_UI_PATCHER_HPP

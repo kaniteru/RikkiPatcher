@@ -1,5 +1,9 @@
 #include "string_util.hpp"
 
+// ======================== C L A S S ========================
+// ===    StringUtil
+// ======================== C L A S S ========================
+
 void StringUtil::replace(std::string& str, const std::string_view oldSub, const std::string_view newSub) {
     size_t pos = 0;
 
@@ -9,7 +13,11 @@ void StringUtil::replace(std::string& str, const std::string_view oldSub, const 
     }
 }
 
-const char* StringUtil::u8_to_cstr(const std::u8string_view str) {
+const char* StringUtil::str_to_u8_then_cstr(const std::string& str) {
+    return StringUtil::u8_to_cstr(StringUtil::str_to_u8(str));
+}
+
+const char* StringUtil::u8_to_cstr(const std::u8string& str) {
     return reinterpret_cast<const char*>(str.data());
 }
 

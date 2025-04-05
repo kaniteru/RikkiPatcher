@@ -13,8 +13,19 @@
 
 class Patcher {
 public:
-    static void do_patch(const path_t& src);
-    static void do_migration(const path_t& dir);
+    void do_patch() const;
+
+    void do_migration() const;
+
+    void do_extract() const;
+public:
+    /**
+     * @param [in] dir Root path of custom patch data.
+     */
+    explicit Patcher(const path_t& dir);
+    ~Patcher();
+private:
+    const path_t m_dir;
 };
 
 

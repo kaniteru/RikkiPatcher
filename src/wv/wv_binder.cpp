@@ -1,24 +1,23 @@
 #include "wv_binder.hpp"
-#include "enums.hpp"
 #include "wv_invoker.hpp"
 #include "wv_args_parser.hpp"
 
 #include "rikki/config.hpp"
 #include "rikki/dir_mgr.hpp"
 #include "rikki/patcher/patcher.hpp"
-#include "rikki/extractor/extractor.hpp"
 
-#include "utils/worker.hpp"
+#include "utils/logger.hpp"
 #include "utils/string_util.hpp"
 #include "utils/dialog_util.hpp"
 #include "utils/filesystem_util.hpp"
 #include "utils/registry_reader.hpp"
-#include "utils/instance_factory.hpp"
 
-#define BIND_EVENT_HANDLER(EVENT, FN) INSTFAC(webview::webview)->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
-#define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) INSTFAC(webview::webview)->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
+#define BIND_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
+#define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
 
 void WvBinder::bind() {
+    LOG(INFO, "Binding wv events...");
+
     BIND_EVENT_HANDLER("INIT_PATCHER", this->init_patcher);
     BIND_EVENT_HANDLER("OPEN_GITHUB", this->open_github);
     BIND_EVENT_HANDLER("OPEN_PROJECT_WEB", this->open_project_web);
@@ -34,7 +33,7 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
     constexpr static auto CONFIG_FILE = "config.json";
     constexpr static auto WORKER_THREADS = 2;
 
-    WvInvoker::log(LOG_LV_PROG, "initializing patcher...");
+    WvInvoker::log(WV_LOG_LV_PROG, "initializing patcher...");
 
     auto& instFac = InstanceFactory::instance();
     instFac.make<Config>(std::filesystem::current_path().append(CONFIG_FILE));

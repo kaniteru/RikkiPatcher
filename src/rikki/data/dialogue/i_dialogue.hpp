@@ -13,15 +13,16 @@ struct DialogueSpan;
 struct Choice;
 }
 
-using dialogue_idx_t = uint64_t; /* Dialogue index. */
-using choice_idx_t    = uint64_t; /* Choice index. */
+using element_idx_t  = uint32_t;           /* Element index. */
+using dialogue_idx_t = element_idx_t; /* Dialogue index. */
+using choice_idx_t    = element_idx_t; /* Choice index. */
 
 using dialogue_map_t = std::map<dialogue_idx_t, j::Dialogue>;
 using choice_map_t    = std::map<choice_idx_t, j::Choice>;
 
-using dialogue_iterate_t  = std::function<void(const int64_t elementID, nlohmann::basic_json<>& array)>;
-using dialogue_callback_t = std::function<void(const dialogue_idx_t idx, j::Dialogue& dia)>;
-using choices_callback_t  = std::function<void(const choice_idx_t idx, j::Choice& choice)>;
+using dialogue_iterate_t   = std::function<void(element_idx_t elementID, nlohmann::basic_json<>& array)>;
+using dialogue_callback_t = std::function<void(dialogue_idx_t idx, j::Dialogue& dia)>;
+using choices_callback_t  = std::function<void(choice_idx_t idx, j::Choice& choice)>;
 
 // ======================== C L A S S ========================
 // ===    IDialogue
@@ -61,16 +62,16 @@ public:
 protected:
     virtual void iterate_elements(const dialogue_iterate_t& callback) = 0;
      /**
-     * @brief Perform a for-each on the loaded dialogue data.
-     *             Can get index and modify the data of spekaer and diagloue string.
+     * @brief Perform a for-each on the loaded dialogue data. <br>
+     * Can get index and modify the data of spekaer and diagloue string.
      *
      * @param [in, out, optional] callback Retrieve or modify the data of spekaer and diagloue string.
      */
     void find_dialogues(const dialogue_callback_t& callback);
 
      /**
-     * @brief Perfomr a for-each on the loaded choice data.
-     *             Can get index and modify the data of choice string.
+     * @brief Perfomr a for-each on the loaded choice data. <br>
+     * Can get index and modify the data of choice string.
      *
      * @param [in, out, optional] callback Retrieve or modify the data of choice string.
      */
