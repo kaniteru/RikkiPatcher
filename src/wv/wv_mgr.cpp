@@ -1,4 +1,6 @@
 #include "wv_mgr.hpp"
+#include "rikki/dir_mgr.hpp"
+
 #include "utils/logger.hpp"
 
 // ======================= S T R U C T =======================
@@ -11,6 +13,10 @@ struct WvMgr::impl {
         m_pWv = std::make_shared<webview::webview>(enableF12, hWnd);
     }
 
+    ~impl() {
+        DLOG("Destroying webview");
+    }
+
     std::shared_ptr<webview::webview> m_pWv;
 };
 
@@ -19,6 +25,7 @@ struct WvMgr::impl {
 // ======================== C L A S S ========================
 
 void WvMgr::init(bool enableF12, void* hWnd) {
+    DirMgr::init({ });
     LOG(INFO, "Initializing WvMgr");
 
     if (WvMgr::instance().m_pImpl) {

@@ -77,6 +77,7 @@ PatcherResult UIFontPatcher::migration() {
     }
 
     WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::PATCH_UI_FONT_RESULT, size, size, 0, 0);
+    return { size, size, 0 };
 }
 
 PatcherResult UIFontPatcher::extract() {
@@ -86,6 +87,7 @@ PatcherResult UIFontPatcher::extract() {
 
     const auto fInfo = path_t(m_dir) / UIFontPath::PATCH_FILE_FONTS_INFO;
     const auto fFiles = path_t(m_dir) / UIFontPath::PATCH_FOLDER_FONTS_FILES;
+
     std::filesystem::create_directories(fFiles);
 
     const UIFont uiFont(m_pUI);
@@ -98,11 +100,6 @@ PatcherResult UIFontPatcher::extract() {
     const auto pureFonts = uiFont.get_fonts();
 
     UIFontPatchStream stream(fInfo);
-
-    if (!stream.is_loaded()) {
-        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::EXTRACT_UI_FONT_FAILED_READ);
-        return { 0, 0, 0 };
-    }
 
     const auto size = static_cast<int32_t>(stream.add_fonts(pureFonts));
 

@@ -26,7 +26,9 @@ int main(const int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
+    DLOG("Navigating to index.html");
     wv->navigate(index.string());
+    DLOG("Running wv client");
     wv->run();
     return EXIT_SUCCESS;
 }

@@ -116,10 +116,6 @@ bool UIText::set_title(const TitleUITextKey& key, const title_ui_text_t& value) 
     return found;
 }
 
-bool UIText::backup(const path_t& dir) {
-    throw std::exception("Not Implemented. Use UI::backup().");
-}
-
 bool UIText::save() {
     throw std::exception("Not Implemented. Use UI::save().");
 }

@@ -55,6 +55,9 @@ void Patcher::do_migration() const {
 }
 
 void Patcher::do_extract() const {
+    fs::remove_all(m_dir);
+    fs::create_directories(m_dir);
+
     // extract dialogues
     DialoguePatcher diaPatcher(m_dir);
     diaPatcher.extract();

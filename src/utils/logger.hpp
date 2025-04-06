@@ -53,12 +53,12 @@ private:
 template<typename ... Args>
 void Logger::log(Meta&& meta, std::string&& fmt, Args&&... args) {
     static constexpr std::array<const char*, 4> LV_TO_STR = { "DEBUG", "INFO", "WARN", "FATAL" };
-    static constexpr std::array<ktd::ANSICode, 4> LV_TO_COLOR = { ktd::color::bright_cyan, ktd::color::white, ktd::color::yellow, ktd::color::bright_red };
+    static                    std::array<ktd::ANSICode, 4> LV_TO_COLOR = { ktd::color::bright_cyan, ktd::color::white, ktd::color::yellow, ktd::color::bright_red };
 
     Logger::instance().m_pool.enqueue([
         meta = std::move(meta),
         fmt = std::move(fmt),
-        ...args = std::make_tuple(std::forward<Args>(args)...)
+        ... _args = std::forward<Args>(args)
         ]() mutable {
 
         const auto lv = static_cast<uint8_t>(meta.m_lv);
@@ -66,11 +66,15 @@ void Logger::log(Meta&& meta, std::string&& fmt, Args&&... args) {
         const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count() % 1000;
         const auto fmtTime = std::format("{:%T}.{:03d}", time, ms);
 
-        const auto fmtMsg = std::apply([&](auto&&... unpacked_args) {
-            return std::format(fmt, std::forward<decltype(unpacked_args)>(unpacked_args)...);
-        }, std::move(args));
+        std::string fmtMsg { };
+        
+        if constexpr (sizeof...(Args) > 0) {
+            fmtMsg = std::vformat(std::string_view(fmt), std::make_format_args(_args...));
+        } else {
+            fmtMsg = fmt;
+        }
 
-        auto msg = std::format("[{}][{}][{}:{}] {}",
+        const auto msg = std::format("[{}][{}][{}:{}] {}",
             fmtTime,
             LV_TO_STR[lv],
             path_t(meta.m_loc.file_name()).filename().string(),

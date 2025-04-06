@@ -1,8 +1,9 @@
 #include "wv_invoker.hpp"
 #include "rikki/dir_mgr.hpp"
 #include "rikki/config.hpp"
+#include "rikki/config_keys.hpp"
+
 #include "utils/string_util.hpp"
-#include "utils/temp_dir_mutex.hpp"
 
 // ======================== C L A S S ========================
 // ===    WvInvoker
@@ -24,11 +25,10 @@ void WvInvoker::init_gmdir(const path_t& gmdir) {
     DirMgr::init(gmdir);
 
     const auto u8 = gmdir.generic_u8string();
-    WvInvoker::log(LOG_LV_ALERT, u8"Game directory set: ");
-
     auto u8str =  StringUtil::u8_to_cstr(u8);
-    INSTFAC(Config)->set(Config::KEY_GMDIR, u8str);
-    INSTFAC(Config)->save();
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::WV_INVOKER_SET_GM_DIR, u8str);
+    Config::set(ConfigKeys::KEY_GMDIR, u8str);
+    Config::save();
     WvInvoker::call(FN, u8str);
 }
 
@@ -41,7 +41,7 @@ void WvInvoker::selected_patch_data_dir(const path_t& dir) {
     }
 
     const auto u8 = dir.generic_u8string();
-    WvInvoker::log(LOG_LV_INFO, u8"Loaded patch data files from " + u8);
+    //WvInvoker::log(WV_LOG_LV_INFO, u8"Loaded patch data files from " + u8);
     WvInvoker::call(FN, StringUtil::u8_to_cstr(u8));
 }
 

@@ -10,6 +10,8 @@ public:
     void init(const path_t& gmDir);
     const path_t& get(eDir type);
 
+public:
+    ~impl();
 private:
     std::shared_mutex m_mtx;
     std::unordered_map<eDir, path_t> m_dirs;
@@ -23,7 +25,7 @@ void DirMgr::impl::init(const path_t& gmDir) {
         m_dirs[e] = d;
     };
 
-    auto add_dir = [this](const eDir e, eDir parent, const char* s) {
+    auto add_dir = [this](const eDir e, const eDir parent, const char* s) {
         const auto dir = path_t(m_dirs[parent]).append(s);
         fs::create_directories(dir);
         m_dirs[e] = dir;
@@ -50,6 +52,10 @@ void DirMgr::impl::init(const path_t& gmDir) {
 const path_t& DirMgr::impl::get(const eDir type) {
     std::shared_lock lock(m_mtx);
     return m_dirs.at(type);
+}
+
+DirMgr::impl::~impl() {
+    fs::remove_all(this->get(DIR_PROJ_TEMP));
 }
 
 // ======================== C L A S S ========================

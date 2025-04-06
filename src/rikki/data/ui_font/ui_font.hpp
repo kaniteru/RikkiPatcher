@@ -47,11 +47,10 @@ private:
     nlohmann::json& get_json_font_arr() const;
 
 public:
-    explicit UIFont(std::shared_ptr<UI> ui);
+    explicit UIFont(std::shared_ptr<UI> pUI);
 private:
     std::shared_ptr<UI> m_pUI;
 };
-
 
 
 #endif //RIKKI_PATCHER_RIKKI_DATA_UI_FONT_UI_FONT_HPP

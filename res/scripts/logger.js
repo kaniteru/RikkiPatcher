@@ -2,10 +2,8 @@ const eLogLv = {
     LOG_LV_INFO  : [0, "INFO",     "white"],
     LOG_LV_ALERT : [1, "ALERT",    "yellow"],
     LOG_LV_PROG  : [2, "PROGRESS", "orange"],
-    LOG_LV_WARN  : [3, "WARN",     "yellow"],
-    LOG_LV_ERR   : [4, "ERROR",    "red"],
-    LOG_LV_FATAL : [5, "FATAL",    "red"],
-    LOG_LV_DEBUG : [6, "DEBUG",    "lightblue"]
+    LOG_LV_FATAL : [3, "FATAL",    "red"],
+    LOG_LV_DEBUG : [4, "DEBUG",    "lightblue"]
 }
 
 class Logger {

@@ -3,6 +3,8 @@
 #include "precompiled.hpp"
 #include "wv_mgr.hpp"
 #include "wv_args_parser.hpp"
+
+#include "utils/logger.hpp"
 #include "utils/string_util.hpp"
 
 enum eWvLogLv {
@@ -10,6 +12,7 @@ enum eWvLogLv {
     WV_LOG_LV_ALERT  = 1,
     WV_LOG_LV_PROG    = 2,
     WV_LOG_LV_FATAL = 3,
+    WV_LOG_LV_DEBUG = 4
 };
 
 // ======================== C L A S S ========================
@@ -39,25 +42,53 @@ public:
 };
 
 template<typename... Args>
-webview::noresult WvInvoker::call(const std::string_view func, Args&& ... args) {
+webview::noresult WvInvoker::call(const std::string_view func, Args&&... args) {
     const WvArgsParser parser(args...);
     const std::string cmd = std::string(func) + "(" + parser.get() + ");";
-    const auto js = StringUtil::str_to_u8_then_cstr(cmd);
-    //std::cout << "js: " << js << std::endl;
+    const auto u8cmd = StringUtil::str_to_u8(cmd);
+    const auto js = StringUtil::u8_to_cstr(u8cmd);
+    DLOG("execute js: {}", cmd);
     return WvMgr::get()->eval(js);
 }
 
 template<typename ... Args>
 void WvInvoker::log(eWvLogLv lv, std::string_view fmt, Args&&... args) {
     constexpr static auto FN = "_log";
-    const auto msg = std::format(fmt, std::forward<Args>(args)...);
+
+    std::string msg { };
+
+    if constexpr (sizeof...(Args) > 0) {
+        msg = std::format(fmt, std::forward<Args>(args)...);
+    } else {
+        msg = fmt;
+    }
+
     WvInvoker::call(FN, lv, msg);
 }
 
+template <>
+struct std::formatter<std::u8string> {
+    constexpr auto parse(std::format_parse_context& ctx) -> decltype(ctx.begin()) {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto format(const std::u8string& u8str, FormatContext& ctx) const -> decltype(ctx.out()) {
+        return std::format_to(ctx.out(), "{}", std::string(u8str.begin(), u8str.end()));
+    }
+};
+
+
 template<typename ... Args>
-void WvInvoker::log(eWvLogLv lv, std::u8string_view fmt, Args&&... args) {
+void WvInvoker::log(eWvLogLv lv, std::u8string_view fmtt, Args&&... args) {
     constexpr static auto FN = "_log";
-    const auto msg = std::vformat(fmt, std::make_format_args<std::format_context>(args...));
+    std::u8string fmt(fmtt.begin(), fmtt.end());
+    // Create a format string
+    std::basic_format_args format_args = std::make_format_args(args...);
+
+    // Use std::vformat with the u8string and the format arguments
+    std::string temp = std::vformat(std::string(fmt.begin(), fmt.end()), format_args);
+    std::u8string msg(temp.begin(), temp.end());
     WvInvoker::call(FN, lv, StringUtil::u8_to_cstr(msg));
 }
 
@@ -66,6 +97,25 @@ void WvInvoker::log(eWvLogLv lv, std::u8string_view fmt, Args&&... args) {
 // ======================= S T R U C T =======================
 
 struct WvLogFmt {
+    // wv invoker
+    static constexpr auto WV_INVOKER_SET_GM_DIR = u8"wv.invoker.set.game_directory"; // game directory set: {}
+
+    // wv binder
+    static constexpr auto WV_BINDER_INIT_START = u8"wv.binder.init.start"; // Initializing patcher...
+    static constexpr auto WV_BINDER_INIT_SUCCESS = u8"wv.binder.init.success"; // init success
+    static constexpr auto WV_BINDER_DIALOG_FAILED = u8"wv.binder.dialog.failed"; // An error occurred while retrieving the path
+    static constexpr auto WV_BINDER_DIALOG_GMDIR_NOTICE = u8"wv.binder.dialog.gmdir.notice"; //Please select the folder containing the game executable (.exe) file
+    static constexpr auto WV_BINDER_GMDIR_AUTO_FAILED_FIND_STEAM = u8"wv.binder.gmdir.auto.failed.find_steam"; // Can't find steam
+    static constexpr auto WV_BINDER_GMDIR_AUTO_FAILED_FIND_GAME_FROM_STEAM = u8"wv.binder.gmdir.auto.failed.find_game_from_steam"; // Can't find installed game in steam
+    static constexpr auto WV_BINDER_GMDIR_AUTO_FAILED_GAME_NOT_INSTALLED = u8"wv.binder.gmdir.auto.failed.game_not_installed"; // Game doesn't installed
+    static constexpr auto WV_BINDER_GMDIR_AUTO_FAILED_FIND_GAME_NAME = u8"wv.binder.gmdir.auto.failed.find_game_name"; //Can't find installed game name
+    static constexpr auto WV_BINDER_GMDIR_AUTO_FAILED_GAME_DIR_NOT_EXISTS = u8"wv.binder.gmdir.auto.failed.game_dir_not_exists"; // Game directory doesn't exists.
+    static constexpr auto WV_BINDER_GMDIR_AUTO_OK_STEAM_DIR = u8"wv.binder.gmdir.auto.ok.steam_dir"; // fount steam directory: {}
+    static constexpr auto WV_BINDER_GMDIR_AUTO_OK_GAME_INSTALLED = u8"wv.binder.gmdir.auto.ok.game_installed"; // Checked game installed
+    static constexpr auto WV_BINDER_GMDIR_AUTO_OK_GAME_NAME = u8"wv.binder.gmdir.auto.ok.game_name"; // Checked game folder name
+    static constexpr auto WV_BINDER_GMDIR_AUTO_OK_GAME_DIR = u8"wv.binder.gmdir.auto.ok.game_directory"; // Found game directory
+    static constexpr auto WV_BINDER_EXTRACT_RESULT = u8"wv.binder.extract.result"; // You can find extracted data into: {}
+
     // dialogue
     static constexpr auto PATCH_DIALOGUE_START = u8"patch.dialogue.start";
     static constexpr auto PATCH_DIALOGUE_PASS_NO_GM_DATA = u8"patch.dialogue.pass.no_gm_data";

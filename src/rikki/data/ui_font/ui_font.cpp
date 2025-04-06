@@ -45,8 +45,8 @@ nlohmann::json& UIFont::get_json_font_arr() const {
     return m_pUI->get_json()["asset/json/config.json"]["FONTS"];
 }
 
-UIFont::UIFont(std::shared_ptr<UI> ui) :
-    m_pUI(ui) {
+UIFont::UIFont(std::shared_ptr<UI> pUI) :
+    m_pUI(pUI) {
 
-    m_isValid = true;
+    m_isValid = m_pUI->is_valid();
 }
