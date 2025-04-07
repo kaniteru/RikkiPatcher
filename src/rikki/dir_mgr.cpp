@@ -21,7 +21,7 @@ void DirMgr::impl::init(const path_t& gmDir) {
     std::lock_guard lock(m_mtx);
     m_dirs.clear();
 
-    auto add = [this](const eDir e, const std::filesystem::path& d) {
+    auto add = [this](const eDir e, const fs::path& d) {
         m_dirs[e] = d;
     };
 
@@ -31,15 +31,16 @@ void DirMgr::impl::init(const path_t& gmDir) {
         m_dirs[e] = dir;
     };
 
-    add(DIR_PROJ_BASE, std::filesystem::current_path());
+    add(DIR_PROJ_BASE, fs::current_path());
     add_dir(DIR_PROJ_TEMP, DIR_PROJ_BASE, "temp");
 
-    add(DIR_PROJ_CONFIG, std::filesystem::current_path().append("config.json"));
-    add(DIR_PROJ_LOG, std::filesystem::current_path().append("log.txt"));
+    add(DIR_PROJ_LANG, fs::current_path().append("lang"));
+    add(DIR_PROJ_CONFIG, fs::current_path().append("config.json"));
+    add(DIR_PROJ_LOG, fs::current_path().append("log.txt"));
 
     add_dir(DIR_PROJ_DATA_EXTRACED, DIR_PROJ_BASE, "extracted");
 
-    add(DIR_PROJ_EXE_7ZIP, std::filesystem::current_path().append("7zip").append("7za.exe"));
+    add(DIR_PROJ_EXE_7ZIP, fs::current_path().append("7zip").append("7za.exe"));
 
     add(DIR_GAME_BASE, gmDir);
     // todo: improve

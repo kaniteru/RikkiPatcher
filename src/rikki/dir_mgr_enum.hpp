@@ -6,6 +6,7 @@ enum eDir : uint32_t {
     DIR_PROJ_BASE,
     DIR_PROJ_TEMP,
 
+    DIR_PROJ_LANG,
     DIR_PROJ_CONFIG,
     DIR_PROJ_LOG,
 

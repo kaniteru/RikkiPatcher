@@ -27,7 +27,7 @@ PatcherResult DialoguePatcher::patch() {
     const auto gmdir = DirMgr::get(DIR_GAME_JSON_DIALOGUES);
 
     for (const auto files = FilesystemUtil::sort_files(m_db); const auto& f : files) {
-        const auto fName = f.filename().generic_u8string();
+        const auto fName = f.filename().string();
         const auto fGame = path_t(gmdir).append(fName);
 
         // check is game file exists
@@ -76,7 +76,7 @@ PatcherResult DialoguePatcher::migration() {
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
 
     for (const auto& f : gmFiles) {
-        const auto fName = f.filename().generic_u8string();
+        const auto fName = f.filename().string();
 
         // pure map
         Dialogue pureDia(f);
@@ -137,7 +137,7 @@ PatcherResult DialoguePatcher::extract(const path_t& path) {
     FilesystemUtil::delete_and_create_directories(path);
 
     for (const auto& files = FilesystemUtil::sort_files(gmdir); const auto& f : files) {
-        const auto fName = f.filename().generic_u8string();
+        const auto fName = f.filename().string();
 
         Dialogue pureDia(f);
 
@@ -195,7 +195,7 @@ PatcherResult ChoicePatcher::patch() {
     const auto gmdir = DirMgr::get(DIR_GAME_JSON_DIALOGUES);
 
     for (const auto files = FilesystemUtil::sort_files(m_db); const auto& f : files) {
-        const auto fName = f.filename().generic_u8string();
+        const auto fName = f.filename().string();
         const auto fGame = path_t(gmdir).append(fName);
 
         // check is game file exists
@@ -244,7 +244,7 @@ PatcherResult ChoicePatcher::migration() {
     const auto gmFiles = FilesystemUtil::sort_files(gmdir);
 
     for (const auto& f : gmFiles) {
-        const auto fName = f.filename().generic_u8string();
+        const auto fName = f.filename().string();
 
         Dialogue pureDia(f);
 
@@ -304,7 +304,7 @@ PatcherResult ChoicePatcher::extract(const path_t& path) {
     FilesystemUtil::delete_and_create_directories(path);
 
     for (const auto& files = FilesystemUtil::sort_files(gmdir); const auto& f : files) {
-        const auto fName = f.filename().generic_u8string();
+        const auto fName = f.filename().string();
 
         Dialogue pureDia(f);
 

@@ -11,6 +11,8 @@
 #include "utils/logger.hpp"
 #include "utils/string_util.hpp"
 #include "utils/dialog_util.hpp"
+#include "utils/filesystem_util.hpp"
+#include "utils/json_util.hpp"
 #include "utils/registry_reader.hpp"
 
 #define BIND_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
@@ -20,6 +22,7 @@ void WvBinder::bind() {
     LOG(INFO, "Binding wv events...");
 
     BIND_EVENT_HANDLER("INIT_PATCHER", this->init_patcher);
+    BIND_EVENT_HANDLER("REQUEST_TRANS", this->request_trans);
     BIND_EVENT_HANDLER("OPEN_GITHUB", this->open_github);
     BIND_EVENT_HANDLER("OPEN_PROJECT_WEB", this->open_project_web);
     BIND_EVENT_HANDLER("SET_GMDIR_MANUALLY", this->set_gmdir_manually);
@@ -50,6 +53,39 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
     WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::WV_BINDER_INIT_SUCCESS);
     WvInvoker::init_success();
     return { };
+}
+
+std::string WvBinder::request_trans(HANDLER_ARGS) {
+    std::u8string rtn = u8"[";
+
+    const auto files = FilesystemUtil::sort_files(DirMgr::get(DIR_PROJ_LANG));
+    const auto size = files.size();
+
+    for (uint32_t i = 0; i < size; i++) {
+        const auto fName = files[i].filename().replace_extension("").u8string();
+        nlohmann::json j { };
+
+        try {
+            if (!JsonUtil::load_from_file(j, files[i])) {
+                LOG(FATAL, "Failed to load json file: {}", files[i].generic_u8string());
+                continue;
+            }
+        }
+        catch (const nlohmann::json::exception& e) {
+            LOG(FATAL, "Failed to parse json file: {} -> {}", files[i].generic_u8string(), e.what());
+            continue;
+        }
+
+        // ["lang", json]
+        rtn += u8"[\"" + fName + u8"\", " + StringUtil::str_to_u8(j.dump()) + u8"]";
+
+        if (i  + 1 < size) {
+            rtn += u8", ";
+        }
+    }
+
+    rtn += u8"]";
+    return StringUtil::u8_to_str(rtn);
 }
 
 std::string WvBinder::open_github(HANDLER_ARGS) {
@@ -106,7 +142,8 @@ std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
         return { };
     }
 
-    WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::WV_BINDER_GMDIR_AUTO_OK_STEAM_DIR, dir.generic_u8string());
+    const auto u8dir = dir.generic_u8string();
+    WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::WV_BINDER_GMDIR_AUTO_OK_STEAM_DIR, StringUtil::u8_to_cstr(u8dir));
 
     RegistryReader rrGame(REG_GAME);
 
@@ -123,7 +160,7 @@ std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
         return { };
     }
 
-    WvInvoker::log(WV_LOG_LV_PROG, "Checked game installed");
+    WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::WV_BINDER_GMDIR_AUTO_OK_GAME_INSTALLED);
 
     /*const auto gm = rrGame.read_string(KEY_GAME_NAME);
 
@@ -167,7 +204,8 @@ std::string WvBinder::patch_extract(HANDLER_ARGS) {
     const Patcher patcher(dst);
     patcher.do_extract();
 
-    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::WV_BINDER_EXTRACT_RESULT, dst.generic_u8string());
+    const auto u8dst = dst.generic_u8string();
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::WV_BINDER_EXTRACT_RESULT, StringUtil::u8_to_cstr(u8dst));
     WvInvoker::finish_patch();
     return { };
 }

@@ -4,13 +4,14 @@
 #include "wv/wv_binder.hpp"
 
 int main(const int argc, char* argv[]) {
-    const bool enableF12 = argc > 1;
+    WvMgr::init(
+#ifndef NDEBUG
+        true
+#endif
+        );
 
-    if (enableF12) {
-        DLOG("Running RP in debug mode, enabled f12");
-    }
+    DLOG("Running RP in debug mode, enabled f12");
 
-    WvMgr::init(enableF12);
     const auto wv = WvMgr::get();
     wv->set_title("Rikki Patcher");
     wv->set_size(600, 750, WEBVIEW_HINT_NONE);

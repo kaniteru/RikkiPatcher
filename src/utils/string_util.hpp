@@ -21,5 +21,17 @@ public:
     static std::string wstr_to_str(std::wstring_view str);
 };
 
+template <>
+struct std::formatter<std::u8string> {
+    constexpr auto parse(std::format_parse_context& ctx) -> decltype(ctx.begin()) {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto format(const std::u8string& u8str, FormatContext& ctx) const -> decltype(ctx.out()) {
+        return std::format_to(ctx.out(), "{}", std::string(u8str.begin(), u8str.end()));
+    }
+};
+
 
 #endif //RIKKI_PATCHER_UTILS_STRING_UTIL_HPP

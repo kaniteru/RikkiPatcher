@@ -1,14 +1,14 @@
 const RIKKI_PATCHER_VER = 250110;
 
 function onLoad() {
-    Logger.INSTANCE.log(eLogLv.LOG_LV_INFO, `Rikki Patcher Version: ${RIKKI_PATCHER_VER}`);
+    Logger.log(eLogLv.LOG_LV_INFO, `Rikki Patcher Version: ${RIKKI_PATCHER_VER}`);
     const inWv = typeof window.INIT_PATCHER === "function";
 
     if (inWv) {
         Control.INSTANCE.move(eCtrlLv.CTRL_LV_PROGRESS);
         window.INIT_PATCHER();
     } else {
-        Logger.INSTANCE.log(eLogLv.LOG_LV_DEBUG, 'Rikki Patcher running in web');
+        Logger.log(eLogLv.LOG_LV_DEBUG, 'Rikki Patcher running in web');
         Control.INSTANCE.move(eCtrlLv.CTRL_LV_PATCH);
     }
 }

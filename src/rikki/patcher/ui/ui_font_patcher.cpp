@@ -39,11 +39,6 @@ PatcherResult UIFontPatcher::patch() {
 
     uiFont.set_fonts(fonts);
 
-    if (!stream.save()) {
-        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::PATCH_UI_FONT_FAILED_WRITE);
-        return { 0, lenFonts, 0 };
-    }
-
     const auto fGm = DirMgr::get(DIR_GAME_FONTS);
     fs::copy(fFiles, fGm, std::filesystem::copy_options::overwrite_existing);
 
@@ -72,17 +67,15 @@ PatcherResult UIFontPatcher::migration() {
     const auto size = static_cast<int32_t>(stream.add_fonts(pureFonts));
 
     if (!stream.save()) {
-        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::PATCH_UI_FONT_FAILED_WRITE);
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::MIGR_UI_FONT_FAILED_WRITE);
         return { 0, size, 0 };
     }
 
-    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::PATCH_UI_FONT_RESULT, size, size, 0, 0);
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::MIGR_UI_FONT_RESULT, size, size, 0, 0);
     return { size, size, 0 };
 }
 
 PatcherResult UIFontPatcher::extract() {
-    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::EXTRACT_UI_FONT_START);
-
     FilesystemUtil::delete_and_create_directories(path_t(m_dir) / UIFontPath::PATCH_BASE);
 
     const auto fInfo = path_t(m_dir) / UIFontPath::PATCH_FILE_FONTS_INFO;

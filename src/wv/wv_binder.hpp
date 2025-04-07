@@ -11,6 +11,7 @@ public:
 
 private:
     std::string init_patcher(HANDLER_ARGS);
+    std::string request_trans(HANDLER_ARGS);
     std::string open_github(HANDLER_ARGS);
     std::string open_project_web(HANDLER_ARGS);
 

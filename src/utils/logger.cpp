@@ -14,6 +14,7 @@ Logger& Logger::instance() {
 Logger::Logger() :
     m_ofs(DirMgr::get(eDir::DIR_PROJ_LOG), std::ios::out | std::ios::trunc) {
 
+    ktd::enable_virtual_terminal();
     m_pool.start();
 }
 
