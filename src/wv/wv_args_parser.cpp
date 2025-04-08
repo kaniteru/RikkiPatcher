@@ -1,5 +1,9 @@
 #include "wv_args_parser.hpp"
 
+// ======================= S T R U C T =======================
+// ===    WvArgsParser
+// ======================= S T R U C T =======================
+
 std::string WvArgsParser::get() const {
     if (this->get_count() < 1) {
         return { };

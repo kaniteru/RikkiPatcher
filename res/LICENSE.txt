@@ -1,5 +1,5 @@
 RikkiPatcher - Licenses for This Project and Included Software
-~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## License for This Project
 This project is licensed under the GNU General Public License (GPL) v3.0.

@@ -4,6 +4,11 @@
 #include "i_stream.hpp"
 #include "rikki/data/ui_font/ui_font.hpp"
 
+/* ui_font_patch_stream.hpp
+ *  Included classes:
+ *      - UIFontPatchStream
+ */
+
 // ======================== C L A S S ========================
 // ===    UIFontPatchStream
 // ======================== C L A S S ========================

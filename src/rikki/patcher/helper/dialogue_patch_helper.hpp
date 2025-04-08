@@ -8,6 +8,7 @@
  *  Included classes:
  *      - DialoguePatchHelper
  *      - ChoicePatchHelper
+ *
  *  Included structs:
  *      - DialoguePatchHelperResult
  */

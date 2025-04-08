@@ -47,7 +47,7 @@ PatcherResult UIFontPatcher::patch() {
 }
 
 PatcherResult UIFontPatcher::migration() {
-    const auto fInfo = path_t(m_dir) / UIFontPath::PATCH_FILE_FONTS_INFO;
+    /*const auto fInfo = path_t(m_dir) / UIFontPath::PATCH_FILE_FONTS_INFO;
     const auto fFiles = path_t(m_dir) / UIFontPath::PATCH_FOLDER_FONTS_FILES;
 
     WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::MIGR_UI_DIALOGUE_START);
@@ -72,10 +72,13 @@ PatcherResult UIFontPatcher::migration() {
     }
 
     WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::MIGR_UI_FONT_RESULT, size, size, 0, 0);
-    return { size, size, 0 };
+    return { size, size, 0 };*/
+    return { };
 }
 
 PatcherResult UIFontPatcher::extract() {
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::EXTRACT_UI_FONT_START);
+
     FilesystemUtil::delete_and_create_directories(path_t(m_dir) / UIFontPath::PATCH_BASE);
 
     const auto fInfo = path_t(m_dir) / UIFontPath::PATCH_FILE_FONTS_INFO;

@@ -6,5 +6,5 @@ FetchContent_Declare(
         GIT_TAG                 main
 )
 
-message("fetching consolestream")
+message(STATUS "fetching consolestream")
 FetchContent_MakeAvailable(consolestream)

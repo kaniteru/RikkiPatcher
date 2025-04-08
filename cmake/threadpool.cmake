@@ -6,5 +6,5 @@ FetchContent_Declare(
         GIT_TAG                 main
 )
 
-message("fetching threadpool")
+message(STATUS "fetching threadpool")
 FetchContent_MakeAvailable(threadpool)

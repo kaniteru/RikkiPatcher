@@ -2,6 +2,15 @@
 #define RIKKI_PATCHER_WV_WV_ARGS_PARSER_HPP
 #include "precompiled.hpp"
 
+/* wv_args_parser.hpp
+ *  Included structs:
+ *      - WvArgsParser
+ */
+
+// ======================= S T R U C T =======================
+// ===    WvArgsParser
+// ======================= S T R U C T =======================
+
 struct WvArgsParser {
     std::string get() const;
 
@@ -24,14 +33,12 @@ private:
 };
 
 template<class T>
-inline
 void WvArgsParser::add(T&& t) {
     m_args.emplace_back(t);
 }
 
 template<class T>
-inline
-T WvArgsParser::get(size_t idx) const {
+T WvArgsParser::get(const size_t idx) const {
     return m_args[idx];
 }
 

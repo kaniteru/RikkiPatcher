@@ -2,6 +2,11 @@
 #define RIKKI_PATCHER_UTILS_STRING_UTIL_HPP
 #include "precompiled.hpp"
 
+/* string_util.hpp
+ *  Included classes:
+ *      - StringUtil
+ */
+
 // ======================== C L A S S ========================
 // ===    StringUtil
 // ======================== C L A S S ========================

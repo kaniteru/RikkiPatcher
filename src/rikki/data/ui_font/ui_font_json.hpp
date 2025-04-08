@@ -3,6 +3,11 @@
 #include "precompiled.hpp"
 #include "utils/json_util.hpp"
 
+/* ui_font_json.hpp
+ *  Included structs:
+ *      - j::UIFont
+ */
+
 // ======================= S T R U C T =======================
 // ===    j::UIFont
 // ======================= S T R U C T =======================

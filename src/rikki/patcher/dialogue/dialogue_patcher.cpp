@@ -192,6 +192,8 @@ PatcherResult ChoicePatcher::patch() {
     auto& failed  = result.m_failed;
     auto& passed = result.m_passed;
 
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::PATCH_CHOICE_START);
+
     const auto gmdir = DirMgr::get(DIR_GAME_JSON_DIALOGUES);
 
     for (const auto files = FilesystemUtil::sort_files(m_db); const auto& f : files) {

@@ -4,6 +4,14 @@
 
 using wv_ptr_t = std::shared_ptr<webview::webview>;
 
+/* wv_mgr.hpp
+ *  Included classes:
+ *      - WvMgr
+ *
+ *  Included structs:
+ *      - WvMgr::impl
+ */
+
 // ======================== C L A S S ========================
 // ===    WvMgr
 // ======================== C L A S S ========================

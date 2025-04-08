@@ -5,6 +5,15 @@
 #define HANDLER_ARGS                const std::string& args
 #define ASYNC_HANDLER_ARGS const std::string& id, const std::string& args, void* pArgs
 
+/* wv_binder.hpp
+ *  Included classes:
+ *      - WvBinder
+ */
+
+// ======================== C L A S S ========================
+// ===    WvBinder
+// ======================== C L A S S ========================
+
 class WvBinder {
 public:
     void bind();

@@ -2,6 +2,11 @@
 #define RIKKI_PATCHER_RIKKI_DATA_I_DATA_HPP
 #include "precompiled.hpp"
 
+/* i_data.hpp
+ *  Included classes:
+ *      - IData
+ */
+
 // ======================== C L A S S ========================
 // ===    IData
 // ======================== C L A S S ========================

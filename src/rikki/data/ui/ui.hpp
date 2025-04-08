@@ -9,13 +9,12 @@
  */
 
 class UI;
-using ui_ptr_t = std::shared_ptr<UI>;
 
 // ======================== C L A S S ========================
 // ===    UI
 // ======================== C L A S S ========================
 
-class UI : public IData {
+class UI final : public IData {
 public:
     bool save() final;
 
@@ -46,7 +45,6 @@ private:
     const path_t m_file; /* Path of decrypted startup.json */
     nlohmann::json m_j;  /* Loaded json data */
 };
-
 
 
 #endif //RIKKI_PATCHER_RIKKI_DATA_UI_UI_HPP

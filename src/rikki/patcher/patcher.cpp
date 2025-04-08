@@ -29,26 +29,17 @@ void Patcher::do_patch() const {
 }
 
 void Patcher::do_migration() const {
-    constexpr auto migrate_process = [&](IPatcher* p) {
-        if (!p->is_available()) {
-            return false;
-        }
-
-        p->migration();
-        return true;
-    };
-
     // migrate dialogues data
     DialoguePatcher diaPatcher(m_dir);
-    migrate_process(&diaPatcher);
+    diaPatcher.migration();
 
     // migrate choices data
     ChoicePatcher choPatcher(m_dir);
-    migrate_process(&choPatcher);
+    choPatcher.migration();
 
     // migrate ui data
     UIPatcher uiPatcher(m_dir);
-    migrate_process(&uiPatcher);
+    uiPatcher.migration();
     uiPatcher.close();
 
     // copy patcher doesn't support the migrating.

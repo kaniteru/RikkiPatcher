@@ -12,7 +12,7 @@ bool DialogUtil::folder_select_dialog(path_t& dir) {
         return false;
     }
 
-    IFileDialog *pfd = nullptr;
+    IFileDialog* pfd = nullptr;
     hr = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_ALL, IID_IFileDialog, reinterpret_cast<void**>(&pfd));
     if (FAILED(hr)) {
         CoUninitialize();
@@ -38,7 +38,7 @@ bool DialogUtil::folder_select_dialog(path_t& dir) {
         return false;
     }
 
-    IShellItem *psi = nullptr;
+    IShellItem* psi = nullptr;
     hr = pfd->GetResult(&psi);
     if (FAILED(hr)) {
         cleanup(pfd);

@@ -1,4 +1,6 @@
 #include "filesystem_util.hpp"
+#include "string_util.hpp"
+#include "logger.hpp"
 
 // ======================== C L A S S ========================
 // ===    FilesystemUtil
@@ -7,7 +9,7 @@
 std::vector<path_t> FilesystemUtil::sort_files(const path_t& dir) {
     std::vector<path_t> result { };
 
-    for (const auto& it : std::filesystem::directory_iterator(dir)) {
+    for (const auto& it : fs::directory_iterator(dir)) {
         result.push_back(it.path());
     }
 
@@ -18,8 +20,9 @@ std::vector<path_t> FilesystemUtil::sort_files(const path_t& dir) {
 void FilesystemUtil::delete_and_create_directories(const path_t& dir) {
     try {
         fs::remove_all(dir);
+    } catch (const std::exception& e) {
+        LOG(FATAL, "Failed to remove directory: {} -> {}", StringUtil::u8_to_str(dir.generic_u8string()), e.what());
     }
-    catch (const std::exception& e) { }
 
     fs::create_directories(dir);
 }

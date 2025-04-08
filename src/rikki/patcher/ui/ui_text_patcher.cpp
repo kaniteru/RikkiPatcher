@@ -1,5 +1,4 @@
 #include "ui_text_patcher.hpp"
-
 #include "rikki/data/data_path.hpp"
 #include "rikki/data/ui/ui.hpp"
 #include "rikki/data/ui_text/ui_text.hpp"
@@ -9,10 +8,7 @@
 #include "rikki/data/ui_text/key/ui_text_dialog_key.hpp"
 #include "rikki/data/ui_text/key/ui_text_title_key.hpp"
 #include "rikki/stream/ui_patch_stream.hpp"
-#include "rikki/stream/ui_migr_stream.hpp"
 
-#include "utils/string_util.hpp"
-#include "utils/ui_text_util.hpp"
 #include "utils/filesystem_util.hpp"
 
 #include "wv/wv_invoker.hpp"
@@ -23,9 +19,6 @@
 
 PatcherResult UITextPatcher::patch() {
     PatcherResult result { };
-    auto& ok        = result.m_ok;
-    auto& failed  = result.m_failed;
-    auto& passed = result.m_passed;
 
     auto do_patch = [this](const path_t& f, IUITextPatcher& p) -> PatcherResult {
         if (const path_t file = (path_t(m_dir) / f); !fs::exists(file)) {

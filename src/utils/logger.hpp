@@ -18,6 +18,14 @@
 // log
 #define LOG(LV, FMT, ...) Logger::log(Logger::Meta{ LV, std::source_location::current(), std::chrono::system_clock::now() }, FMT, ##__VA_ARGS__)
 
+/* logger.hpp
+ *  Included classes:
+ *      - Logger
+ *
+ *  Included structs:
+ *      - Logger::Meta
+ */
+
 // ======================== C L A S S ========================
 // ===    Logger
 // ======================== C L A S S ========================

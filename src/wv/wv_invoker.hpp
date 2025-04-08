@@ -95,7 +95,7 @@ struct WvLogFmt {
     static constexpr auto PATCH_DIALOGUE_OK = u8"patch.dialogue.ok";
     static constexpr auto PATCH_DIALOGUE_RESULT = u8"patch.dialogue.result";
 
-    static constexpr auto MIGR_DIALOGUE_START = u8"patch.dialogue.start";
+    static constexpr auto MIGR_DIALOGUE_START = u8"migration.dialogue.start";
     static constexpr auto MIGR_DIALOGUE_FAILED_READ = u8"migration.dialogue.failed.read";
     static constexpr auto MIGR_DIALOGUE_FAILED_WRITE = u8"migration.dialogue.failed.write";
     static constexpr auto MIGR_DIALOGUE_OK_NO_GM_DATA = u8"migration.dialogue.pass.no_gm_data";
@@ -103,7 +103,7 @@ struct WvLogFmt {
     static constexpr auto MIGR_DIALOGUE_RESULT = u8"migration.dialogue.result";
     static constexpr auto MIGR_DIALOGUE_EXTRACT = u8"migration.dialogue.extract";
 
-    static constexpr auto EXTRACT_DIALOGUE_START = u8"patch.dialogue.start";
+    static constexpr auto EXTRACT_DIALOGUE_START = u8"extract.dialogue.start";
     static constexpr auto EXTRACT_DIALOGUE_PASS_NO_GM_DATA = u8"extract.dialogue.pass.no_gm_data";
     static constexpr auto EXTRACT_DIALOGUE_FAILED_READ = u8"extract.dialogue.failed.read";
     static constexpr auto EXTRACT_DIALOGUE_FAILED_WRITE = u8"extract.dialogue.failed.write";
@@ -118,7 +118,7 @@ struct WvLogFmt {
     static constexpr auto PATCH_CHOICE_OK = u8"patch.choice.ok";
     static constexpr auto PATCH_CHOICE_RESULT = u8"patch.choice.result";
 
-    static constexpr auto MIGR_CHOICE_START = u8"patch.choice.start";
+    static constexpr auto MIGR_CHOICE_START = u8"migration.choice.start";
     static constexpr auto MIGR_CHOICE_FAILED_READ = u8"migration.choice.failed.read";
     static constexpr auto MIGR_CHOICE_FAILED_WRITE = u8"migration.choice.failed.write";
     static constexpr auto MIGR_CHOICE_OK_NO_GM_DATA = u8"migration.choice.pass.no_gm_data";
@@ -126,7 +126,7 @@ struct WvLogFmt {
     static constexpr auto MIGR_CHOICE_RESULT = u8"migration.choice.result";
     static constexpr auto MIGR_CHOICE_EXTRACT = u8"migration.choice.extract";
 
-    static constexpr auto EXTRACT_CHOICE_START = u8"patch.choice.start";
+    static constexpr auto EXTRACT_CHOICE_START = u8"extract.choice.start";
     static constexpr auto EXTRACT_CHOICE_PASS_NO_GM_DATA = u8"extract.choice.pass.no_gm_data";
     static constexpr auto EXTRACT_CHOICE_FAILED_READ = u8"extract.choice.failed.read";
     static constexpr auto EXTRACT_CHOICE_FAILED_WRITE = u8"extract.choice.failed.write";

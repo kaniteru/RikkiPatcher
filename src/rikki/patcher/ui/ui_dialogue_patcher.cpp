@@ -122,8 +122,6 @@ PatcherResult UIDialoguePatcher::extract(const path_t& dir, std::shared_ptr<UI> 
 
     FilesystemUtil::delete_and_create_directories(dir);
 
-    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::EXTRACT_UI_DIALOGUE_START);
-
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
         UIDialogue dia(pUI, pKey);
 
@@ -174,6 +172,8 @@ PatcherResult UIChoicePatcher::patch() {
     auto& ok        = result.m_ok;
     auto& failed  = result.m_failed;
     auto& passed = result.m_passed;
+
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::PATCH_UI_CHOICE_START);
 
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
         const auto fPatch = path_t(m_db).append(pFile);
@@ -265,8 +265,6 @@ PatcherResult UIChoicePatcher::extract(const path_t& src, std::shared_ptr<UI> pU
     auto& passed = result.m_passed;
 
     FilesystemUtil::delete_and_create_directories(src);
-
-    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::EXTRACT_UI_CHOICE_START);
 
     for (const auto& [pKey, pFile] : UIDialogueKey::g_arr) {
         UIDialogue dia(pUI,  pKey);

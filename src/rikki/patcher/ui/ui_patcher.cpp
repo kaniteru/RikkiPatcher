@@ -1,12 +1,9 @@
 #include "ui_patcher.hpp"
-#include "rikki/data/data_path.hpp"
 #include "rikki/data/ui/ui.hpp"
 #include "rikki/data/ui_text/ui_text.hpp"
-#include "rikki/data/ui_dialogue/ui_dialogue.hpp"
-#include "rikki/data/ui_dialogue/ui_dialogue_key.hpp"
 #include "ui_text_patcher.hpp"
-#include "ui_dialogue_patcher.hpp"
 #include "ui_font_patcher.hpp"
+#include "ui_dialogue_patcher.hpp"
 
 #include "utils/ui_text_util.hpp"
 

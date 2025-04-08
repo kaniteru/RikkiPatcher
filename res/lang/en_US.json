@@ -88,7 +88,7 @@
 	"migration.ui_dialogue.pass.no_gm_data": "{} => OK (no game data)",
 	"migration.ui_dialogue.ok": "{} -> {} / {} => OK",
 	"migration.ui_dialogue.result": "Total: {} | OK: {} | Failed: {} | Passed: {}",
-	"migration.ui_dialogue.extract": "Start generate the dialogues migration data",
+	"migration.ui_dialogue.extract": "Start generate the ui-dialogues migration data",
 	
 	"extract.ui_dialogue.start": "Start extract the ui-dialogues data",
 	"extract.ui_dialogue.failed.read": "{} => Read failed",

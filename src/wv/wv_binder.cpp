@@ -18,6 +18,10 @@
 #define BIND_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
 #define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
 
+// ======================== C L A S S ========================
+// ===    WvBinder
+// ======================== C L A S S ========================
+
 void WvBinder::bind() {
     LOG(INFO, "Binding wv events...");
 
