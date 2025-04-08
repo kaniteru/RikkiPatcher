@@ -1,5 +1,9 @@
 #include "registry_reader.hpp"
 
+// ======================== C L A S S ========================
+// ===    RegistryReader
+// ======================== C L A S S ========================
+
 bool RegistryReader::is_valid() const {
     return m_isValid;
 }

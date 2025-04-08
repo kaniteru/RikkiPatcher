@@ -1,5 +1,5 @@
-#ifndef RIKKY_PATCHER_RIKKY_CONFIG_HPP
-#define RIKKY_PATCHER_RIKKY_CONFIG_HPP
+#ifndef RIKKI_PATCHER_RIKKI_CONFIG_HPP
+#define RIKKI_PATCHER_RIKKI_CONFIG_HPP
 #include "precompiled.hpp"
 
 /* config.hpp
@@ -34,7 +34,7 @@ public:
      * @endcode
      */
     template <class T>
-    T get(const char* key);
+    static T get(const char* key);
 
     /**
      * @brief Get json value reference using key.
@@ -42,7 +42,7 @@ public:
      * @param [in] key Target key.
      * @return Returns json reference of key.
      */
-    auto& get_ref(const char* key);
+    static auto& get_ref(const char* key);
 
     /**
      * @brief Check is key exists.
@@ -50,7 +50,7 @@ public:
      * @param [in] key Target key.
      * @return Returns true if key exists.
      */
-    bool exists(const char* key);
+    static bool exists(const char* key);
 
     /**
      * @brief Set config value with key. If key exists, it will overwrite.
@@ -60,46 +60,47 @@ public:
      * @param [in] value Target value.
      */
     template <class T>
-    void set(const char* key, T&& value);
+    static void set(const char* key, T&& value);
 
     /**
      * @brief Save config file.
      *
      * @return Returns true, if data saved successfully.
      */
-    bool save() const;
+    static bool save();
 
-public:
+private:
+    static Config& instance();
+
     /**
      * @brief Create or load config data from file.
      *
      * @param [in] file Target config file path.
      */
-    explicit Config(const path_t& file);
+    Config();
+    ~Config();
 private:
-    const path_t m_file; /* Config file path. */
     nlohmann::json m_j;  /* Config json data */
-
-public:
-    constexpr static auto KEY_GMDIR = "gmdir"; /* Key of game directory. */
+    std::shared_mutex m_mtx;
 };
 
 template<class T>
-inline
 T Config::get(const char* key) {
-    return m_j[key];
+    std::shared_lock lock(Config::instance().m_mtx);
+    return Config::instance().m_j[key];
 }
 
 inline
 auto& Config::get_ref(const char* key) {
-    return m_j[key];
+    std::unique_lock lock(Config::instance().m_mtx);
+    return Config::instance().m_j[key];
 }
 
 template<class T>
-inline
 void Config::set(const char* key, T&& value) {
-    m_j[key] = value;
+    std::unique_lock lock(Config::instance().m_mtx);
+    Config::instance().m_j[key] = value;
 }
 
 
-#endif //RIKKY_PATCHER_RIKKY_CONFIG_HPP
+#endif //RIKKI_PATCHER_RIKKI_CONFIG_HPP

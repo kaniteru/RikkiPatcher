@@ -17,17 +17,19 @@ class UI;
 class UIFontPatcher : public IPatcher {
 public:
     PatcherResult patch() final;
+
     PatcherResult migration() final;
-    PatcherResult generate_migration_info() final;
+
+    PatcherResult extract() final;
 
 public:
     /**
      * @param [in] src Root path of custom patch data directory.
      * @param [in] pUI ptr of UI.
      */
-    UIFontPatcher(const path_t& src, UI* pUI);
+    UIFontPatcher(const path_t& src, std::shared_ptr<UI> pUI);
 private:
-    UI* const m_pUI;
+    std::shared_ptr<UI> m_pUI;
 };
 
 

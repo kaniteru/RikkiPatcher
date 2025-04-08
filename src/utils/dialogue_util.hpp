@@ -2,9 +2,18 @@
 #define RIKKI_PATCHER_UTILS_DIALOGUE_UTIL_HPP
 #include "precompiled.hpp"
 
+/* dialogue_util.hpp
+ *  Included classes:
+ *      - DialogueUtil
+ */
+
 namespace j {
 struct DialogueSpan;
 }
+
+// ======================== C L A S S ========================
+// ===    DialogueUtil
+// ======================== C L A S S ========================
 
 class DialogueUtil {
 public:

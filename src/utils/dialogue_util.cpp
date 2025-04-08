@@ -1,6 +1,10 @@
 #include "dialogue_util.hpp"
 #include "rikki/data/dialogue/dialogue_json.hpp"
 
+// ======================== C L A S S ========================
+// ===    DialogueUtil
+// ======================== C L A S S ========================
+
 std::vector<j::DialogueSpan> DialogueUtil::extract_texts_from_span(std::string_view span) {
     const static auto SPAN_REGEX = std::regex(R"(<span\s+([^>]*)>([^<]*)</span>)");
 

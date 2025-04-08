@@ -1,5 +1,9 @@
 #include "json_util.hpp"
 
+// ======================== C L A S S ========================
+// ===    JsonUtil
+// ======================== C L A S S ========================
+
 bool JsonUtil::load_from_file(nlohmann::json& j, const path_t& file) {
     if (auto fs = std::fstream(file, std::ios::in); fs.is_open()) {
         fs >> j;

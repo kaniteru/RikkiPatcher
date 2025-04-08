@@ -1,23 +1,30 @@
 #include "filesystem_util.hpp"
+#include "string_util.hpp"
+#include "logger.hpp"
+
+// ======================== C L A S S ========================
+// ===    FilesystemUtil
+// ======================== C L A S S ========================
 
 std::vector<path_t> FilesystemUtil::sort_files(const path_t& dir) {
     std::vector<path_t> result { };
 
-    for (const auto& it : std::filesystem::directory_iterator(dir)) {
+    for (const auto& it : fs::directory_iterator(dir)) {
         result.push_back(it.path());
     }
 
-    std::sort(result.begin(), result.end(), FilesystemUtil::natural_sort_comparator);
+    std::ranges::sort(result, FilesystemUtil::natural_sort_comparator);
     return result;
 }
 
 void FilesystemUtil::delete_and_create_directories(const path_t& dir) {
     try {
-        std::filesystem::remove_all(dir);
+        fs::remove_all(dir);
+    } catch (const std::exception& e) {
+        LOG(FATAL, "Failed to remove directory: {} -> {}", StringUtil::u8_to_str(dir.generic_u8string()), e.what());
     }
-    catch (const std::exception& e) { }
 
-    std::filesystem::create_directories(dir);
+    fs::create_directories(dir);
 }
 
 std::vector<int32_t> FilesystemUtil::extract_nums(std::u8string_view filename) {
@@ -30,7 +37,7 @@ std::vector<int32_t> FilesystemUtil::extract_nums(std::u8string_view filename) {
     std::sregex_iterator end { };
 
     while (it != end) {
-        result.push_back(std::stoi((*it).str()));
+        result.push_back(std::stoi(it->str()));
         ++it;
     }
 
@@ -38,16 +45,20 @@ std::vector<int32_t> FilesystemUtil::extract_nums(std::u8string_view filename) {
 }
 
 bool FilesystemUtil::natural_sort_comparator(const path_t& a, const path_t& b) {
-    auto numbersA = FilesystemUtil::extract_nums(a.filename().u8string());
-    auto numbersB = FilesystemUtil::extract_nums(b.filename().u8string());
+    const auto numbersA = FilesystemUtil::extract_nums(a.filename().u8string());
+    const auto numbersB = FilesystemUtil::extract_nums(b.filename().u8string());
 
     if (numbersA.empty() && numbersB.empty()) {
         return a.filename() < b.filename();
-    } else if (numbersA.empty()) {
-        return true;
-    } else if (numbersB.empty()) {
-        return false;
-    } else {
-        return numbersA < numbersB;
     }
+
+    if (numbersA.empty()) {
+        return true;
+    }
+
+    if (numbersB.empty()) {
+        return false;
+    }
+
+    return numbersA < numbersB;
 }

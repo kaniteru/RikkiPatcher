@@ -1,5 +1,9 @@
 #include "ui_text_setting_key.hpp"
 
+// ======================= S T R U C T =======================
+// ===    SettingUITextKeyMgr
+// ======================= S T R U C T =======================
+
 const SettingUITextKey SettingUITextKeyMgr::fullscreen {
     "asset/json/ui/data/ui6.json",
     "77057165895_0.7755981457644934",

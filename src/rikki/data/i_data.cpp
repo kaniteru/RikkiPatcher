@@ -1,7 +1,7 @@
 #include "i_data.hpp"
 
 // ======================== C L A S S ========================
-// ===    IExtractor
+// ===    IData
 // ======================== C L A S S ========================
 
 bool IData::is_valid() const {

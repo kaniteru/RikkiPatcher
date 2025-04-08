@@ -14,8 +14,8 @@
 // ======================== C L A S S ========================
 
 /**
- * @brief Using load, modify and save the dialogue file.
- *             (asset/json/server/scene/*.json)
+ * @brief Using load, modify and save the dialogue file. <br>
+ * (asset/json/server/scene/*.json)
  *
  * @code
  * Dialogue dialogue(...);
@@ -25,14 +25,6 @@
  */
 class Dialogue final : public IData, public IDialogue {
 public:
-    /**
-     * @brief Copy and save the data file into arg path. If file exists in target directory, overwrite it.
-     *
-     * @param [in] dir Target directory path.
-     * @return Returns true if saved successfully.
-     */
-    bool backup(const path_t& dir) final;
-
     /**
      * @brief Save the data to the path where it was loaded.
      *
@@ -62,8 +54,8 @@ public:
      */
     explicit Dialogue(const path_t& file);
 private:
-    const path_t m_file; /* Target dialogue in game file path */
-    nlohmann::json m_j;  /* Loaded dialogue data */
+    const path_t m_file; /* Path of a target dialogue json file. */
+    nlohmann::json m_j;  /* Loaded dialogue data. */
 };
 
 

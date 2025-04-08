@@ -2,6 +2,15 @@
 #define RIKKI_PATCHER_UTILS_FILESYSTEM_UTIL_HPP
 #include "precompiled.hpp"
 
+/* filesystem_util.hpp
+ *  Included classes:
+ *      - FilesystemUtil
+ */
+
+// ======================== C L A S S ========================
+// ===    FilesystemUtil
+// ======================== C L A S S ========================
+
 class FilesystemUtil {
 public:
     static std::vector<path_t> sort_files(const path_t& dir);

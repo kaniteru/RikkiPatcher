@@ -16,13 +16,10 @@ class UI;
 // ======================== C L A S S ========================
 
 class UIDialogue final : public IData, public IDialogue {
-public:
-    bool backup(const path_t& dir) final;
-
     bool save() final;
 
     bool save(const path_t& path) final;
-private:
+
     void iterate_elements(const dialogue_iterate_t& callback) final;
 
 public:
@@ -37,10 +34,10 @@ public:
      * if (dia.is_valid()) { ... }
      * @endcode
      */
-    explicit UIDialogue(UI* pUI, const char* pKey);
+    UIDialogue(std::shared_ptr<UI> pUI, const char* pKey);
 private:
-    UI* const m_pUI;               /* Loaded UI ptr */
-    const char* const m_pKey; /* Target UIDialogue key */
+    std::shared_ptr<UI> m_pUI; /* Loaded UI ptr */
+    const char* const m_pKey;    /* Target UIDialogue key */
 };
 
 

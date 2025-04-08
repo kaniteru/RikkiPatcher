@@ -2,6 +2,15 @@
 #define RIKKI_PATCHER_UTILS_REGISTRY_READER_HPP
 #include "precompiled.hpp"
 
+/* registry_reader.hpp
+ *  Included classes:
+ *      - RegistryReader
+ */
+
+// ======================== C L A S S ========================
+// ===    RegistryReader
+// ======================== C L A S S ========================
+
 class RegistryReader {
 public:
     bool is_valid() const;

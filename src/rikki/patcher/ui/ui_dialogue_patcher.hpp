@@ -19,9 +19,9 @@ class UI;
 
 class IUIDialoguePatcher {
 public:
-    explicit IUIDialoguePatcher(UI* pUI);
+    explicit IUIDialoguePatcher(std::shared_ptr<UI> pUI);
 protected:
-    UI* const m_pUI;
+    std::shared_ptr<UI> m_pUI;
 };
 
 // ======================== C L A S S ========================
@@ -30,18 +30,20 @@ protected:
 
 class UIDialoguePatcher final : public IPatcher, IUIDialoguePatcher {
 public:
-    virtual PatcherResult patch() override;
+    PatcherResult patch() final;
 
-    virtual PatcherResult migration() override;
+    PatcherResult migration() final;
 
-    virtual PatcherResult generate_migration_info() override;
+    PatcherResult extract() final;
+private:
+    static PatcherResult extract(const path_t& dir, std::shared_ptr<UI> pUI);
 
 public:
     /**
      * @param [in] src Root path of custom patch data directory.
      * @param [in] pUI ptr of UI.
      */
-    UIDialoguePatcher(const path_t& src, UI* pUI);
+    UIDialoguePatcher(const path_t& src, std::shared_ptr<UI> pUI);
 private:
     const path_t m_db;         /* Path of ui dialogue-dialogues patch folder */
     const path_t m_migrDB; /* Patch of ui dialogue-dialogues migration folder */
@@ -53,18 +55,20 @@ private:
 
 class UIChoicePatcher final : public IPatcher, IUIDialoguePatcher {
 public:
-    virtual PatcherResult patch() override;
+    PatcherResult patch() final;
 
-    virtual PatcherResult migration() override;
+    PatcherResult migration() final;
 
-    virtual PatcherResult generate_migration_info() override;
+    PatcherResult extract() final;
+private:
+    static PatcherResult extract(const path_t& src, std::shared_ptr<UI> pUI);
 
 public:
     /**
      * @param [in] src Root path of custom patch data directory.
      * @param [in] pUI ptr of UI.
      */
-    UIChoicePatcher(const path_t& src, UI* pUI);
+    UIChoicePatcher(const path_t& src, std::shared_ptr<UI> pUI);
 private:
     const path_t m_db;         /* Path of ui dialogue-choices patch folder */
     const path_t m_migrDB; /* Patch of ui dialogue-choices migration folder */

@@ -10,15 +10,19 @@
  *      - PatcherResult
  */
 
-// ======================== C L A S S ========================
+// ======================= S T R U C T =======================
 // ===    PatcherResult
-// ======================== C L A S S ========================
+// ======================= S T R U C T =======================
 
 struct PatcherResult {
-    size_t m_total;   /* Total count */
-    size_t m_ok;       /* OK count */
-    size_t m_failed;  /* Failed count */
-    size_t m_passed; /* Passed count */
+    int32_t m_ok;        /* OK count */
+    int32_t m_failed;  /* Failed count */
+    int32_t m_passed; /* Passed count */
+
+    /**
+     * @return Returns total counts.
+     */
+    int32_t total() const;
 
     PatcherResult& operator+=(const PatcherResult&);
     bool operator==(const PatcherResult&) const;
@@ -38,8 +42,10 @@ public:
     bool is_available() const;
 
     virtual PatcherResult patch() = 0;
+
     virtual PatcherResult migration() = 0;
-    virtual PatcherResult generate_migration_info() = 0;
+
+    virtual PatcherResult extract() = 0;
 
 public:
     /**

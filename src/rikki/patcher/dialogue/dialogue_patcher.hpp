@@ -23,21 +23,24 @@ public:
     PatcherResult patch() final;
 
     /**
-     * @brief Migrate custom data using game data.
-     *             Game data must be unmodified.
+     * @brief Migrate custom data using game data. <br>
+     * Game data must be unmodified.
      *
      * @return Returns true if migrated successfully.
      */
     PatcherResult migration() final;
 
     /**
-     * @brief Generate migration info data.
-     *             This data will be used to migrate custom patch data to match the updated game of features.
-     *             Game data must be unmodified.
-     *
-     * @return Returns true if generated migration info successfully.
+     * @brief
+     * @return
      */
-    PatcherResult generate_migration_info() final;
+    PatcherResult extract() final;
+private:
+    /**
+     * @param [in] path Directory of dialogue data files.
+     * @return Returns patch result.
+     */
+    static PatcherResult extract(const path_t& path);
 
 public:
     /**
@@ -65,21 +68,16 @@ public:
     PatcherResult patch() final;
 
     /**
-     * @brief Migrate custom data using game data.
-     *             Game data must be unmodified.
+     * @brief Migrate custom data using game data. <br>
+     * Game data must be unmodified.
      *
      * @return Returns true if migrated successfully.
      */
     PatcherResult migration() final;
 
-    /**
-     * @brief Generate migration info data.
-     *             This data will be used to migrate custom patch data to match the updated game in the future.
-     *             Game data must be unmodified.
-     *
-     * @return
-     */
-    PatcherResult generate_migration_info() final;
+    PatcherResult extract() final;
+
+    static PatcherResult extract(const path_t& path);
 
 public:
     /**

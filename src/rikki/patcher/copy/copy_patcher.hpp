@@ -18,16 +18,15 @@ public:
 
     PatcherResult migration() final;
 
-    PatcherResult generate_migration_info() final;
+    PatcherResult extract() final;
 
 public:
+    /**
+     * @param [in] dir Root path of custom patch data dir.
+     */
     explicit CopyPatcher(const path_t& dir);
 private:
     const path_t m_db;
-
-public:
-    static constexpr auto FOLDER_BASE = "copy";
-    static constexpr auto FILE_NAME = "copy.json";
 };
 
 

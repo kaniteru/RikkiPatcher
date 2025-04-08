@@ -3,6 +3,10 @@
 #include "ui_text_setting_key.hpp"
 #include "ui_text_dialog_key.hpp"
 
+// ======================== C L A S S ========================
+// ===    UIKeyMgr
+// ======================== C L A S S ========================
+
 void UIKeyMgr::add_ui_text_in_game() {
     for (const auto& [k, v] : InGameUITextKeyMgr::g_arr) {
         this->add<InGameUITextKey>(k, v);

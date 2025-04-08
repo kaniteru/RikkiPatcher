@@ -4,10 +4,10 @@
 // ===    DialoguePath
 // ======================= S T R U C T =======================
 
-const path_t DialoguePath::PATCH_FOLDER_DIALOGUE = path_t(DialoguePath::DIALOGUE_FOLDER_NAME);
-const path_t DialoguePath::PATCH_FOLDER_CHOICE = path_t(DialoguePath::CHOICE_FOLDER_NAME);
-const path_t DialoguePath::MIGR_FOLDER_DIALOGUE = path_t(MigrPath::BASE_FOLDER_NAME).append(DialoguePath::DIALOGUE_FOLDER_NAME);
-const path_t DialoguePath::MIGR_FOLDER_CHOICE = path_t(MigrPath::BASE_FOLDER_NAME).append(DialoguePath::CHOICE_FOLDER_NAME);
+const path_t DialoguePath::PATCH_FOLDER_DIALOGUE = path_t(DialoguePath::BASE_FOLDER_NAME).append(DialoguePath::DIALOGUE_FOLDER_NAME);
+const path_t DialoguePath::PATCH_FOLDER_CHOICE = path_t(DialoguePath::BASE_FOLDER_NAME).append(DialoguePath::CHOICE_FOLDER_NAME);
+const path_t DialoguePath::MIGR_FOLDER_DIALOGUE = path_t(MigrPath::BASE_FOLDER_NAME).append(DialoguePath::BASE_FOLDER_NAME).append(DialoguePath::DIALOGUE_FOLDER_NAME);
+const path_t DialoguePath::MIGR_FOLDER_CHOICE = path_t(MigrPath::BASE_FOLDER_NAME).append(DialoguePath::BASE_FOLDER_NAME).append(DialoguePath::CHOICE_FOLDER_NAME);
 
 // ======================= S T R U C T =======================
 // ===    UIPath
@@ -58,3 +58,11 @@ const path_t UIFontPath::PATCH_FILE_FONTS_INFO = path_t(UIFontPath::PATCH_BASE).
 
 const path_t UIFontPath::MIGR_FOLDER_FONTS_FILES = path_t(UIFontPath::MIGR_BASE).append(UIFontPath::FONTS_FILES_FOLDER_NAME);
 const path_t UIFontPath::MIGR_FILE_FONTS_INFO = path_t(UIFontPath::MIGR_BASE).append(UIFontPath::FONTS_INFO_FILE_NAME);
+
+// ======================= S T R U C T =======================
+// ===    CopyPath
+// ======================= S T R U C T =======================
+
+const path_t CopyPath::PATCH_BASE = path_t(CopyPath::BASE_FOLDER_NAME);
+
+const path_t CopyPath::PATCH_CONFIG_FILE = path_t(CopyPath::PATCH_BASE).append(CopyPath::CONFIG_FILE_NAME);

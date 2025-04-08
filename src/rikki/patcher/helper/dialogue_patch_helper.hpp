@@ -4,6 +4,15 @@
 #include "rikki/patcher/i_patcher.hpp"
 #include "rikki/data/dialogue/i_dialogue.hpp"
 
+/* dialogue_patch_helper.hpp
+ *  Included classes:
+ *      - DialoguePatchHelper
+ *      - ChoicePatchHelper
+ *
+ *  Included structs:
+ *      - DialoguePatchHelperResult
+ */
+
 // ======================== C L A S S ========================
 // ===    DialoguePatchHelper
 // ======================== C L A S S ========================
@@ -58,23 +67,27 @@ public:
     static PatcherResult do_migrate(const path_t& fPatch, const path_t& fMigr, const choice_map_t& pureMap);
 };
 
+// ======================= S T R U C T =======================
+// ===    DialoguePatchHelperResult
+// ======================= S T R U C T =======================
+
 struct DialoguePatchHelperResult {
     static constexpr auto OK = 0;
     static constexpr auto OK_NO_DATA = 1;
     static constexpr auto FAILED_SAVE = -1;
 
     static auto to_result(const PatcherResult& r) {
-        if (r == DialoguePatchHelperResult::_OK_NO_DATA) {
+        if (r == DialoguePatchHelperResult::PATCHER_RESULT_OK_NO_DATA) {
             return DialoguePatchHelperResult::OK_NO_DATA;
         }
-        if (r == DialoguePatchHelperResult::_FAILED_SAVE) {
+        if (r == DialoguePatchHelperResult::PATCHER_RESULT_FAILED_SAVE) {
             return DialoguePatchHelperResult::FAILED_SAVE;
         }
         return DialoguePatchHelperResult::OK;
     }
 
-    static constexpr PatcherResult _OK_NO_DATA =  { 0, 1, 0, 0 };
-    static constexpr PatcherResult _FAILED_SAVE = { 0, 0, 1, 0 };
+    static constexpr PatcherResult PATCHER_RESULT_OK_NO_DATA =  { -1, 0, 0 };
+    static constexpr PatcherResult PATCHER_RESULT_FAILED_SAVE = { 0, -1, 0 };
 };
 
 

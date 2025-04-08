@@ -9,7 +9,7 @@ function(download_7zip ver)
             URL "${DOWNLOAD_URL}"
     )
 
-    message("fetching ${CONT_NAME}")
+    message(STATUS "fetching ${CONT_NAME}")
     FetchContent_MakeAvailable(${CONT_NAME})
 
     set(${CONT_NAME}_DIR "${${CONT_NAME}_SOURCE_DIR}" PARENT_SCOPE)

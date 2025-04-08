@@ -116,10 +116,6 @@ bool UIText::set_title(const TitleUITextKey& key, const title_ui_text_t& value) 
     return found;
 }
 
-bool UIText::backup(const path_t& dir) {
-    throw std::exception("Not Implemented. Use UI::backup().");
-}
-
 bool UIText::save() {
     throw std::exception("Not Implemented. Use UI::save().");
 }
@@ -226,7 +222,7 @@ void UIText::find_title(const TitleUITextKey& key, const setting_ui_text_callbac
     buf.into_json_array(arr);
 }
 
-UIText::UIText(UI* const pUI) :
+UIText::UIText(std::shared_ptr<UI> pUI) :
     m_pUI(pUI) {
 
     m_isValid = m_pUI->is_valid();

@@ -6,5 +6,5 @@ FetchContent_Declare(
         GIT_TAG                 v3.11.3
 )
 
-message("fetching json")
+message(STATUS "fetching json")
 FetchContent_MakeAvailable(json)

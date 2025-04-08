@@ -2,6 +2,10 @@
 #define RIKKI_PATCHER_UTILS_UI_TEXT_UTIL_HPP
 #include "precompiled.hpp"
 
+// ======================== C L A S S ========================
+// ===    UITextUtil
+// ======================== C L A S S ========================
+
 class UITextUtil {
 public:
     static bool copy_startup_from_game_and_decrypt(path_t& file);

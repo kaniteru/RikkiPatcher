@@ -2,6 +2,15 @@
 #define RIKKI_PATCHER_UTILS_SEVENZIP_UTIL_HPP
 #include "precompiled.hpp"
 
+/* sevenzip_util.hpp
+ *  Included classes:
+ *      - SevenzipUtil
+ */
+
+// ======================== C L A S S ========================
+// ===    SevenzipUtil
+// ======================== C L A S S ========================
+
 class SevenzipUtil {
 public:
     bool zip(const std::vector<path_t>& files, const path_t& dst, bool usePW, const std::u8string& pw) const;

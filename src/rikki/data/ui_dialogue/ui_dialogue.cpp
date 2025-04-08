@@ -8,10 +8,6 @@
 // ===    UIDialogue
 // ======================== C L A S S ========================
 
-bool UIDialogue::backup(const path_t& dir) {
-    throw std::exception("Not Implemented. Use UI::backup().");
-}
-
 bool UIDialogue::save() {
     throw std::exception("Not Implemented. Use UI::save().");
 }
@@ -35,7 +31,7 @@ void UIDialogue::iterate_elements(const dialogue_iterate_t& callback) {
     }
 }
 
-UIDialogue::UIDialogue(UI* pUI, const char* const pKey) :
+UIDialogue::UIDialogue(const std::shared_ptr<UI> pUI, const char* const pKey) :
     m_pUI(pUI),
     m_pKey(pKey) {
 

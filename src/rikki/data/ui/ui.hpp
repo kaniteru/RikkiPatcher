@@ -8,14 +8,16 @@
  *      - UI
  */
 
+class UI;
+
 // ======================== C L A S S ========================
 // ===    UI
 // ======================== C L A S S ========================
 
-class UI : public IData {
+class UI final : public IData {
 public:
-    bool backup(const path_t& dir) final;
     bool save() final;
+
     bool save(const path_t& dir) final;
 
     /**
@@ -43,7 +45,6 @@ private:
     const path_t m_file; /* Path of decrypted startup.json */
     nlohmann::json m_j;  /* Loaded json data */
 };
-
 
 
 #endif //RIKKI_PATCHER_RIKKI_DATA_UI_UI_HPP

@@ -1,25 +1,32 @@
 #include "wv_binder.hpp"
-#include "enums.hpp"
 #include "wv_invoker.hpp"
 #include "wv_args_parser.hpp"
 
 #include "rikki/config.hpp"
+#include "rikki/config_keys.hpp"
 #include "rikki/dir_mgr.hpp"
+#include "rikki/dir_mgr_enum.hpp"
 #include "rikki/patcher/patcher.hpp"
-#include "rikki/extractor/extractor.hpp"
 
-#include "utils/worker.hpp"
+#include "utils/logger.hpp"
 #include "utils/string_util.hpp"
 #include "utils/dialog_util.hpp"
 #include "utils/filesystem_util.hpp"
+#include "utils/json_util.hpp"
 #include "utils/registry_reader.hpp"
-#include "utils/instance_factory.hpp"
 
-#define BIND_EVENT_HANDLER(EVENT, FN) INSTFAC(webview::webview)->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
-#define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) INSTFAC(webview::webview)->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
+#define BIND_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
+#define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
+
+// ======================== C L A S S ========================
+// ===    WvBinder
+// ======================== C L A S S ========================
 
 void WvBinder::bind() {
+    LOG(INFO, "Binding wv events...");
+
     BIND_EVENT_HANDLER("INIT_PATCHER", this->init_patcher);
+    BIND_EVENT_HANDLER("REQUEST_TRANS", this->request_trans);
     BIND_EVENT_HANDLER("OPEN_GITHUB", this->open_github);
     BIND_EVENT_HANDLER("OPEN_PROJECT_WEB", this->open_project_web);
     BIND_EVENT_HANDLER("SET_GMDIR_MANUALLY", this->set_gmdir_manually);
@@ -28,37 +35,61 @@ void WvBinder::bind() {
     BIND_EVENT_HANDLER("PATCH_EXTRACT", this->patch_extract);
     BIND_EVENT_HANDLER("PATCH_APPLY", this->patch_apply);
     BIND_EVENT_HANDLER("MIGRATE_PATCH_DATA", this->migrate_patch_data);
+
+    LOG(INFO, "All events bound");
 }
 
 std::string WvBinder::init_patcher(HANDLER_ARGS) {
-    constexpr static auto CONFIG_FILE = "config.json";
-    constexpr static auto WORKER_THREADS = 2;
-
-    WvInvoker::log(LOG_LV_PROG, "initializing patcher...");
-
-    auto& instFac = InstanceFactory::instance();
-    instFac.make<Config>(std::filesystem::current_path().append(CONFIG_FILE));
-    //instFac.make<Worker>(WORKER_THREADS);
-
+    WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::WV_BINDER_INIT_START);
     path_t gmDir { };
 
     try {
-        if (const auto pConfig = INSTFAC(Config); pConfig->exists(Config::KEY_GMDIR)) {
-            const auto s = pConfig->get<std::string>(Config::KEY_GMDIR);
+        if (Config::exists(ConfigKeys::KEY_GMDIR)) {
+            const auto s = Config::get<std::string>(ConfigKeys::KEY_GMDIR);
             gmDir = StringUtil::str_to_u8(s);
         }
     }
     catch (const nlohmann::json::exception& e) {
-        std::cerr << e.what() << std::endl;
+        LOG(FATAL, "Failed to load the gmdir from config: {}", e.what());
     }
 
-    //auto pWorker = inst.get<Worker>();
-    //pWorker->start();
-
     WvInvoker::init_gmdir(gmDir);
-    WvInvoker::log(LOG_LV_INFO, "Patcher initialized");
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::WV_BINDER_INIT_SUCCESS);
     WvInvoker::init_success();
     return { };
+}
+
+std::string WvBinder::request_trans(HANDLER_ARGS) {
+    std::u8string rtn = u8"[";
+
+    const auto files = FilesystemUtil::sort_files(DirMgr::get(DIR_PROJ_LANG));
+    const auto size = files.size();
+
+    for (uint32_t i = 0; i < size; i++) {
+        const auto fName = files[i].filename().replace_extension("").u8string();
+        nlohmann::json j { };
+
+        try {
+            if (!JsonUtil::load_from_file(j, files[i])) {
+                LOG(FATAL, "Failed to load json file: {}", files[i].generic_u8string());
+                continue;
+            }
+        }
+        catch (const nlohmann::json::exception& e) {
+            LOG(FATAL, "Failed to parse json file: {} -> {}", files[i].generic_u8string(), e.what());
+            continue;
+        }
+
+        // ["lang", json]
+        rtn += u8"[\"" + fName + u8"\", " + StringUtil::str_to_u8(j.dump()) + u8"]";
+
+        if (i  + 1 < size) {
+            rtn += u8", ";
+        }
+    }
+
+    rtn += u8"]";
+    return StringUtil::u8_to_str(rtn);
 }
 
 std::string WvBinder::open_github(HANDLER_ARGS) {
@@ -76,10 +107,11 @@ std::string WvBinder::open_project_web(HANDLER_ARGS) {
 std::string WvBinder::set_gmdir_manually(HANDLER_ARGS) {
     path_t dir { };
 
-    WvInvoker::log(LOG_LV_ALERT, "Please select the folder containing the game executable (.exe) file");
+    WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::WV_BINDER_DIALOG_GMDIR_NOTICE);
 
     if (!DialogUtil::folder_select_dialog(dir)) {
-        WvInvoker::log(LOG_LV_ERR, "An error occurred while retrieving the path");
+        // maybe user closed dialog window
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_DIALOG_FAILED);
     }
 
     WvInvoker::init_gmdir(dir);
@@ -87,80 +119,73 @@ std::string WvBinder::set_gmdir_manually(HANDLER_ARGS) {
 }
 
 std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
-    constexpr static auto REG_STEAM   = L"SOFTWARE\\Valve\\Steam";
-    constexpr static auto KEY_STEAM_PATH = L"SteamPath";
+    constexpr static auto REG_STEAM                       = L"SOFTWARE\\Valve\\Steam";
+    constexpr static auto KEY_STEAM_PATH          = L"SteamPath";
 
-    constexpr static auto REG_GAME = L"SOFTWARE\\Valve\\Steam\\Apps\\3269960";
+    constexpr static auto REG_GAME                         = L"SOFTWARE\\Valve\\Steam\\Apps\\3269960";
     constexpr static auto KEY_GAME_INSTALLED = L"Installed";
-    constexpr static auto KEY_GAME_NAME = L"Name";
+    constexpr static auto KEY_GAME_NAME            = L"Name";
 
     constexpr static auto GAME_DATA_FOLDER_NAME = u8"鼓手余命十日谭";
 
     RegistryReader rrSteam(REG_STEAM);
-    path_t dir { };
 
     if (!rrSteam.is_valid()) {
-        std::wcerr << "RegisterReader can't open:  " << REG_STEAM << std::endl;
-        WvInvoker::log(LOG_LV_ERR, "Can't find steam");
-        WvInvoker::init_gmdir(dir);
+        LOG(FATAL, "RegistryReader can't open:  {}", StringUtil::wstr_to_str(REG_STEAM));
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_FIND_STEAM);
+        WvInvoker::init_gmdir({ });
         return { };
     }
 
-    path_t steam = rrSteam.read_string(KEY_STEAM_PATH);
+    path_t dir = rrSteam.read_string(KEY_STEAM_PATH);
 
-    if (steam.empty()) {
-        std::wcerr << "RegistryReader can't read key: " << KEY_STEAM_PATH << std::endl;
-        WvInvoker::log(LOG_LV_ERR, "Can't find steam");
-        WvInvoker::init_gmdir(dir);
+    if (dir.empty()) {
+        LOG(FATAL, "RegistryReader can't read key: {}", StringUtil::wstr_to_str(KEY_STEAM_PATH));
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_FIND_STEAM);
+        WvInvoker::init_gmdir({ });
         return { };
     }
-    else {
-        dir = steam;
-        const auto u8log = u8"Found steam directory: " + dir.u8string();
-        auto cstr = reinterpret_cast<const char*>(u8log.c_str());
-        WvInvoker::log(LOG_LV_PROG, cstr);
-    }
+
+    const auto u8dir = dir.generic_u8string();
+    WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::WV_BINDER_GMDIR_AUTO_OK_STEAM_DIR, StringUtil::u8_to_cstr(u8dir));
 
     RegistryReader rrGame(REG_GAME);
 
     if (!rrGame.is_valid()) {
-        std::wcerr << "RegisterReader can't open:  " << REG_GAME << std::endl;
-        WvInvoker::log(LOG_LV_ERR, "Can't find installed game in steam");
-        WvInvoker::init_gmdir(dir);
+        LOG(FATAL, "RegistryReader can't open:  {}", StringUtil::wstr_to_str(REG_GAME));
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_FIND_GAME_FROM_STEAM);
+        WvInvoker::init_gmdir({ });
         return { };
     }
 
-    if (auto installed = rrGame.read_dword(KEY_GAME_INSTALLED); installed == 0) {
-        WvInvoker::log(LOG_LV_ERR, "Game doesn't installed");
-        WvInvoker::init_gmdir(dir);
+    if (const auto installed = rrGame.read_dword(KEY_GAME_INSTALLED); installed == 0) {
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_GAME_NOT_INSTALLED);
+        WvInvoker::init_gmdir({ });
         return { };
     }
-    else {
-        WvInvoker::log(LOG_LV_PROG, "Checked game installed");
-    }
 
-    const auto gm = rrGame.read_string(KEY_GAME_NAME);
+    WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::WV_BINDER_GMDIR_AUTO_OK_GAME_INSTALLED);
+
+    /*const auto gm = rrGame.read_string(KEY_GAME_NAME);
 
     if (gm.empty()) {
-        std::wcerr << "RegistryReader can't read key: " << KEY_GAME_NAME << std::endl;
-        WvInvoker::log(LOG_LV_ERR, "Can't find installed game name");
-        WvInvoker::init_gmdir(dir);
+        LOG(FATAL, "RegistryReader can't read key:  {}", StringUtil::wstr_to_str(KEY_GAME_NAME));
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_FIND_GAME_NAME);
+        WvInvoker::init_gmdir({ });
         return { };
     }
-    else {
-        WvInvoker::log(LOG_LV_PROG, "Checked game folder name");
+
+    WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::WV_BINDER_GMDIR_AUTO_OK_GAME_NAME);*/
+
+    dir.append("steamapps").append("common").append(GAME_DATA_FOLDER_NAME).append(GAME_DATA_FOLDER_NAME);
+
+    if (!fs::exists(dir)) {
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_GAME_DIR_NOT_EXISTS);
+        WvInvoker::init_gmdir({ });
+        return { };
     }
 
-    dir.append("steamapps").append("common").append(gm).append(GAME_DATA_FOLDER_NAME);
-
-    if (!std::filesystem::exists(dir)) {
-        WvInvoker::log(LOG_LV_ERR, "Game directory doesn't exits");
-        dir = path_t();
-    }
-    else {
-        WvInvoker::log(LOG_LV_INFO, "Found game directory");
-    }
-
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::WV_BINDER_GMDIR_AUTO_OK_GAME_DIR);
     WvInvoker::init_gmdir(dir);
     return { };
 }
@@ -169,7 +194,8 @@ std::string WvBinder::select_patch_data_dir(const std::string& args) {
     path_t dir { };
 
     if (!DialogUtil::folder_select_dialog(dir)) {
-        WvInvoker::log(LOG_LV_ERR, "An error occurred while retrieving the path");
+        // maybe user closed dialog window
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_DIALOG_FAILED);
     }
 
     WvInvoker::selected_patch_data_dir(dir);
@@ -177,14 +203,13 @@ std::string WvBinder::select_patch_data_dir(const std::string& args) {
 }
 
 std::string WvBinder::patch_extract(HANDLER_ARGS) {
-    const auto pDirMgr = INSTFAC(DirMgr);
-    const auto dst = pDirMgr->get(DIR_PROJ_DATA_EXTRACED);
-    FilesystemUtil::delete_and_create_directories(dst);
+    const auto dst = DirMgr::get(DIR_PROJ_DATA_EXTRACED);
 
-    Extractor::do_extract(dst);
-    Extractor::do_generate_migration_info(dst);
+    const Patcher patcher(dst);
+    patcher.do_extract();
 
-    WvInvoker::log(LOG_LV_INFO, u8"You can find extracted data into: " + dst.generic_u8string());
+    const auto u8dst = dst.generic_u8string();
+    WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::WV_BINDER_EXTRACT_RESULT, StringUtil::u8_to_cstr(u8dst));
     WvInvoker::finish_patch();
     return { };
 }
@@ -194,7 +219,8 @@ std::string WvBinder::patch_apply(HANDLER_ARGS) {
     const auto src = a.get<std::string>(0);
     const path_t u8src(StringUtil::str_to_u8(src));
 
-    Patcher::do_patch(u8src);
+    const Patcher patcher(u8src);
+    patcher.do_patch();
 
     WvInvoker::finish_patch();
     return { };
@@ -202,10 +228,11 @@ std::string WvBinder::patch_apply(HANDLER_ARGS) {
 
 std::string WvBinder::migrate_patch_data(HANDLER_ARGS) {
     if (path_t dir { }; DialogUtil::folder_select_dialog(dir)) {
-        Patcher::do_migration(dir);
+        const Patcher patcher(dir);
+        patcher.do_migration();
     } else {
         // maybe user closed dialog window
-        WvInvoker::log(LOG_LV_ERR, "An error occurred while retrieving the path");
+        WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_DIALOG_FAILED);
     }
 
     WvInvoker::finish_patch();

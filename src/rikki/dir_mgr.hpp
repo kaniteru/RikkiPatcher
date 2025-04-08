@@ -11,25 +11,21 @@
 // ===    DirMgr
 // ======================== C L A S S ========================
 
-enum eDir {
-    DIR_PROJ_BASE,
-    DIR_PROJ_TEMP,
-
-    DIR_PROJ_DATA_EXTRACED,
-
-    DIR_PROJ_EXE_7ZIP,
-
-    DIR_GAME_BASE,
-    DIR_GAME_FONTS,
-    DIR_GAME_JSON_STARTUP,
-    DIR_GAME_JSON_DIALOGUES
-};
+enum eDir : uint32_t; //e_dir.hpp
 
 /**
- * @brief Used get a dir path.
+ * @brief Used get a dir path. <br>
+ * eDir is defined in e_dir.hpp.
  */
 class DirMgr {
 public:
+    /**
+     * @brief Initialize using game directory.
+     *
+     * @param [in] gmDir Game directory path.
+     */
+    static void init(const path_t& gmDir);
+
     /**
      * @brief Get a target path.
      *
@@ -42,17 +38,18 @@ public:
      * auto path = dirMgr.get(dirType);
      * @endcode
      */
-    const path_t& get(eDir type);
-
-public:
-    /**
-     * @brief Initialize using game directory.
-     *
-     * @param [in] gmDir Game directory path.
-     */
-    explicit DirMgr(const path_t& gmDir);
+    const static path_t& get(eDir type);
 private:
-    std::unordered_map<eDir, path_t> m_dirs;
+    static DirMgr& instance();
+public:
+    DirMgr(const DirMgr&) = delete;
+    DirMgr& operator=(const DirMgr&) = delete;
+private:
+    DirMgr();
+    ~DirMgr();
+private:
+    class impl;
+    std::unique_ptr<impl> m_pImpl;
 };
 
 

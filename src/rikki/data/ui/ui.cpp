@@ -1,12 +1,9 @@
 #include "ui.hpp"
 #include "utils/json_util.hpp"
+
 // ======================== C L A S S ========================
 // ===    UI
 // ======================== C L A S S ========================
-
-bool UI::backup(const path_t& dir) {
-    throw std::exception("Not Implemented. Use save().");
-}
 
 bool UI::save() {
     return this->save(m_file);

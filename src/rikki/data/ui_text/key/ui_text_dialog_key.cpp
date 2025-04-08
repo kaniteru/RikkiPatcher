@@ -1,5 +1,9 @@
 #include "ui_text_dialog_key.hpp"
 
+// ======================= S T R U C T =======================
+// ===    DialogUITextKeyMgr
+// ======================= S T R U C T =======================
+
 const DialogType1UITextKey DialogUITextKeyMgr::delete_save_file {
     "asset/json/server/ui/sui1001.json",
     "42588917265_0.8154324523113876"

@@ -9,18 +9,6 @@
 // ===    Dialogue
 // ======================== C L A S S ========================
 
-bool Dialogue::backup(const path_t& dir) {
-    try {
-        const auto fName = m_file.filename().u8string();
-        std::filesystem::copy(m_file, path_t(dir).append(fName), std::filesystem::copy_options::overwrite_existing);
-    }
-    catch (const std::exception& e) {
-        return false;
-    }
-
-    return true;
-}
-
 bool Dialogue::save() {
     return this->save(m_file);
 }

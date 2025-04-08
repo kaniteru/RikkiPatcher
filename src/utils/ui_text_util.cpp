@@ -1,31 +1,39 @@
 #include "ui_text_util.hpp"
-#include "rikki/dir_mgr.hpp"
 
+#include "rikki/dir_mgr.hpp"
+#include "rikki/dir_mgr_enum.hpp"
+
+#include "utils/logger.hpp"
 #include "utils/sevenzip_util.hpp"
-#include "utils/temp_dir_mutex.hpp"
-#include "utils/instance_factory.hpp"
+
+// ======================== C L A S S ========================
+// ===    UITextUtil
+// ======================== C L A S S ========================
 
 bool UITextUtil::copy_startup_from_game_and_decrypt(path_t& file) {
-    if (!INSTFAC(TempDirMutex)->lock(TEMP_FOLDER_NAME)) {
+    const auto tempDir = path_t(DirMgr::get(DIR_PROJ_TEMP)).append(TEMP_FOLDER_NAME);
+    const auto fGm     = DirMgr::get(DIR_GAME_JSON_STARTUP);
+    const auto fZip       = path_t(tempDir).append(ZIP_FILE_NAME);
+    const auto fPatch   = path_t(tempDir).append(FILE_NAME);
+
+    fs::remove_all(tempDir);
+
+    if (!fs::create_directories(tempDir)) {
+        LOG(FATAL, "failed to create temp/ui dir");
         return false;
     }
-
-    const auto tempDir = path_t(INSTFAC(DirMgr)->get(DIR_PROJ_TEMP)).append(TEMP_FOLDER_NAME);
-    const auto fGm = INSTFAC(DirMgr)->get(DIR_GAME_JSON_STARTUP);
-    const auto fZip = path_t(tempDir).append(ZIP_FILE_NAME);
-    const auto fPatch = path_t(tempDir).append(FILE_NAME);
 
     // copy the game file to temp dir
-    if (!std::filesystem::copy_file(fGm, fZip, std::filesystem::copy_options::overwrite_existing)) {
-        INSTFAC(TempDirMutex)->unlock(TEMP_FOLDER_NAME);
+    if (!fs::copy_file(fGm, fZip, fs::copy_options::overwrite_existing)) {
+        LOG(FATAL, "failed to copy startup.json from game");
         return false;
     }
 
-    const SevenzipUtil svzip(INSTFAC(DirMgr)->get(DIR_PROJ_EXE_7ZIP));
+    const SevenzipUtil svzip(DirMgr::get(DIR_PROJ_EXE_7ZIP));
 
     // decrypt the game file
     if (!svzip.unzip(fZip, tempDir, true, PW)) {
-        INSTFAC(TempDirMutex)->unlock(TEMP_FOLDER_NAME);
+        LOG(FATAL, "failed to decrypt startup.json");
         return false;
     }
 
@@ -34,29 +42,33 @@ bool UITextUtil::copy_startup_from_game_and_decrypt(path_t& file) {
 }
 
 bool UITextUtil::encrypt_startup_and_move_to_game() {
-    if (!INSTFAC(TempDirMutex)->is_locked(TEMP_FOLDER_NAME)) {
+    const auto tempDir = path_t(DirMgr::get(DIR_PROJ_TEMP)).append(TEMP_FOLDER_NAME);
+    const auto fGm     = DirMgr::get(DIR_GAME_JSON_STARTUP);
+    const auto fZip       = path_t(tempDir).append(ZIP_FILE_NAME);
+    const auto fPatch   = path_t(tempDir).append(FILE_NAME);
+
+    if (!fs::exists(tempDir) || !fs::exists(fZip)) {
+        LOG(FATAL, "temp dir or zip file not found");
+        fs::remove_all(tempDir);
         return false;
     }
 
-    const auto tempDir = path_t(INSTFAC(DirMgr)->get(DIR_PROJ_TEMP)).append(TEMP_FOLDER_NAME);
-    const auto fGm = INSTFAC(DirMgr)->get(DIR_GAME_JSON_STARTUP);
-    const auto fZip = path_t(tempDir).append(ZIP_FILE_NAME);
-    const auto fPatch = path_t(tempDir).append(FILE_NAME);
-
-    const SevenzipUtil svzip(INSTFAC(DirMgr)->get(DIR_PROJ_EXE_7ZIP));
+    const SevenzipUtil svzip(DirMgr::get(DIR_PROJ_EXE_7ZIP));
 
     // re-zip patched file
     if (!svzip.zip({ fPatch }, fZip, true, PW)) {
-        INSTFAC(TempDirMutex)->unlock(TEMP_FOLDER_NAME);
+        LOG(FATAL, "failed to re-zip patched file");
+        fs::remove_all(tempDir);
         return false;
     }
 
     // copy patched file to game dir
-    if (!std::filesystem::copy_file(fZip, fGm, std::filesystem::copy_options::overwrite_existing)) {
-        INSTFAC(TempDirMutex)->unlock(TEMP_FOLDER_NAME);
+    if (!fs::copy_file(fZip, fGm, fs::copy_options::overwrite_existing)) {
+        LOG(FATAL, "failed to copy patched file to game dir");
+        fs::remove_all(tempDir);
         return false;
     }
 
-    INSTFAC(TempDirMutex)->unlock(TEMP_FOLDER_NAME);
+    fs::remove_all(tempDir);
     return true;
 }

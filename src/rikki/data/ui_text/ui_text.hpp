@@ -118,10 +118,11 @@ public:
      */
     bool set_title(const TitleUITextKey& key, const title_ui_text_t& value);
 
-    bool backup(const path_t& dir) final;
-    bool save() final;
-    bool save(const path_t& dir) final;
 private:
+    bool save() final;
+
+    bool save(const path_t& dir) final;
+
     /**
      * @brief Find in-game data in the loaded data using key.
      *
@@ -168,9 +169,9 @@ public:
      *
      * @param [in, out] pUI Ptr of UI.
      */
-    explicit UIText(UI* pUI);
+    explicit UIText(std::shared_ptr<UI> pUI);
 private:
-    UI* const m_pUI;
+    std::shared_ptr<UI> m_pUI;
 };
 
 

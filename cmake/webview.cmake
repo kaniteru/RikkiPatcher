@@ -6,5 +6,5 @@ FetchContent_Declare(
         GIT_TAG                 0.12.0
 )
 
-message("fetching webview")
+message(STATUS "fetching webview")
 FetchContent_MakeAvailable(webview)
