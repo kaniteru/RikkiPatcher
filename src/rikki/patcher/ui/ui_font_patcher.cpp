@@ -40,7 +40,10 @@ PatcherResult UIFontPatcher::patch() {
     uiFont.set_fonts(fonts);
 
     const auto fGm = DirMgr::get(DIR_GAME_FONTS);
-    fs::copy(fFiles, fGm, std::filesystem::copy_options::overwrite_existing);
+
+    if (fs::exists(fFiles) && fs::is_directory(fFiles)) {
+        fs::copy(fFiles, fGm, fs::copy_options::overwrite_existing);
+    }
 
     WvInvoker::log(WV_LOG_LV_INFO, WvLogFmt::PATCH_UI_FONT_RESULT, lenFonts, lenFonts, 0, 0);
     return { lenFonts, 0, 0 };

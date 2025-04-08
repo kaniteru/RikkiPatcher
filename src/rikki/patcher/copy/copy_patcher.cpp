@@ -60,7 +60,7 @@ PatcherResult CopyPatcher::patch() {
                 fs::copy(src, dst, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
                 success = true;
             } catch (const fs::filesystem_error& e) {
-                WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::PATCH_COPY_FAILED_EXCEPTION, u8K, u8V, e.what());
+                WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::PATCH_COPY_FAILED_EXCEPTION, k, v, e.what());
             }
         } else {
             success = fs::copy_file(src, dst, fs::copy_options::overwrite_existing);
@@ -68,9 +68,9 @@ PatcherResult CopyPatcher::patch() {
 
         if (success) {
             if (isDir) {
-                WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_COPY_OK_DIR, u8K, u8V);
+                WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_COPY_OK_DIR, k, v);
             } else {
-                WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_COPY_OK_FILE, u8K, u8V);
+                WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_COPY_OK_FILE, k, v);
             }
 
             ok++;

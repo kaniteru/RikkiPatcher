@@ -31,7 +31,7 @@ PatcherResult DialoguePatcher::patch() {
         const auto fGame = path_t(gmdir).append(fName);
 
         // check is game file exists
-        if (!std::filesystem::exists(fGame)) {
+        if (!fs::exists(fGame)) {
             WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_DIALOGUE_PASS_NO_GM_DATA, fName);
 
             passed++;
@@ -201,7 +201,7 @@ PatcherResult ChoicePatcher::patch() {
         const auto fGame = path_t(gmdir).append(fName);
 
         // check is game file exists
-        if (!std::filesystem::exists(fGame)) {
+        if (!fs::exists(fGame)) {
             WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::PATCH_CHOICE_PASS_NO_GM_DATA, fName);
 
             passed++;

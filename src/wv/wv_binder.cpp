@@ -220,7 +220,7 @@ std::string WvBinder::patch_apply(HANDLER_ARGS) {
     const path_t u8src(StringUtil::str_to_u8(src));
 
     const Patcher patcher(u8src);
-    patcher.do_migration();
+    patcher.do_patch();
 
     WvInvoker::finish_patch();
     return { };
