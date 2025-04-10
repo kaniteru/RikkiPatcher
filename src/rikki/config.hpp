@@ -24,11 +24,10 @@ public:
      * @return Returns value of key.
      *
      * @code
-     * Config config(...);
      * const char* key = "my_key";
      *
-     * if (config.exists(key)) {
-     *      auto value = config.get<...>(key);
+     * if (config::exists(key)) {
+     *      auto value = config::get<...>(key);
      *      ...
      * }
      * @endcode
@@ -72,11 +71,6 @@ public:
 private:
     static Config& instance();
 
-    /**
-     * @brief Create or load config data from file.
-     *
-     * @param [in] file Target config file path.
-     */
     Config();
     ~Config();
 private:
