@@ -1,14 +1,15 @@
 #include "precompiled.hpp"
+#include "exception/rixception.hpp"
 #include "utils/logger.hpp"
 #include "wv/wv_mgr.hpp"
 #include "wv/wv_binder.hpp"
 
-int main(const int argc, char* argv[]) {
+int rikki_main() {
     WvMgr::init(
 #ifndef NDEBUG
-        true
+    true
 #endif
-        );
+    );
 
     DLOG("Running RP in debug mode, enabled f12");
 
@@ -24,7 +25,7 @@ int main(const int argc, char* argv[]) {
 
     if (!fs::exists(index)) {
         LOG(FATAL, "index.html not found");
-        return EXIT_FAILURE;
+        throw ResourceRixception("index.html not found");
     }
 
     DLOG("Navigating to index.html");
@@ -32,6 +33,26 @@ int main(const int argc, char* argv[]) {
     DLOG("Running wv client");
     wv->run();
     return EXIT_SUCCESS;
+}
+
+int main(int argc, char* argv[]) {
+    try {
+        return rikki_main();
+    }
+    catch (const Rixception& e) {
+        LOG(FATAL, "Unhandled Rixception: {}", e.what());
+        MessageBoxA(nullptr, e.what(), "Rikki Patcher Error", MB_OK | MB_ICONERROR);
+    }
+    catch (const webview::exception& e) {
+        LOG(FATAL, "Unhandled webview exception: {}", e.what());
+        MessageBoxA(nullptr, e.what(), "Webview Error", MB_OK | MB_ICONERROR);
+    }
+    catch (const std::exception& e) {
+        LOG(FATAL, "Unhandled exception: {}", e.what());
+        MessageBoxA(nullptr, e.what(), "Unknown Error", MB_OK | MB_ICONERROR);
+    }
+
+    return EXIT_FAILURE;
 }
 
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
