@@ -1,4 +1,5 @@
 #include "wv_invoker.hpp"
+#include "wv_log_fmt.hpp"
 #include "rikki/dir_mgr.hpp"
 #include "rikki/config.hpp"
 #include "rikki/config_keys.hpp"

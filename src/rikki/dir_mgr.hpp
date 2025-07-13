@@ -11,11 +11,11 @@
 // ===    DirMgr
 // ======================== C L A S S ========================
 
-enum eDir : uint32_t; //e_dir.hpp
+enum eDir : uint32_t; //dir_mgr_enum.hpp
 
 /**
  * @brief Used get a dir path. <br>
- * eDir is defined in e_dir.hpp.
+ * eDir is defined in dir_mgr_enum.hpp.
  */
 class DirMgr {
 public:
@@ -35,7 +35,7 @@ public:
      * @code
      * DirMgr dirMgr(...);
      * eDir dirType = ...;
-     * auto path = dirMgr.get(dirType);
+     * auto path = DirMgr::get(dirType);
      * @endcode
      */
     const static path_t& get(eDir type);

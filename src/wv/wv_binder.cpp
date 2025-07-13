@@ -1,6 +1,7 @@
 #include "wv_binder.hpp"
 #include "wv_invoker.hpp"
 #include "wv_args_parser.hpp"
+#include "wv_log_fmt.hpp"
 
 #include "rikki/config.hpp"
 #include "rikki/config_keys.hpp"

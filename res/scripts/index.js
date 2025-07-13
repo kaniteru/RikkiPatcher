@@ -1,4 +1,4 @@
-const RIKKI_PATCHER_VER = 250408;
+const RIKKI_PATCHER_VER = 250714;
 
 function onLoad() {
     Logger.log(eLogLv.LOG_LV_INFO, `Rikki Patcher Version: ${RIKKI_PATCHER_VER}`);

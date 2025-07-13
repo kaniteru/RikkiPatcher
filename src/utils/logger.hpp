@@ -4,9 +4,9 @@
 
 // log levels
 #define VERBOSE Logger::eLogLv::LOG_LV_DEBUG
-#define INFO        Logger::eLogLv::LOG_LV_INFO
-#define WARN       Logger::eLogLv::LOG_LV_WARN
-#define FATAL      Logger::eLogLv::LOG_LV_FATAL
+#define INFO    Logger::eLogLv::LOG_LV_INFO
+#define WARN    Logger::eLogLv::LOG_LV_WARN
+#define FATAL   Logger::eLogLv::LOG_LV_FATAL
 
 // debug log
 #ifdef NDEBUG
@@ -34,9 +34,9 @@ class Logger {
 public:
     enum class eLogLv : uint8_t {
         LOG_LV_DEBUG = 0,
-        LOG_LV_INFO   = 1,
+        LOG_LV_INFO  = 1,
         LOG_LV_WARN  = 2,
-        LOG_LV_FATAL  = 3
+        LOG_LV_FATAL = 3
     };
 
     struct Meta {
@@ -64,7 +64,7 @@ void Logger::log(Meta&& meta, std::string&& fmt, Args&&... args) {
     static                    std::array<ktd::ANSICode, 4> LV_TO_COLOR = { ktd::color::bright_cyan, ktd::color::white, ktd::color::yellow, ktd::color::bright_red };
 
     Logger::instance().m_pool.enqueue([
-        meta = std::move(meta),
+        meta = meta,
         fmt = std::move(fmt),
         ... _args = std::forward<Args>(args)
         ]() mutable {
@@ -90,9 +90,11 @@ void Logger::log(Meta&& meta, std::string&& fmt, Args&&... args) {
             fmtMsg
         );
 
-        if (auto& ofs = Logger::instance().m_ofs; ofs.is_open()) {
+        if (auto& ofs = Logger::instance().m_ofs; ofs.good()) {
             ofs << msg << "\n";
             ofs.flush();
+        } else {
+            std::cerr << "File stream is in error state!" << std::endl;
         }
 
         std::cout << LV_TO_COLOR[lv] << msg <<  ktd::endl;
