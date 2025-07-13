@@ -14,7 +14,7 @@ struct WvMgr::impl {
     }
 
     ~impl() {
-        DLOG("Destroying webview");
+        LOG(VERBOSE, "Destroying webview");
     }
 
     std::shared_ptr<webview::webview> m_pWv;
