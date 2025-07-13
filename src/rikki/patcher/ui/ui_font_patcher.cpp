@@ -10,6 +10,7 @@
 #include "utils/filesystem_util.hpp"
 
 #include "wv/wv_invoker.hpp"
+#include "wv/wv_log_fmt.hpp"
 
 // ======================== C L A S S ========================
 // ===    UIFontPatcher
