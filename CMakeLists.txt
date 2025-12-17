@@ -133,15 +133,3 @@ add_custom_command(TARGET rikkipatcher POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${7ZIP_DIR}/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/7zip
 )
-
-#[[ from failed project
-add_custom_command(TARGET rikkipatcher POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${CMAKE_SOURCE_DIR}/res"
-            "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${7ZIP_DIR}"
-            "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/7zip"
-        COMMENT "Copying resources and 7-Zip..."
-)
-]]
