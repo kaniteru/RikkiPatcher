@@ -14,7 +14,7 @@ bool Config::exists(const char* key) {
 }
 
 bool Config::save() {
-    std::unique_lock lock(Config::instance().m_mtx);
+    std::lock_guard lock(Config::instance().m_mtx);
     return JsonUtil::save_into_file(Config::instance().m_j, DirMgr::get(DIR_PROJ_CONFIG));
 }
 
@@ -28,5 +28,5 @@ Config::Config() {
 }
 
 Config::~Config() {
-    this->save();
+    (void)save();
 }

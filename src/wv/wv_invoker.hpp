@@ -47,7 +47,7 @@ webview::noresult WvInvoker::call(const std::string_view func, Args&&... args) {
     const std::string cmd = std::string(func) + "(" + parser.get() + ");";
     const auto u8cmd = StringUtil::str_to_u8(cmd);
     const auto js = StringUtil::u8_to_cstr(u8cmd);
-    LOG(VERBOSE, "execute js: {}", cmd);
+    LOG_VERBOSE("execute js: {}", cmd);
     return WvMgr::get()->eval(js);
 }
 

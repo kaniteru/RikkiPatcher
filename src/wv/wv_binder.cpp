@@ -24,7 +24,7 @@
 // ======================== C L A S S ========================
 
 void WvBinder::bind() {
-    LOG(INFO, "Binding wv events...");
+    LOG_INFO("Binding wv events...");
 
     BIND_EVENT_HANDLER("INIT_PATCHER", this->init_patcher);
     BIND_EVENT_HANDLER("REQUEST_TRANS", this->request_trans);
@@ -37,7 +37,7 @@ void WvBinder::bind() {
     BIND_EVENT_HANDLER("PATCH_APPLY", this->patch_apply);
     BIND_EVENT_HANDLER("MIGRATE_PATCH_DATA", this->migrate_patch_data);
 
-    LOG(INFO, "All events bound");
+    LOG_INFO("All events bound");
 }
 
 std::string WvBinder::init_patcher(HANDLER_ARGS) {
@@ -51,7 +51,7 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
         }
     }
     catch (const nlohmann::json::exception& e) {
-        LOG(FATAL, "Failed to load the gmdir from config: {}", e.what());
+        LOG_FATAL("Failed to load the gmdir from config: {}", e.what());
     }
 
     WvInvoker::init_gmdir(gmDir);
@@ -72,12 +72,12 @@ std::string WvBinder::request_trans(HANDLER_ARGS) {
 
         try {
             if (!JsonUtil::load_from_file(j, files[i])) {
-                LOG(FATAL, "Failed to load json file: {}", files[i].generic_u8string());
+                LOG_FATAL("Failed to load json file: {}", files[i].generic_u8string());
                 continue;
             }
         }
         catch (const nlohmann::json::exception& e) {
-            LOG(FATAL, "Failed to parse json file: {} -> {}", files[i].generic_u8string(), e.what());
+            LOG_FATAL("Failed to parse json file: {} -> {}", files[i].generic_u8string(), e.what());
             continue;
         }
 
@@ -132,7 +132,7 @@ std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
     RegistryReader rrSteam(REG_STEAM);
 
     if (!rrSteam.is_valid()) {
-        LOG(FATAL, "RegistryReader can't open:  {}", StringUtil::wstr_to_str(REG_STEAM));
+        LOG_FATAL("RegistryReader can't open:  {}", StringUtil::wstr_to_str(REG_STEAM));
         WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_FIND_STEAM);
         WvInvoker::init_gmdir({ });
         return { };
@@ -141,7 +141,7 @@ std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
     path_t dir = rrSteam.read_string(KEY_STEAM_PATH);
 
     if (dir.empty()) {
-        LOG(FATAL, "RegistryReader can't read key: {}", StringUtil::wstr_to_str(KEY_STEAM_PATH));
+        LOG_FATAL("RegistryReader can't read key: {}", StringUtil::wstr_to_str(KEY_STEAM_PATH));
         WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_FIND_STEAM);
         WvInvoker::init_gmdir({ });
         return { };
@@ -153,7 +153,7 @@ std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
     RegistryReader rrGame(REG_GAME);
 
     if (!rrGame.is_valid()) {
-        LOG(FATAL, "RegistryReader can't open:  {}", StringUtil::wstr_to_str(REG_GAME));
+        LOG_FATAL("RegistryReader can't open:  {}", StringUtil::wstr_to_str(REG_GAME));
         WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_FIND_GAME_FROM_STEAM);
         WvInvoker::init_gmdir({ });
         return { };
@@ -170,7 +170,7 @@ std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
     /*const auto gm = rrGame.read_string(KEY_GAME_NAME);
 
     if (gm.empty()) {
-        LOG(FATAL, "RegistryReader can't read key:  {}", StringUtil::wstr_to_str(KEY_GAME_NAME));
+        LOG_FATAL("RegistryReader can't read key:  {}", StringUtil::wstr_to_str(KEY_GAME_NAME));
         WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_GMDIR_AUTO_FAILED_FIND_GAME_NAME);
         WvInvoker::init_gmdir({ });
         return { };

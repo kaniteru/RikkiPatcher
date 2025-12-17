@@ -19,13 +19,13 @@ bool UITextUtil::copy_startup_from_game_and_decrypt(path_t& file) {
     fs::remove_all(tempDir);
 
     if (!fs::create_directories(tempDir)) {
-        LOG(FATAL, "failed to create temp/ui dir");
+        LOG_FATAL("failed to create temp/ui dir");
         return false;
     }
 
     // copy the game file to temp dir
     if (!fs::copy_file(fGm, fZip, fs::copy_options::overwrite_existing)) {
-        LOG(FATAL, "failed to copy startup.json from game");
+        LOG_FATAL("failed to copy startup.json from game");
         return false;
     }
 
@@ -33,7 +33,7 @@ bool UITextUtil::copy_startup_from_game_and_decrypt(path_t& file) {
 
     // decrypt the game file
     if (!svzip.unzip(fZip, tempDir, true, PW)) {
-        LOG(FATAL, "failed to decrypt startup.json");
+        LOG_FATAL("failed to decrypt startup.json");
         return false;
     }
 
@@ -48,7 +48,7 @@ bool UITextUtil::encrypt_startup_and_move_to_game() {
     const auto fPatch   = path_t(tempDir).append(FILE_NAME);
 
     if (!fs::exists(tempDir) || !fs::exists(fZip)) {
-        LOG(FATAL, "temp dir or zip file not found");
+        LOG_FATAL("temp dir or zip file not found");
         fs::remove_all(tempDir);
         return false;
     }
@@ -57,14 +57,14 @@ bool UITextUtil::encrypt_startup_and_move_to_game() {
 
     // re-zip patched file
     if (!svzip.zip({ fPatch }, fZip, true, PW)) {
-        LOG(FATAL, "failed to re-zip patched file");
+        LOG_FATAL("failed to re-zip patched file");
         fs::remove_all(tempDir);
         return false;
     }
 
     // copy patched file to game dir
     if (!fs::copy_file(fZip, fGm, fs::copy_options::overwrite_existing)) {
-        LOG(FATAL, "failed to copy patched file to game dir");
+        LOG_FATAL("failed to copy patched file to game dir");
         fs::remove_all(tempDir);
         return false;
     }
