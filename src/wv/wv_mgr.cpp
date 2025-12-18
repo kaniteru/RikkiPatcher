@@ -9,12 +9,12 @@
 
 struct WvMgr::impl {
     impl(bool enableF12, void* hWnd) {
-        LOG(INFO, "Initializing webview");
+        LOG_INFO("Initializing webview");
         m_pWv = std::make_shared<webview::webview>(enableF12, hWnd);
     }
 
     ~impl() {
-        LOG(VERBOSE, "Destroying webview");
+        LOG_INFO("Destroying webview");
     }
 
     std::shared_ptr<webview::webview> m_pWv;
@@ -26,13 +26,9 @@ struct WvMgr::impl {
 
 void WvMgr::init(bool enableF12, void* hWnd) {
     DirMgr::init({ });
-    LOG(INFO, "Initializing WvMgr");
+    LOG_INFO("Initializing WvMgr");
 
-    if (WvMgr::instance().m_pImpl) {
-        LOG(FATAL, "WvMgr already initialized");
-        throw std::runtime_error("WvMgr already initialized");
-    }
-
+    assert(WvMgr::instance().m_pImpl == nullptr && "WvMgr already initialized");
     WvMgr::instance().m_pImpl = std::make_unique<impl>(enableF12, hWnd);
 }
 

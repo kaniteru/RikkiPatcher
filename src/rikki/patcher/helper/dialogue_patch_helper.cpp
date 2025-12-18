@@ -147,7 +147,7 @@ PatcherResult ChoicePatchHelper::do_patch(const path_t& fPatch, IDialogue* const
 
 PatcherResult ChoicePatchHelper::do_migrate(const path_t& fPatch, const path_t& fMigr, const choice_map_t& pureMap) {
     PatcherResult result { };
-    auto& ok       = result.m_ok;
+    auto& ok     = result.m_ok;
     auto& failed = result.m_failed;
 
     if (pureMap.empty()) {

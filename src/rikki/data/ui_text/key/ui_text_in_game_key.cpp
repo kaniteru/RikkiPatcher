@@ -95,14 +95,14 @@ const InGameUITextKey InGameUITextKeyMgr::enter_save_file_name2 = {
 };
 
 const std::map<const char*, const InGameUITextKey&> InGameUITextKeyMgr::g_keys = {
-    { KEY_PREVIOUS_DIALOGUE, previous_dialogue },
-    { KEY_HIDE_INTERFACE, hide_interface },
-    { KEY_AUTO_PLAY_DIALOGUE, auto_play_dialogue },
-    { KEY_AUTO_SKIP_DIALOGUE, auto_skip_dialogue },
-    { KEY_SAVE_GAME_PROGRESS, save_game_progress },
-    { KEY_LOAD_GAME_PROGRESS, load_game_progress },
-    { KEY_SETTINGS, settings },
-    { KEY_RETURN_TO_TITLE, return_to_title },
-    { KEY_ENTER_SAVE_FILE_NAME, enter_save_file_name },
+    { KEY_PREVIOUS_DIALOGUE,     previous_dialogue },
+    { KEY_HIDE_INTERFACE,        hide_interface },
+    { KEY_AUTO_PLAY_DIALOGUE,    auto_play_dialogue },
+    { KEY_AUTO_SKIP_DIALOGUE,    auto_skip_dialogue },
+    { KEY_SAVE_GAME_PROGRESS,    save_game_progress },
+    { KEY_LOAD_GAME_PROGRESS,    load_game_progress },
+    { KEY_SETTINGS,              settings },
+    { KEY_RETURN_TO_TITLE,       return_to_title },
+    { KEY_ENTER_SAVE_FILE_NAME,  enter_save_file_name },
     { KEY_ENTER_SAVE_FILE_NAME2, enter_save_file_name2 }
 };

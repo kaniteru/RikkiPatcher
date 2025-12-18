@@ -19,17 +19,17 @@ using wv_ptr_t = std::shared_ptr<webview::webview>;
 class WvMgr final {
 public:
     /**
-     * @brief Initialize WvMgr.
+     * @return Returns webview instance.
+     */
+    static wv_ptr_t get();
+
+    /**
+     * @brief Initialize webview.
      *
      * @param [in, optional] enableF12
      * @param [in, out, optional] hWnd
      */
     static void init(bool enableF12 = false, void* hWnd = nullptr);
-
-    /**
-     * @return Returns webview instance.
-     */
-    static wv_ptr_t get();
 
     WvMgr& operator=(const WvMgr&) = delete;
     WvMgr(const WvMgr&) = delete;

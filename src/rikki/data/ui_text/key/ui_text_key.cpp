@@ -44,7 +44,7 @@ InGameUITextKey::InGameUITextKey(const char* a1, const char* a2, const uint32_t 
 // ===    TitleUITextKey
 // ======================= S T R U C T =======================
 
-TitleUITextKey::TitleUITextKey(const char* a1, const char* a2, const char* a3, uint32_t a4, const char* a5, uint32_t a6) :
+TitleUITextKey::TitleUITextKey(const char* a1, const char* a2, const char* a3, const uint32_t a4, const char* a5, const uint32_t a6) :
     m_iKey(a1),
     m_iiKey(a2),
     m_iiiKey(a3),

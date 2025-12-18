@@ -19,7 +19,7 @@ bool Dialogue::save(const path_t& path) {
 
 void Dialogue::iterate_elements(const dialogue_iterate_t& callback) {
     constexpr static auto KEY_ELEMETNS = "customCommands";
-    constexpr static auto IDX_ID                = 0;
+    constexpr static auto IDX_ID       = 0;
 
     for (auto& elements : m_j[KEY_ELEMETNS]) {
         for (auto& elem : elements) {

@@ -81,15 +81,63 @@ public:
      */
     static bool save_into_file(const nlohmann::ordered_json& j, const path_t& file);
 
+    /**
+     * @brief Deserialize a value of type @p T from a JSON object.
+     *
+     * @tparam T Destination type (must be compatible with nlohmann::json::get<T>()).
+     * @param j Source JSON.
+     * @return Deserialized value.
+     *
+     * @code
+     * nlohmann::json j { ... };
+     * MyType v = JsonUtil::from_json<MyType>(j);
+     * @endcode
+     */
     template <class T>
     static T from_json(const nlohmann::json& j);
 
+    /**
+     * @brief Deserialize a value of type @p T from an ordered JSON object.
+     *
+     * @tparam T Destination type (must be compatible with nlohmann::ordered_json::get<T>()).
+     * @param j Source ordered JSON.
+     * @return Deserialized value.
+     *
+     * @code
+     * nlohmann::ordered_json oj { ... };
+     * MyType v = JsonUtil::from_json<MyType>(oj);
+     * @endcode
+     */
     template <class T>
     static T from_json(const nlohmann::ordered_json& j);
 
+    /**
+     * @brief Serialize a value of type @p T into a JSON object.
+     *
+     * @tparam T Source type (must be compatible with nlohmann::json assignment).
+     * @param[out] j Destination JSON.
+     * @param t Value to serialize.
+     *
+     * @code
+     * nlohmann::json j { };
+     * JsonUtil::to_json(j, value);
+     * @endcode
+     */
     template <class T>
     static void to_json(nlohmann::json& j, const T& t);
 
+    /**
+     * @brief Serialize a value of type @p T into an ordered JSON object.
+     *
+     * @tparam T Source type (must be compatible with nlohmann::ordered_json assignment).
+     * @param[out] j Destination ordered JSON.
+     * @param t Value to serialize.
+     *
+     * @code
+     * nlohmann::ordered_json oj { };
+     * JsonUtil::to_json(oj, value);
+     * @endcode
+     */
     template <class T>
     static void to_json(nlohmann::ordered_json& j, const T& t);
 };

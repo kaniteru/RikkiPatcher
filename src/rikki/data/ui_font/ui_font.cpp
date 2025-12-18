@@ -31,7 +31,7 @@ bool UIFont::save() {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 
-bool UIFont::save(const path_t& dir) {
+bool UIFont::save(const path_t&) {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 
@@ -45,7 +45,7 @@ nlohmann::json& UIFont::get_json_font_arr() const {
     return m_pUI->get_json()["asset/json/config.json"]["FONTS"];
 }
 
-UIFont::UIFont(std::shared_ptr<UI> pUI) :
+UIFont::UIFont(const std::shared_ptr<UI>& pUI) :
     m_pUI(pUI) {
 
     m_isValid = m_pUI->is_valid();

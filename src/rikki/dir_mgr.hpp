@@ -41,10 +41,7 @@ public:
     const static path_t& get(eDir type);
 private:
     static DirMgr& instance();
-public:
-    DirMgr(const DirMgr&) = delete;
-    DirMgr& operator=(const DirMgr&) = delete;
-private:
+
     DirMgr();
     ~DirMgr();
 private:

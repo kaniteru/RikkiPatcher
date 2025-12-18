@@ -47,7 +47,7 @@ private:
     nlohmann::json& get_json_font_arr() const;
 
 public:
-    explicit UIFont(std::shared_ptr<UI> pUI);
+    explicit UIFont(const std::shared_ptr<UI>& pUI);
 private:
     std::shared_ptr<UI> m_pUI;
 };

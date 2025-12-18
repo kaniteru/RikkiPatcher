@@ -21,13 +21,13 @@ void FilesystemUtil::delete_and_create_directories(const path_t& dir) {
     try {
         fs::remove_all(dir);
     } catch (const std::exception& e) {
-        LOG(FATAL, "Failed to remove directory: {} -> {}", StringUtil::u8_to_str(dir.generic_u8string()), e.what());
+        LOG_FATAL("Failed to remove directory: {} -> {}", StringUtil::u8_to_str(dir.generic_u8string()), e.what());
     }
 
     fs::create_directories(dir);
 }
 
-std::vector<int32_t> FilesystemUtil::extract_nums(std::u8string_view filename) {
+std::vector<int32_t> FilesystemUtil::extract_nums(const std::u8string_view filename) {
     static const auto REGEX = std::regex("(\\d+)");
 
     std::vector<int32_t> result { };

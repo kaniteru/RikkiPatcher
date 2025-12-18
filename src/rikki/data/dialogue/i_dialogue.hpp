@@ -13,14 +13,14 @@ struct DialogueSpan;
 struct Choice;
 }
 
-using element_idx_t  = uint32_t;           /* Element index. */
+using element_idx_t  = uint32_t;      /* Element index. */
 using dialogue_idx_t = element_idx_t; /* Dialogue index. */
-using choice_idx_t    = element_idx_t; /* Choice index. */
+using choice_idx_t   = element_idx_t; /* Choice index. */
 
 using dialogue_map_t = std::map<dialogue_idx_t, j::Dialogue>;
-using choice_map_t    = std::map<choice_idx_t, j::Choice>;
+using choice_map_t   = std::map<choice_idx_t, j::Choice>;
 
-using dialogue_iterate_t   = std::function<void(element_idx_t elementID, nlohmann::basic_json<>& array)>;
+using dialogue_iterate_t  = std::function<void(element_idx_t elementID, nlohmann::basic_json<>& array)>;
 using dialogue_callback_t = std::function<void(dialogue_idx_t idx, j::Dialogue& dia)>;
 using choices_callback_t  = std::function<void(choice_idx_t idx, j::Choice& choice)>;
 

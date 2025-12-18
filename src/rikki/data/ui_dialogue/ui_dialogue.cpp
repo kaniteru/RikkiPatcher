@@ -12,13 +12,13 @@ bool UIDialogue::save() {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 
-bool UIDialogue::save(const path_t& path) {
+bool UIDialogue::save(const path_t&) {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 
 void UIDialogue::iterate_elements(const dialogue_iterate_t& callback) {
     constexpr static auto KEY_ELEMETNS = "commands";
-    constexpr static auto IDX_ID                = 0;
+    constexpr static auto IDX_ID       = 0;
 
     for (auto& elem : m_pUI->get_json()[m_pKey][KEY_ELEMETNS]) {
         if (elem.empty() || !elem.is_array()) {
@@ -31,7 +31,7 @@ void UIDialogue::iterate_elements(const dialogue_iterate_t& callback) {
     }
 }
 
-UIDialogue::UIDialogue(const std::shared_ptr<UI> pUI, const char* const pKey) :
+UIDialogue::UIDialogue(const std::shared_ptr<UI>& pUI, const char* const pKey) :
     m_pUI(pUI),
     m_pKey(pKey) {
 

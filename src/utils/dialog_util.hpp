@@ -13,6 +13,21 @@
 
 class DialogUtil {
 public:
+    /**
+     * @brief Show a native folder picker dialog and store the selected directory.
+     *
+     * @param[out] dir Receives the chosen directory when the user accepts.
+     * @return true if a folder was selected, false if canceled or on error.
+     *
+     * @code
+     * path_t dir { ... };
+     * if (DialogUtil::folder_select_dialog(dir)) {
+     *     // use dir
+     * } else {
+     *     // dialog was canceled
+     * }
+     * @endcode
+     */
     static bool folder_select_dialog(path_t& dir);
 };
 

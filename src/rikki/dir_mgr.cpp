@@ -13,7 +13,7 @@ public:
 public:
     ~impl();
 private:
-    std::shared_mutex m_mtx;
+    mutable std::shared_mutex m_mtx;
     std::unordered_map<eDir, path_t> m_dirs;
 };
 
@@ -79,4 +79,4 @@ DirMgr& DirMgr::instance() {
 DirMgr::DirMgr() :
     m_pImpl(std::make_unique<DirMgr::impl>()) { }
 
-DirMgr::~DirMgr() { }
+DirMgr::~DirMgr() = default;

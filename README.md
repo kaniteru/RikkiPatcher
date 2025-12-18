@@ -1,7 +1,7 @@
 # Rikki Patcher
 A simple patch tool to modify the game《 [鼓手余命十日谭 (Shiina Taki's Decameron)](https://store.steampowered.com/app/3269960) 》
 
-![screenshot](img/patcher.png)
+![screenshot](.github/patcher.png)
 
 ## Features
 - Extract and apply modified dialogue, some ui texts

@@ -7,14 +7,14 @@
 // ======================= S T R U C T =======================
 
 struct MsgBoxUITextKey {
-    static constexpr auto KEY_FONT = "font";
-    static constexpr auto KEY_COLOR= "color";
+    static constexpr auto KEY_FONT      = "font";
+    static constexpr auto KEY_COLOR     = "color";
     static constexpr auto KEY_FONT_SIZE = "fontSize";
-    static constexpr auto KEY_X = "x";
-    static constexpr auto KEY_Y = "y";
-    static constexpr auto KEY_WIDTH = "width";
-    static constexpr auto KEY_SHOW = "show";
-    static constexpr auto KEY_TEXT = "text";
+    static constexpr auto KEY_X         = "x";
+    static constexpr auto KEY_Y         = "y";
+    static constexpr auto KEY_WIDTH     = "width";
+    static constexpr auto KEY_SHOW      = "show";
+    static constexpr auto KEY_TEXT      = "text";
 };
 
 

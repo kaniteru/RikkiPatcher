@@ -10,8 +10,8 @@ int32_t PatcherResult::total() const {
 }
 
 PatcherResult& PatcherResult::operator+=(const PatcherResult& rhs) {
-    m_ok        += rhs.m_ok;
-    m_failed  += rhs.m_failed;
+    m_ok     += rhs.m_ok;
+    m_failed += rhs.m_failed;
     m_passed += rhs.m_passed;
     return *this;
 }
