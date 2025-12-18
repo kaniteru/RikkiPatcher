@@ -18,10 +18,10 @@ struct DialogUITextKeyMgr {
     static const DialogType2UITextKey save_file_write_error;
     static const DialogType2UITextKey back_to_title_alert;
 
-    static constexpr auto KEY_DELETE_SAVE_FILE = "delete_save_file";
-    static constexpr auto KEY_SAVE_FILE_READ_ERROR = "save_file_read_error";
+    static constexpr auto KEY_DELETE_SAVE_FILE      = "delete_save_file";
+    static constexpr auto KEY_SAVE_FILE_READ_ERROR  = "save_file_read_error";
     static constexpr auto KEY_SAVE_FILE_WRITE_ERROR = "save_file_write_error";
-    static constexpr auto KEY_BACK_TO_TITLE_ALERT = "back_to_title_alert";
+    static constexpr auto KEY_BACK_TO_TITLE_ALERT   = "back_to_title_alert";
 
     static constexpr auto KEY_SYSTEM = "system";
     static constexpr auto KEY_TEXT = "text";

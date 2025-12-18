@@ -14,8 +14,8 @@
 
 PatcherResult CopyPatcher::patch() {
     PatcherResult result { };
-    auto& ok        = result.m_ok;
-    auto& failed  = result.m_failed;
+    auto& ok     = result.m_ok;
+    auto& failed = result.m_failed;
     auto& passed = result.m_passed;
 
     WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::PATCH_COPY_START);
@@ -54,7 +54,7 @@ PatcherResult CopyPatcher::patch() {
         }
 
         bool success = false;
-        bool isDir      = fs::is_directory(src);
+        const bool isDir = fs::is_directory(src);
 
         if (isDir) {
             try {

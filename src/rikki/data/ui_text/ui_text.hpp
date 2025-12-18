@@ -169,7 +169,7 @@ public:
      *
      * @param [in, out] pUI Ptr of UI.
      */
-    explicit UIText(std::shared_ptr<UI> pUI);
+    explicit UIText(const std::shared_ptr<UI>& pUI);
 private:
     std::shared_ptr<UI> m_pUI;
 };

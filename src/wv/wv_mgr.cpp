@@ -14,7 +14,7 @@ struct WvMgr::impl {
     }
 
     ~impl() {
-        LOG_VERBOSE("Destroying webview");
+        LOG_INFO("Destroying webview");
     }
 
     std::shared_ptr<webview::webview> m_pWv;
@@ -28,11 +28,7 @@ void WvMgr::init(bool enableF12, void* hWnd) {
     DirMgr::init({ });
     LOG_INFO("Initializing WvMgr");
 
-    if (WvMgr::instance().m_pImpl) {
-        LOG_FATAL("WvMgr already initialized");
-        throw std::runtime_error("WvMgr already initialized");
-    }
-
+    assert(WvMgr::instance().m_pImpl == nullptr && "WvMgr already initialized");
     WvMgr::instance().m_pImpl = std::make_unique<impl>(enableF12, hWnd);
 }
 

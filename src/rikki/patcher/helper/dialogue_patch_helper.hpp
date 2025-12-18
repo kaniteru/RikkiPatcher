@@ -72,9 +72,9 @@ public:
 // ======================= S T R U C T =======================
 
 struct DialoguePatchHelperResult {
-    static constexpr auto OK = 0;
+    static constexpr auto OK         = 0;
     static constexpr auto OK_NO_DATA = 1;
-    static constexpr auto FAILED_SAVE = -1;
+    static constexpr auto FAILED_SAVE= -1;
 
     static auto to_result(const PatcherResult& r) {
         if (r == DialoguePatchHelperResult::PATCHER_RESULT_OK_NO_DATA) {

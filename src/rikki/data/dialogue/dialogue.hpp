@@ -30,7 +30,7 @@ public:
      *
      * @return Returns true if saved successfully.
      */
-    bool save() final;
+    bool save();
 
     /**
      * @brief Save the data to the path provided in arg.
@@ -38,14 +38,14 @@ public:
      * @param path Target path.
      * @return Returns true if saved successfully.
      */
-    bool save(const path_t& path) final;
+    bool save(const path_t& path);
 private:
     /**
      * @brief iterate array elements in dialogue data.
      *
      * @param [in, out, optional] callback Retrieve or modify the data of elements.
      */
-    void iterate_elements(const dialogue_iterate_t& callback) final;
+    void iterate_elements(const dialogue_iterate_t& callback);
 public:
     /**
      * @brief Load dialogue from game data file.

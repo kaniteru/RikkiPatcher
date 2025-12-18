@@ -62,8 +62,8 @@ struct DialogType2UITextKey : IUIKey {
 struct InGameUITextKey : IUIKey {
     const char* m_iKey;
     const char* m_iiKey;
-    uint32_t m_iIdx;
-    uint32_t m_iiIdx;
+    uint32_t    m_iIdx;
+    uint32_t    m_iiIdx;
     const char* m_iiiKey;
     const char* m_iiiiKey;
 
@@ -78,9 +78,9 @@ struct TitleUITextKey : IUIKey {
     const char* m_iKey;
     const char* m_iiKey;
     const char* m_iiiKey;
-    uint32_t m_iIdx;
+    uint32_t    m_iIdx;
     const char* m_iiiiKey;
-    uint32_t m_iiIdx;
+    uint32_t    m_iiIdx;
 
     TitleUITextKey(const char* a1, const char* a2, const char* a3, uint32_t a4, const char* a5, uint32_t a6);
 };

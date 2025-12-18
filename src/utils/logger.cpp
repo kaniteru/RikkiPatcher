@@ -4,9 +4,9 @@
 
 namespace {
 
-constexpr std::array<const char*, 5> LEVEL_NAMES = { "V", "DEBUG", "INFO", "WARN", "FATAL" };
+constexpr std::array<char, 5> LEVEL_NAMES = { 'V', 'D', 'I', 'W', 'F' };
 constexpr std::array<const char*, 5> LEVEL_COLORS = {
-    kani::ansi::fg_bright_white,
+    kani::ansi::fg_bright_magenta,
     kani::ansi::fg_bright_cyan,
     kani::ansi::fg_white,
     kani::ansi::fg_yellow,
@@ -18,7 +18,7 @@ constexpr std::array<const char*, 5> LEVEL_COLORS = {
 // ===    Logger
 // ======================== C L A S S ========================
 
-void Logger::log_impl(eLogLv level, const std::source_location& loc, std::string&& message) {
+void Logger::log_impl(const eLogLv level, const std::source_location& loc, std::string&& message) {
     m_pool.enqueue([this, level, loc, msg = std::move(message)]() {
         const auto lvIndex = static_cast<size_t>(level);
         const auto now = std::chrono::system_clock::now();
@@ -43,8 +43,10 @@ void Logger::log_impl(eLogLv level, const std::source_location& loc, std::string
             m_ofs.flush();
         }
 
+#ifndef NDEBUG
         // Write to console with color
         std::cout << LEVEL_COLORS[lvIndex] << logLine << kani::ansi::reset_fg << std::endl;
+#endif //NDEBUG
     });
 }
 
@@ -57,14 +59,16 @@ Logger::Logger() :
     m_ofs(DirMgr::get(eDir::DIR_PROJ_LOG), std::ios::out | std::ios::trunc) {
 
     kani::ansi::enable_virtual_terminal();
-    m_pool.start();
+    if (!m_pool.start()) {
+        throw std::runtime_error("Failed to start logger pool");
+    }
 }
 
 Logger::~Logger() {
     while (!m_pool.is_empty()) {
         std::this_thread::yield();
     }
-    m_pool.stop();
+    (void)m_pool.stop();
 
     if (m_ofs.is_open()) {
         m_ofs.close();

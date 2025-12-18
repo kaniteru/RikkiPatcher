@@ -20,7 +20,7 @@ public:
      *
      * @return Returns patched files count.
      */
-    PatcherResult patch() final;
+    PatcherResult patch();
 
     /**
      * @brief Migrate custom data using game data. <br>
@@ -28,13 +28,13 @@ public:
      *
      * @return Returns true if migrated successfully.
      */
-    PatcherResult migration() final;
+    PatcherResult migration();
 
     /**
      * @brief
      * @return
      */
-    PatcherResult extract() final;
+    PatcherResult extract();
 private:
     /**
      * @param [in] path Directory of dialogue data files.
@@ -50,7 +50,7 @@ public:
      */
     explicit DialoguePatcher(const path_t& src);
 private:
-    const path_t m_db;        /* Patch data folder of dialogue data files. */
+    const path_t m_db;     /* Patch data folder of dialogue data files. */
     const path_t m_migrDB; /* Migration folder of dialogue data files */
 };
 
@@ -65,7 +65,7 @@ public:
      *
      * @return Returns patched files count.
      */
-    PatcherResult patch() final;
+    PatcherResult patch();
 
     /**
      * @brief Migrate custom data using game data. <br>
@@ -73,9 +73,9 @@ public:
      *
      * @return Returns true if migrated successfully.
      */
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 
     static PatcherResult extract(const path_t& path);
 
@@ -87,7 +87,7 @@ public:
      */
     explicit ChoicePatcher(const path_t& src);
 private:
-    const path_t m_db;        /* Patch data folder of Choice data files */
+    const path_t m_db;     /* Patch data folder of Choice data files */
     const path_t m_migrDB; /* Migration folder of choice data files */
 };
 

@@ -49,8 +49,8 @@ public:
      */
     explicit IRikkiStream(const path_t& file);
 protected:
-    const path_t m_file;               /* Path of json file */
-    bool m_isLoaded;                     /* Is data loaded from json file? */
+    const path_t m_file;        /* Path of json file */
+    bool m_isLoaded;            /* Is data loaded from json file? */
     nlohmann::ordered_json m_j; /* Json object */
 };
 

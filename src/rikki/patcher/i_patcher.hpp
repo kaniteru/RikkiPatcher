@@ -15,8 +15,8 @@
 // ======================= S T R U C T =======================
 
 struct PatcherResult {
-    int32_t m_ok;        /* OK count */
-    int32_t m_failed;  /* Failed count */
+    int32_t m_ok;     /* OK count */
+    int32_t m_failed; /* Failed count */
     int32_t m_passed; /* Passed count */
 
     /**
@@ -57,8 +57,8 @@ public:
     explicit IPatcher(const path_t& dir);
     virtual ~IPatcher() = default;
 protected:
-    bool m_isAvailable;         /* Is patcher available? */
-    const path_t m_dir;        /* Root path of custom patch data. */
+    bool m_isAvailable;     /* Is patcher available? */
+    const path_t m_dir;     /* Root path of custom patch data. */
     const path_t m_migrDir; /* Root path of custom patch migration data */
 };
 

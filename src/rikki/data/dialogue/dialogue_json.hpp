@@ -32,9 +32,9 @@ struct DialogueSpan {
 // ======================= S T R U C T =======================
 
 struct Dialogue {
-    std::string speaker; /* Speaker. ex) Rikki Shiina */
+    std::string speaker;             /* Speaker. ex) Rikki Shiina */
     std::vector<DialogueSpan> spans;
-    nlohmann::ordered_json atts; /* attributes (using control the font family, font size and etc...) */
+    nlohmann::ordered_json atts;     /* attributes (using control the font family, font size and etc...) */
 
     ORDERED_NLOHMANN_DEFINE_TYPE_INTRUSIVE(Dialogue,
     speaker,

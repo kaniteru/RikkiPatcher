@@ -43,9 +43,9 @@ bool UITextUtil::copy_startup_from_game_and_decrypt(path_t& file) {
 
 bool UITextUtil::encrypt_startup_and_move_to_game() {
     const auto tempDir = path_t(DirMgr::get(DIR_PROJ_TEMP)).append(TEMP_FOLDER_NAME);
-    const auto fGm     = DirMgr::get(DIR_GAME_JSON_STARTUP);
-    const auto fZip       = path_t(tempDir).append(ZIP_FILE_NAME);
-    const auto fPatch   = path_t(tempDir).append(FILE_NAME);
+    const auto fGm    = DirMgr::get(DIR_GAME_JSON_STARTUP);
+    const auto fZip    = path_t(tempDir).append(ZIP_FILE_NAME);
+    const auto fPatch  = path_t(tempDir).append(FILE_NAME);
 
     if (!fs::exists(tempDir) || !fs::exists(fZip)) {
         LOG_FATAL("temp dir or zip file not found");

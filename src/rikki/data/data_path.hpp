@@ -32,10 +32,10 @@ struct DialoguePath {
     static const path_t MIGR_FOLDER_CHOICE;
 
 private:
-    static constexpr auto BASE_FOLDER_NAME = u8"dialogue";
+    static constexpr auto BASE_FOLDER_NAME     = u8"dialogue";
 
     static constexpr auto DIALOGUE_FOLDER_NAME = u8"dialogues";
-    static constexpr auto CHOICE_FOLDER_NAME = u8"choices";
+    static constexpr auto CHOICE_FOLDER_NAME   = u8"choices";
 };
 
 // ======================= S T R U C T =======================
@@ -69,12 +69,12 @@ struct UITextPath {
     static const path_t MIGR_FILE_TITLE;
 
 private:
-    static constexpr auto BASE_FOLDER_NAME = u8"text";
+    static constexpr auto BASE_FOLDER_NAME  = u8"text";
 
     constexpr static auto IN_GAME_FILE_NAME = u8"in_game.json";
     constexpr static auto SETTING_FILE_NAME = u8"setting.json";
-    constexpr static auto DIALOG_FILE_NAME = u8"dialog.json";
-    constexpr static auto TITLE_FILE_NAME = u8"title.json";
+    constexpr static auto DIALOG_FILE_NAME  = u8"dialog.json";
+    constexpr static auto TITLE_FILE_NAME   = u8"title.json";
 };
 
 // ======================= S T R U C T =======================
@@ -92,10 +92,10 @@ struct UIDialoguePath {
     static const path_t MIGR_FOLDER_CHOICE;
 
 private:
-    static constexpr auto BASE_FOLDER_NAME = u8"dialogue";
+    static constexpr auto BASE_FOLDER_NAME     = u8"dialogue";
 
     static constexpr auto DIALOGUE_FOLDER_NAME = u8"dialogues";
-    static constexpr auto CHOICE_FOLDER_NAME = u8"choices";
+    static constexpr auto CHOICE_FOLDER_NAME   = u8"choices";
 };
 
 // ======================= S T R U C T =======================
@@ -113,10 +113,10 @@ struct UIFontPath {
     static const path_t MIGR_FILE_FONTS_INFO;
 
 private:
-    static constexpr auto BASE_FOLDER_NAME = u8"font";
+    static constexpr auto BASE_FOLDER_NAME        = u8"font";
 
     static constexpr auto FONTS_FILES_FOLDER_NAME = u8"fonts";
-    static constexpr auto FONTS_INFO_FILE_NAME = u8"fonts.json";
+    static constexpr auto FONTS_INFO_FILE_NAME    = u8"fonts.json";
 };
 
 // ======================= S T R U C T =======================

@@ -222,7 +222,7 @@ void UIText::find_title(const TitleUITextKey& key, const setting_ui_text_callbac
     buf.into_json_array(arr);
 }
 
-UIText::UIText(std::shared_ptr<UI> pUI) :
+UIText::UIText(const std::shared_ptr<UI>& pUI) :
     m_pUI(pUI) {
 
     m_isValid = m_pUI->is_valid();

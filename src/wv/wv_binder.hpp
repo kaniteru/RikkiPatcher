@@ -2,7 +2,7 @@
 #define RIKKI_PATCHER_WV_WV_BINDER_HPP
 #include "precompiled.hpp"
 
-#define HANDLER_ARGS                const std::string& args
+#define HANDLER_ARGS       const std::string& args
 #define ASYNC_HANDLER_ARGS const std::string& id, const std::string& args, void* pArgs
 
 /* wv_binder.hpp

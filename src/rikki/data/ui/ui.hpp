@@ -16,9 +16,9 @@ class UI;
 
 class UI final : public IData {
 public:
-    bool save() final;
+    bool save();
 
-    bool save(const path_t& dir) final;
+    bool save(const path_t& dir);
 
     /**
      * @brief Get json ref.
@@ -42,8 +42,8 @@ public:
      */
     explicit UI(const path_t& file);
 private:
-    const path_t m_file; /* Path of decrypted startup.json */
-    nlohmann::json m_j;  /* Loaded json data */
+    const path_t   m_file; /* Path of decrypted startup.json */
+    nlohmann::json m_j;    /* Loaded json data */
 };
 
 

@@ -120,12 +120,12 @@ std::string WvBinder::set_gmdir_manually(HANDLER_ARGS) {
 }
 
 std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
-    constexpr static auto REG_STEAM                       = L"SOFTWARE\\Valve\\Steam";
-    constexpr static auto KEY_STEAM_PATH          = L"SteamPath";
+    constexpr static auto REG_STEAM          = L"SOFTWARE\\Valve\\Steam";
+    constexpr static auto KEY_STEAM_PATH     = L"SteamPath";
 
-    constexpr static auto REG_GAME                         = L"SOFTWARE\\Valve\\Steam\\Apps\\3269960";
+    constexpr static auto REG_GAME           = L"SOFTWARE\\Valve\\Steam\\Apps\\3269960";
     constexpr static auto KEY_GAME_INSTALLED = L"Installed";
-    constexpr static auto KEY_GAME_NAME            = L"Name";
+    constexpr static auto KEY_GAME_NAME      = L"Name";
 
     constexpr static auto GAME_DATA_FOLDER_NAME = u8"鼓手余命十日谭";
 
