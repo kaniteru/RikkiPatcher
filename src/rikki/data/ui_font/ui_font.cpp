@@ -31,7 +31,7 @@ bool UIFont::save() {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 
-bool UIFont::save(const path_t& dir) {
+bool UIFont::save(const path_t&) {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 

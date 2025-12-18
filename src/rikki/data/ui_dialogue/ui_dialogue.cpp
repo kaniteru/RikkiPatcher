@@ -12,7 +12,7 @@ bool UIDialogue::save() {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 
-bool UIDialogue::save(const path_t& path) {
+bool UIDialogue::save(const path_t&) {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 

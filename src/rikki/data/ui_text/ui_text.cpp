@@ -1,6 +1,7 @@
 #include "ui_text.hpp"
 #include "rikki/data/ui/ui.hpp"
 #include "key/ui_text_msg_box_text.hpp"
+#include "utils/logger.hpp"
 
 // ======================== C L A S S ========================
 // ===    UIText
@@ -120,7 +121,7 @@ bool UIText::save() {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 
-bool UIText::save(const path_t& dir) {
+bool UIText::save(const path_t&) {
     throw std::exception("Not Implemented. Use UI::save().");
 }
 
@@ -133,7 +134,9 @@ void UIText::find_in_game(const InGameUITextKey& key, const in_game_ui_text_call
         callback(buf);
         jText = buf;
     }
-    catch (const nlohmann::json::exception& e) { }
+    catch (const nlohmann::json::exception& e) {
+        LOG_FATAL("Failed to find in-game ui text: {}", e.what());
+    }
 }
 
 void UIText::find_setting(const SettingUITextKey& key, const setting_ui_text_callback_t& callback) const {
@@ -215,7 +218,7 @@ void UIText::find_dialog_type2(const DialogType2UITextKey& key, const dialog_ui_
 
 void UIText::find_title(const TitleUITextKey& key, const setting_ui_text_callback_t& callback) const {
     auto& arr = m_pUI->get_json()[key.m_iKey][key.m_iiKey][key.m_iiiKey][key.m_iIdx][key.m_iiiiKey][key.m_iiIdx];
-    auto& jText = arr["text"];
+    //auto& jText = arr["text"];
 
     auto buf = j::MsgBoxText::from_json_array(arr);
     callback(buf);
