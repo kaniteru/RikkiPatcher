@@ -27,13 +27,14 @@ FetchContent_Declare(json
 
 # webview
 FetchContent_Declare(webview
-        GIT_REPOSITORY https://github.com/webview/webview
-        GIT_TAG        55b438dc11d0e46bc68526822380963ae9d362af
+        GIT_REPOSITORY https://github.com/webview/webview.git
+        GIT_TAG        cbbdee44afff22867de9fd88a9fc8350d9bdd399
+        GIT_SHALLOW    TRUE
 )
 
 # Thread pool
 FetchContent_Declare(threadpool
-        GIT_REPOSITORY https://github.com/kaniteru/CPP-ThreadPool
+        GIT_REPOSITORY https://github.com/kaniteru/CPP-ThreadPool.git
         GIT_TAG        main
         GIT_SHALLOW    TRUE
 )
