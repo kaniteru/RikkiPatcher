@@ -6,6 +6,14 @@
 #include "utils/logger.hpp"
 #include "utils/sevenzip_util.hpp"
 
+namespace {
+
+constexpr auto FILE_NAME        = "startup.json";
+constexpr auto ZIP_FILE_NAME    = "startup.zip";
+constexpr auto TEMP_FOLDER_NAME = "ui";
+constexpr auto PW               = u8"gc_zip";
+} //namespace
+
 // ======================== C L A S S ========================
 // ===    UITextUtil
 // ======================== C L A S S ========================

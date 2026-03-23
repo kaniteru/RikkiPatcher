@@ -21,7 +21,7 @@ public:
      *
      * @tparam T Value type.
      * @param key Configuration key.
-     * @return Value of specified type.
+     * @return Value of a specified type.
      *
      * @code
      * const char* key = "my_key";
@@ -39,7 +39,7 @@ public:
      * @brief Get json value reference using key.
      *
      * @param key Target key.
-     * @return Returns json reference of key.
+     * @return Returns json reference of a key.
      */
     [[nodiscard]]
     static auto& get_ref(const char* key);
@@ -48,13 +48,13 @@ public:
      * @brief Check is key exists.
      *
      * @param key Configuration key.
-     * @return Returns true if key exists.
+     * @return Returns true if the key exists.
      */
     [[nodiscard]]
     static bool exists(const char* key);
 
     /**
-     * @brief Set config value with key. If key exists, it will overwrite.
+     * @brief Set the config value with a key. If a key exists, it will overwrite.
      *
      * @tparam T Value type.
      * @param key Configuration key.
@@ -64,7 +64,7 @@ public:
     static void set(const char* key, T&& value);
 
     /**
-     * @brief Save config file.
+     * @brief Save the config file.
      *
      * @return true if data saved successfully.
      */

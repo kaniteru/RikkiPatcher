@@ -11,7 +11,7 @@ namespace j {
 struct Dialogue;
 struct DialogueSpan;
 struct Choice;
-}
+} //namespace j
 
 using element_idx_t  = uint32_t;      /* Element index. */
 using dialogue_idx_t = element_idx_t; /* Dialogue index. */
@@ -63,9 +63,9 @@ protected:
     virtual void iterate_elements(const dialogue_iterate_t& callback) = 0;
      /**
      * @brief Perform a for-each on the loaded dialogue data. <br>
-     * Can get index and modify the data of spekaer and diagloue string.
+     * Can get index and modify the data of speaker and dialogue string.
      *
-     * @param [in, out, optional] callback Retrieve or modify the data of spekaer and diagloue string.
+     * @param [in, out, optional] callback Retrieve or modify the data of speaker and dialogue string.
      */
     void find_dialogues(const dialogue_callback_t& callback);
 
@@ -73,7 +73,7 @@ protected:
      * @brief Perfomr a for-each on the loaded choice data. <br>
      * Can get index and modify the data of choice string.
      *
-     * @param [in, out, optional] callback Retrieve or modify the data of choice string.
+     * @param [in, out, optional] callback Retrieve or modify the data of a choice string.
      */
     void find_choices(const choices_callback_t& callback);
 

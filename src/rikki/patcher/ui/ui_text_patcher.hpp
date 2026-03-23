@@ -22,30 +22,30 @@ class UIText;
 class UITextPatcher final : public IPatcher {
 public:
     /**
-     * @brief Do custom patch into game data.
+     * @brief Do a custom patch into game data.
      *
      * @return Returns patched data count.
      */
-    PatcherResult patch() final;
+    PatcherResult patch();
 
     /**
      * @brief Migrate custom data using data data.
-     *              Game data must be unmodified.
+     *        Game data must be unmodified.
      *
      * @return Returns true if migrated successfully.
      */
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 
 public:
     /**
-     * @brief Init using custom patch data directory.
+     * @brief Init using a custom patch data directory.
      *
-     * @param [in] src Root path of custom patch data directory.
+     * @param [in] src Root path of a custom patch data directory.
      * @param [in] pUT ptr of UIText.
      */
-    UITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
+    UITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT);
 private:
     std::shared_ptr<UIText> m_pUT; /* Ptr of UIText. */
 };
@@ -57,10 +57,10 @@ private:
 class IUITextPatcher : public IPatcher {
 public:
     /**
-     * @param [in] src Target root folder of custom patch data.
+     * @param [in] src Target the root folder of custom patch data.
      * @param [in] ut  Ptr of loaded UIText.
      */
-    IUITextPatcher(const path_t& src, std::shared_ptr<UIText> ut);
+    IUITextPatcher(const path_t& src, const std::shared_ptr<UIText>& ut);
 protected:
     std::shared_ptr<UIText> m_pUT; /* Reference of UIText */
 };
@@ -71,21 +71,21 @@ protected:
 
 class InGameUITextPatcher final : public IUITextPatcher {
 public:
-    PatcherResult patch() final;
+    PatcherResult patch();
 
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 
 public:
     /**
-     * @param [in] src Target root folder of custom patch data.
-     * @param [in] ut  Ptr of loaded UIText.
+     * @param [in] src Target the root folder of custom patch data.
+     * @param [in] pUT  Ptr of loaded UIText.
      */
-    InGameUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
+    InGameUITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT);
 private:
-    const path_t m_db;         /* Path of in-game patch data folder */
-    const path_t m_migrDB; /* Path of in-game migration data folder */
+    const path_t m_db;     /* Path of the in-game patch data folder */
+    const path_t m_migrDB; /* Path of the in-game migration data folder */
 };
 
 // ======================== C L A S S ========================
@@ -94,20 +94,20 @@ private:
 
 class SettingUITextPatcher final : public IUITextPatcher {
 public:
-    PatcherResult patch() final;
+    PatcherResult patch();
 
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 
 public:
     /**
-     * @param [in] src Target root folder of custom patch data.
-     * @param [in] ut  Ptr of loaded UIText.
+     * @param [in] src Target the root folder of custom patch data.
+     * @param [in] pUT  Ptr of loaded UIText.
      */
-    SettingUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
+    SettingUITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT);
 private:
-    const path_t m_db;         /* Path of setting patch data folder */
+    const path_t m_db;     /* Path of setting patch data folder */
     const path_t m_migrDB; /* Path of setting migration data folder */
 };
 
@@ -117,20 +117,20 @@ private:
 
 class DialogUITextPatcher final : public IUITextPatcher {
 public:
-    PatcherResult patch() final;
+    PatcherResult patch();
 
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 
 public:
     /**
-     * @param [in] src Target root folder of custom patch data.
-     * @param [in] ut  Ptr of loaded UIText.
+     * @param [in] src Target the root folder of custom patch data.
+     * @param [in] pUT  Ptr of loaded UIText.
      */
     DialogUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
 private:
-    const path_t m_db;         /* Path of dialog patch data folder */
+    const path_t m_db;     /* Path of dialog patch data folder */
     const path_t m_migrDB; /* Path of dialog migration data folder */
 };
 
@@ -140,18 +140,20 @@ private:
 
 class TitleUITextPatcher final : public IUITextPatcher {
 public:
-    PatcherResult patch() final;
-    PatcherResult migration() final;
-    PatcherResult extract() final;
+    PatcherResult patch();
+
+    PatcherResult migration();
+
+    PatcherResult extract();
 
 public:
     /**
-     * @param [in] src Target root folder of custom patch data.
-     * @param [in] ut  Ptr of loaded UIText.
+     * @param [in] src Target the root folder of custom patch data.
+     * @param [in] pUT Ptr of loaded UIText.
      */
-    TitleUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT);
+    TitleUITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT);
 private:
-    const path_t m_db;         /* Path of title patch data folder */
+    const path_t m_db;     /* Path of title patch data folder */
     const path_t m_migrDB; /* Path of title migration data folder */
 };
 

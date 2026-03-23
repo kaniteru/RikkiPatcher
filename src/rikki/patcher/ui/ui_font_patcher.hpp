@@ -14,20 +14,20 @@ class UI;
 // ===    UIFontPatcher
 // ======================== C L A S S ========================
 
-class UIFontPatcher : public IPatcher {
+class UIFontPatcher final : public IPatcher {
 public:
-    PatcherResult patch() final;
+    PatcherResult patch();
 
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 
 public:
     /**
-     * @param [in] src Root path of custom patch data directory.
+     * @param [in] src Root path of a custom patch data directory.
      * @param [in] pUI ptr of UI.
      */
-    UIFontPatcher(const path_t& src, std::shared_ptr<UI> pUI);
+    UIFontPatcher(const path_t& src, const std::shared_ptr<UI>& pUI);
 private:
     std::shared_ptr<UI> m_pUI;
 };

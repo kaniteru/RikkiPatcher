@@ -25,7 +25,7 @@ struct IUIKey { };
 struct SettingUITextKey : IUIKey {
     const char* m_iKey;
     const char* m_iiKey;
-    const char* m_iiiKey; // id
+    const char* m_iiiKey; //id
     const char* m_textKey;
 
     SettingUITextKey(const char* a1, const char* a2, const char* a3, const char* a4);
@@ -48,9 +48,9 @@ struct DialogType1UITextKey : IUIKey {
 
 struct DialogType2UITextKey : IUIKey {
     const char* m_ikey;
-    int32_t m_iIdx;
-    uint32_t m_iiIdx;
-    uint32_t m_iiiIdx;
+    int32_t     m_iIdx;
+    uint32_t    m_iiIdx;
+    uint32_t    m_iiiIdx;
 
     explicit DialogType2UITextKey(const char* a1, int32_t a2, uint32_t a3, uint32_t a4);
 };

@@ -112,6 +112,6 @@ PatcherResult UIFontPatcher::extract() {
     return { size, size, 0 };
 }
 
-UIFontPatcher::UIFontPatcher(const path_t& src, std::shared_ptr<UI> pUI) :
+UIFontPatcher::UIFontPatcher(const path_t& src, const std::shared_ptr<UI>& pUI) :
     IPatcher(src),
     m_pUI(pUI) { }

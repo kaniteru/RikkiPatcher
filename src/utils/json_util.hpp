@@ -3,7 +3,7 @@
 #include "precompiled.hpp"
 
 #define ORDERED_NLOHMANN_DEFINE_TYPE_INTRUSIVE(Type, ...)  \
-friend void to_json(nlohmann::ordered_json& nlohmann_json_j, const Type& nlohmann_json_t) { NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) } \
+friend void to_json(nlohmann::ordered_json& nlohmann_json_j, const Type& nlohmann_json_t)   { NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) } \
 friend void from_json(const nlohmann::ordered_json& nlohmann_json_j, Type& nlohmann_json_t) { NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_FROM, __VA_ARGS__)) }
 
 /* json_util.hpp
@@ -18,7 +18,7 @@ friend void from_json(const nlohmann::ordered_json& nlohmann_json_j, Type& nlohm
 class JsonUtil {
 public:
     /**
-     * @brief Load json data from file.
+     * @brief Load json data from a file.
      *
      * @param [out] j Json instance.
      * @param [in] file Json file path.
@@ -50,7 +50,7 @@ public:
     static bool load_from_file(nlohmann::ordered_json& j, const path_t& file);
 
     /**
-     * @brief Save json data into file.
+     * @brief Save json data into a file.
      *
      * @param [in] j Json instance.
      * @param [in] file Target file path.
@@ -66,7 +66,7 @@ public:
     static bool save_into_file(const nlohmann::json& j, const path_t& file);
 
      /**
-     * @brief Save ordered json data into file.
+     * @brief Save ordered json data into a file.
      *
      * @param [in] j Ordered json instance.
      * @param [in] file Target file path.
