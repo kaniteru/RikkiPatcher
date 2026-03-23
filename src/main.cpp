@@ -17,8 +17,7 @@ int rikki_main() {
     wv->set_size(600, 750, WEBVIEW_HINT_NONE);
 
     LOG_INFO("Initializing WvBinder");
-    WvBinder binder { };
-    binder.bind();
+    WvBinder(wv.get()).bind();
 
     const auto index = fs::current_path().append("index.html");
 

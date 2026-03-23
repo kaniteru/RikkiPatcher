@@ -15,7 +15,7 @@ PatcherResult DialoguePatchHelper::do_patch(const path_t& fPatch, IDialogue* con
     const auto map = stream.get_dialogues();
     const auto lenPatched = pDst->update_dialogues(map);
     
-    ok += lenPatched.size();
+    ok += static_cast<int32_t>(lenPatched.size());
     return result;
 }
 
@@ -141,7 +141,7 @@ PatcherResult ChoicePatchHelper::do_patch(const path_t& fPatch, IDialogue* const
     const auto map = stream.get_choices();
     const auto lenPatched = pDst->update_choices(map);
     
-    ok += lenPatched.size();
+    ok += static_cast<int32_t>(lenPatched.size());
     return result;
 }
 
