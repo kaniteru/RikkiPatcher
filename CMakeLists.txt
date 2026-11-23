@@ -28,7 +28,7 @@ FetchContent_Declare(json
 # webview
 FetchContent_Declare(webview
         GIT_REPOSITORY https://github.com/webview/webview.git
-        GIT_TAG        cbbdee44afff22867de9fd88a9fc8350d9bdd399
+        GIT_TAG        f244320ab0d82fdab98a094e02996fc26d0ffd0c
         GIT_SHALLOW    TRUE
 )
 
