@@ -27,7 +27,9 @@ int rikki_main() {
     }
 
     LOG_DEBUG("Navigating to index.html");
-    wv->navigate(index.string());
+    const auto u8 = index.generic_u8string();
+    wv->navigate("file:///" + std::string(u8.begin(), u8.end()));
+
     LOG_DEBUG("Running wv client");
     wv->run();
     return EXIT_SUCCESS;
@@ -46,7 +48,7 @@ int main(int, char*[]) {
         MessageBoxA(nullptr, e.what(), "Webview Error", MB_OK | MB_ICONERROR);
     }
     catch (const std::exception& e) {
-        LOG_FATAL("Unhandled exception: {}", e.what());
+        LOG_FATAL("Unhandled exception({}): {}", GetLastError(), e.what());
         MessageBoxA(nullptr, e.what(), "Error", MB_OK | MB_ICONERROR);
     }
 
