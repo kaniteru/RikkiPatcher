@@ -1,5 +1,5 @@
-#ifndef RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_STREAM_HPP
-#define RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_STREAM_HPP
+#ifndef RIKKI_PATCHER_RIKKI_STREAM_DIALOGUE_STREAM_HPP
+#define RIKKI_PATCHER_RIKKI_STREAM_DIALOGUE_STREAM_HPP
 #include "precompiled.hpp"
 #include "i_stream.hpp"
 #include "rikki/data/dialogue/dialogue.hpp"
@@ -17,7 +17,7 @@
 class DialoguePatchStream final : public IRikkiStream {
 public:
     /**
-     * @brief Find dialogue from index.
+     * @brief Find dialogue from the index.
      *
      * @param [in] idx Target dialogue index.
      * @param [out] e Result reference.
@@ -33,7 +33,7 @@ public:
     dialogue_map_t get_dialogues() const;
 
     /**
-     * @brief Check target index dialogue is exist.
+     * @brief Check target index dialogue exists.
      *
      * @param [in] idx Target dialogue index.
      * @return Returns true if dialogue exists.
@@ -56,7 +56,7 @@ public:
 
 public:
     /**
-     * @brief Load dialogues from custom patch file.
+     * @brief Load dialogues from a custom patch file.
      *
      * @param [in] file Dialogue custom patch file path.
      */
@@ -70,7 +70,7 @@ public:
 class ChoicePatchStream final : public IRikkiStream {
 public:
     /**
-     * @brief Find choice from index.
+     * @brief Find a choice from index.
      *
      * @param  [in] idx Target choice index.
      * @return Returns target choice of index.
@@ -95,4 +95,4 @@ public:
 };
 
 
-#endif //RIKKI_PATCHER_RIKKI_PATCHER_DIALOGUE_STREAM_HPP
+#endif //RIKKI_PATCHER_RIKKI_STREAM_DIALOGUE_STREAM_HPP

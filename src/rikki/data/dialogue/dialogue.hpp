@@ -48,7 +48,7 @@ private:
     void iterate_elements(const dialogue_iterate_t& callback);
 public:
     /**
-     * @brief Load dialogue from game data file.
+     * @brief Load dialogue from a game data file.
      *
      * @param [in] file 'asset/json/server/scene/*.json' file path.
      */

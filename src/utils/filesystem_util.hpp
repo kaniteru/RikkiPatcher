@@ -14,7 +14,7 @@
 class FilesystemUtil {
 public:
     /**
-     * @brief List files in a directory and return them in natural-sorted order.
+     * @brief List files in a directory and return them in naturally sorted order.
      *
      * @param dir Directory to enumerate.
      * @return Sorted list of paths from @p dir.

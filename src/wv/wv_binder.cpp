@@ -16,31 +16,12 @@
 #include "utils/json_util.hpp"
 #include "utils/registry_reader.hpp"
 
-#define BIND_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](HANDLER_ARGS) { return FN(args); });
-#define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) WvMgr::get()->bind(EVENT, [this](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
+#define HANDLER_ARGS       const std::string& args
+#define HANDLER_ARGS_UNREF const std::string&
+#define ASYNC_HANDLER_ARGS const std::string& id, const std::string& args, void* a3
 
-// ======================== C L A S S ========================
-// ===    WvBinder
-// ======================== C L A S S ========================
-
-void WvBinder::bind() {
-    LOG_INFO("Binding wv events...");
-
-    BIND_EVENT_HANDLER("INIT_PATCHER", this->init_patcher);
-    BIND_EVENT_HANDLER("REQUEST_TRANS", this->request_trans);
-    BIND_EVENT_HANDLER("OPEN_GITHUB", this->open_github);
-    BIND_EVENT_HANDLER("OPEN_PROJECT_WEB", this->open_project_web);
-    BIND_EVENT_HANDLER("SET_GMDIR_MANUALLY", this->set_gmdir_manually);
-    BIND_EVENT_HANDLER("SET_GMDIR_AUTOMATICALLY", this->set_gmdir_automatically);
-    BIND_EVENT_HANDLER("SELECT_PATCH_DATA_DIR", this->select_patch_data_dir);
-    BIND_EVENT_HANDLER("PATCH_EXTRACT", this->patch_extract);
-    BIND_EVENT_HANDLER("PATCH_APPLY", this->patch_apply);
-    BIND_EVENT_HANDLER("MIGRATE_PATCH_DATA", this->migrate_patch_data);
-
-    LOG_INFO("All events bound");
-}
-
-std::string WvBinder::init_patcher(HANDLER_ARGS) {
+namespace {
+std::string init_patcher(HANDLER_ARGS_UNREF) {
     WvInvoker::log(WV_LOG_LV_PROG, WvLogFmt::WV_BINDER_INIT_START);
     path_t gmDir { };
 
@@ -60,7 +41,7 @@ std::string WvBinder::init_patcher(HANDLER_ARGS) {
     return { };
 }
 
-std::string WvBinder::request_trans(HANDLER_ARGS) {
+std::string request_trans(HANDLER_ARGS_UNREF) {
     std::u8string rtn = u8"[";
 
     const auto files = FilesystemUtil::sort_files(DirMgr::get(DIR_PROJ_LANG));
@@ -93,25 +74,25 @@ std::string WvBinder::request_trans(HANDLER_ARGS) {
     return StringUtil::u8_to_str(rtn);
 }
 
-std::string WvBinder::open_github(HANDLER_ARGS) {
+std::string open_github(HANDLER_ARGS_UNREF) {
     constexpr static auto URL = L"https://github.com/kaniteru/RikkiPatcher";
     ShellExecute(nullptr, nullptr, URL, nullptr, nullptr, SW_HIDE);
     return { };
 }
 
-std::string WvBinder::open_project_web(HANDLER_ARGS) {
+std::string open_project_web(HANDLER_ARGS_UNREF) {
     constexpr static auto URL = L"https://kaniteru.github.io/project/rikkipatcher/index.html?section=usage";
     ShellExecute(nullptr, nullptr, URL, nullptr, nullptr, SW_HIDE);
     return { };
 }
 
-std::string WvBinder::set_gmdir_manually(HANDLER_ARGS) {
+std::string set_gmdir_manually(HANDLER_ARGS_UNREF) {
     path_t dir { };
 
     WvInvoker::log(WV_LOG_LV_ALERT, WvLogFmt::WV_BINDER_DIALOG_GMDIR_NOTICE);
 
     if (!DialogUtil::folder_select_dialog(dir)) {
-        // maybe user closed dialog window
+        // maybe a user closed the dialog window
         WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_DIALOG_FAILED);
     }
 
@@ -119,7 +100,7 @@ std::string WvBinder::set_gmdir_manually(HANDLER_ARGS) {
     return { };
 }
 
-std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
+std::string set_gmdir_automatically(HANDLER_ARGS_UNREF) {
     constexpr static auto REG_STEAM          = L"SOFTWARE\\Valve\\Steam";
     constexpr static auto KEY_STEAM_PATH     = L"SteamPath";
 
@@ -191,11 +172,11 @@ std::string WvBinder::set_gmdir_automatically(HANDLER_ARGS) {
     return { };
 }
 
-std::string WvBinder::select_patch_data_dir(const std::string& args) {
+std::string select_patch_data_dir(HANDLER_ARGS_UNREF) {
     path_t dir { };
 
     if (!DialogUtil::folder_select_dialog(dir)) {
-        // maybe user closed dialog window
+        // maybe a user closed the dialog window
         WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_DIALOG_FAILED);
     }
 
@@ -203,7 +184,7 @@ std::string WvBinder::select_patch_data_dir(const std::string& args) {
     return { };
 }
 
-std::string WvBinder::patch_extract(HANDLER_ARGS) {
+std::string patch_extract(HANDLER_ARGS_UNREF) {
     const auto dst = DirMgr::get(DIR_PROJ_DATA_EXTRACED);
 
     const Patcher patcher(dst);
@@ -215,7 +196,7 @@ std::string WvBinder::patch_extract(HANDLER_ARGS) {
     return { };
 }
 
-std::string WvBinder::patch_apply(HANDLER_ARGS) {
+std::string patch_apply(HANDLER_ARGS) {
     const auto a = WvArgsParser::from_js(args);
     const auto src = a.get<std::string>(0);
     const path_t u8src(StringUtil::str_to_u8(src));
@@ -227,15 +208,40 @@ std::string WvBinder::patch_apply(HANDLER_ARGS) {
     return { };
 }
 
-std::string WvBinder::migrate_patch_data(HANDLER_ARGS) {
+std::string migrate_patch_data(HANDLER_ARGS_UNREF) {
     if (path_t dir { }; DialogUtil::folder_select_dialog(dir)) {
         const Patcher patcher(dir);
         patcher.do_migration();
     } else {
-        // maybe user closed dialog window
+        // maybe a user closed the dialog window
         WvInvoker::log(WV_LOG_LV_FATAL, WvLogFmt::WV_BINDER_DIALOG_FAILED);
     }
 
     WvInvoker::finish_patch();
     return { };
+}
+} //namespace
+
+// ======================== C L A S S ========================
+// ===    WvBinder
+// ======================== C L A S S ========================
+
+#define BIND_EVENT_HANDLER(EVENT, FN)       m_wv->bind(EVENT, [](HANDLER_ARGS)       { return FN(args); });
+#define BIND_ASYNC_EVENT_HANDLER(EVENT, FN) m_wv->bind(EVENT, [](ASYNC_HANDLER_ARGS) { FN(id, args, pArgs); }, nullptr);
+
+void WvBinder::bind() const {
+    LOG_INFO("Binding wv events...");
+
+    BIND_EVENT_HANDLER("INIT_PATCHER",            init_patcher);
+    BIND_EVENT_HANDLER("REQUEST_TRANS",           request_trans);
+    BIND_EVENT_HANDLER("OPEN_GITHUB",             open_github);
+    BIND_EVENT_HANDLER("OPEN_PROJECT_WEB",        open_project_web);
+    BIND_EVENT_HANDLER("SET_GMDIR_MANUALLY",      set_gmdir_manually);
+    BIND_EVENT_HANDLER("SET_GMDIR_AUTOMATICALLY", set_gmdir_automatically);
+    BIND_EVENT_HANDLER("SELECT_PATCH_DATA_DIR",   select_patch_data_dir);
+    BIND_EVENT_HANDLER("PATCH_EXTRACT",           patch_extract);
+    BIND_EVENT_HANDLER("PATCH_APPLY",             patch_apply);
+    BIND_EVENT_HANDLER("MIGRATE_PATCH_DATA",      migrate_patch_data);
+
+    LOG_INFO("All events bound");
 }

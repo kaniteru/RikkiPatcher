@@ -14,11 +14,11 @@
 
 class CopyPatcher final : public IPatcher {
 public:
-    PatcherResult patch() final;
+    PatcherResult patch();
 
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 
 public:
     /**

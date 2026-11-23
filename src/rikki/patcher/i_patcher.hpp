@@ -50,7 +50,7 @@ public:
 public:
     /**
      * @brief Initializing patcher.
-     * <br>m_dir is point the root path of custom patch data.
+     *        m_dir is point the root path of custom patch data.
      * 
      * @param [in] dir Root path of custom patch data.
      */

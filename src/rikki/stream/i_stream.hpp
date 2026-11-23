@@ -1,5 +1,5 @@
-#ifndef RIKKI_PATCHER_RIKKI_PATCHER_I_STREAM_HPP
-#define RIKKI_PATCHER_RIKKI_PATCHER_I_STREAM_HPP
+#ifndef RIKKI_PATCHER_RIKKI_STREAM_I_STREAM_HPP
+#define RIKKI_PATCHER_RIKKI_STREAM_I_STREAM_HPP
 #include "precompiled.hpp"
 
 /* i_stream.hpp
@@ -16,7 +16,7 @@ class IRikkiStream {
 public:
     /**
      * @brief Check is migration data loaded successfully.
-     * <br>If you want to write from empty stream, you don't need to check this.
+     * <br>If you want to write from an empty stream, you don't need to check this.
      *
      * @return Returns true if json data loaded successfully.
      */
@@ -28,7 +28,7 @@ public:
     void clear();
 
     /**
-     * @brief Save the json data into file.
+     * @brief Save the json data into a file.
      *
      * @return Returns true if saved successfully.
      */
@@ -38,7 +38,7 @@ public:
     /**
      * @brief Load json from the patch data file or create the empty stream.
      *
-     * @param [in] file A path of patch data file.
+     * @param [in] file A path of a patch data file.
      *
      * @code
      * IRikkiStream stream(...);
@@ -55,4 +55,4 @@ protected:
 };
 
 
-#endif //RIKKI_PATCHER_RIKKI_PATCHER_I_STREAM_HPP
+#endif //RIKKI_PATCHER_RIKKI_STREAM_I_STREAM_HPP

@@ -17,8 +17,7 @@ int rikki_main() {
     wv->set_size(600, 750, WEBVIEW_HINT_NONE);
 
     LOG_INFO("Initializing WvBinder");
-    WvBinder binder { };
-    binder.bind();
+    WvBinder(wv.get()).bind();
 
     const auto index = fs::current_path().append("index.html");
 
@@ -28,7 +27,9 @@ int rikki_main() {
     }
 
     LOG_DEBUG("Navigating to index.html");
-    wv->navigate(index.string());
+    const auto u8 = index.generic_u8string();
+    wv->navigate("file:///" + std::string(u8.begin(), u8.end()));
+
     LOG_DEBUG("Running wv client");
     wv->run();
     return EXIT_SUCCESS;
@@ -47,7 +48,7 @@ int main(int, char*[]) {
         MessageBoxA(nullptr, e.what(), "Webview Error", MB_OK | MB_ICONERROR);
     }
     catch (const std::exception& e) {
-        LOG_FATAL("Unhandled exception: {}", e.what());
+        LOG_FATAL("Unhandled exception({}): {}", GetLastError(), e.what());
         MessageBoxA(nullptr, e.what(), "Error", MB_OK | MB_ICONERROR);
     }
 

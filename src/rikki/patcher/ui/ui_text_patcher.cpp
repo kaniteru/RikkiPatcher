@@ -77,7 +77,7 @@ PatcherResult UITextPatcher::extract() {
     return result;
 }
 
-UITextPatcher::UITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT) :
+UITextPatcher::UITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT) :
     IPatcher(src),
     m_pUT(pUT) {
 
@@ -88,7 +88,7 @@ UITextPatcher::UITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT) :
 // ===    IUITextPatcher
 // ======================== C L A S S ========================
 
-IUITextPatcher::IUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT) :
+IUITextPatcher::IUITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT) :
     IPatcher(src),
     m_pUT(pUT) {
 
@@ -172,7 +172,7 @@ PatcherResult InGameUITextPatcher::extract() {
     return result;
 }
 
-InGameUITextPatcher::InGameUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT) :
+InGameUITextPatcher::InGameUITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT) :
     IUITextPatcher(src, pUT),
     m_db(path_t(src) / UITextPath::PATCH_FILE_IN_GAME),
     m_migrDB(path_t(src) / UITextPath::MIGR_FILE_IN_GAME) { }
@@ -278,7 +278,7 @@ PatcherResult SettingUITextPatcher::extract() {
     return result;
 }
 
-SettingUITextPatcher::SettingUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT) :
+SettingUITextPatcher::SettingUITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT) :
     IUITextPatcher(src, pUT),
     m_db(path_t(src) / UITextPath::PATCH_FILE_SETTING),
     m_migrDB(path_t(src) / UITextPath::MIGR_FILE_SETTING) { }
@@ -485,7 +485,7 @@ PatcherResult TitleUITextPatcher::extract() {
     return result;
 }
 
-TitleUITextPatcher::TitleUITextPatcher(const path_t& src, std::shared_ptr<UIText> pUT) :
+TitleUITextPatcher::TitleUITextPatcher(const path_t& src, const std::shared_ptr<UIText>& pUT) :
     IUITextPatcher(src, pUT),
     m_db(path_t(src) / UITextPath::PATCH_FILE_TITLE),
     m_migrDB(path_t(src) / UITextPath::MIGR_FILE_TITLE) { }

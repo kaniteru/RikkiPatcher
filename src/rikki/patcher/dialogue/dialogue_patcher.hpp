@@ -16,7 +16,7 @@
 class DialoguePatcher final : public IPatcher {
 public:
     /**
-     * @brief Do custom patch into game data.
+     * @brief Do a custom patch into game data.
      *
      * @return Returns patched files count.
      */
@@ -46,7 +46,7 @@ public:
     /**
      * @brief Initialize using custom patch data directory.
      *
-     * @param [in] src Root path of custom patch data directory.
+     * @param [in] src Root path of a custom patch data directory.
      */
     explicit DialoguePatcher(const path_t& src);
 private:
@@ -61,7 +61,7 @@ private:
 class ChoicePatcher final : public IPatcher {
 public:
     /**
-     * @brief Do custom patch into game data.
+     * @brief Do a custom patch into game data.
      *
      * @return Returns patched files count.
      */
@@ -81,7 +81,7 @@ public:
 
 public:
     /**
-     * @brief Initialize using custom data directory.
+     * @brief Initialize using a custom data directory.
      *
      * @param [in] src Custom data directory root path.
      */

@@ -20,7 +20,7 @@ enum eDir : uint32_t; //dir_mgr_enum.hpp
 class DirMgr {
 public:
     /**
-     * @brief Initialize using game directory.
+     * @brief Initialize using a game directory.
      *
      * @param [in] gmDir Game directory path.
      */

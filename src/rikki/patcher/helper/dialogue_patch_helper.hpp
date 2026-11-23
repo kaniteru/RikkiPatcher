@@ -35,7 +35,7 @@ public:
      * @param [in] fMigr Target migration data file.
      * @param [in] pureMap The pure dialogue map.
      * @return If save the patch file failed, returns DialoguePatchHelperResult::FAILED_SAVE.
-     * <br>else if data doesn't exist in a pure map, returns DialoguePatchHelperResult::OK_NO_DATA. also, delete the patch file.
+     * <br>Else if data doesn't exist in a pure map, returns DialoguePatchHelperResult::OK_NO_DATA. Also, delete the patch file.
      */
     static PatcherResult do_migrate(const path_t& fPatch, const path_t& fMigr, const dialogue_map_t& pureMap);
 };
@@ -62,7 +62,7 @@ public:
      * @param [in] fMigr Target migration data file.
      * @param [in] pureMap The pure dialogue map.
      * @return If save the patch file failed, returns DialoguePatchHelperResult::FAILED_SAVE.
-     * <br>else if data doesn't exist in a pure map, returns DialoguePatchHelperResult::OK_NO_DATA. also, delete the patch file.
+     * <br>Else if data doesn't exist in a pure map, returns DialoguePatchHelperResult::OK_NO_DATA. Also, delete the patch file.
      */
     static PatcherResult do_migrate(const path_t& fPatch, const path_t& fMigr, const choice_map_t& pureMap);
 };
@@ -72,9 +72,9 @@ public:
 // ======================= S T R U C T =======================
 
 struct DialoguePatchHelperResult {
-    static constexpr auto OK         = 0;
-    static constexpr auto OK_NO_DATA = 1;
-    static constexpr auto FAILED_SAVE= -1;
+    static constexpr auto OK          = 0;
+    static constexpr auto OK_NO_DATA  = 1;
+    static constexpr auto FAILED_SAVE = -1;
 
     static auto to_result(const PatcherResult& r) {
         if (r == DialoguePatchHelperResult::PATCHER_RESULT_OK_NO_DATA) {

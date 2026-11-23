@@ -17,7 +17,7 @@
 // ===    IUIDialoguePatcher
 // ======================== C L A S S ========================
 
-IUIDialoguePatcher::IUIDialoguePatcher(std::shared_ptr<UI> pUI) :
+IUIDialoguePatcher::IUIDialoguePatcher(const std::shared_ptr<UI>& pUI) :
     m_pUI(pUI) { }
 
 // ======================== C L A S S ========================
@@ -115,7 +115,7 @@ PatcherResult UIDialoguePatcher::extract() {
     return { }; // todo: handle result
 }
 
-PatcherResult UIDialoguePatcher::extract(const path_t& dir, std::shared_ptr<UI> pUI) {
+PatcherResult UIDialoguePatcher::extract(const path_t& dir, const std::shared_ptr<UI>& pUI) {
     PatcherResult result { };
     auto& ok        = result.m_ok;
     auto& failed  = result.m_failed;
@@ -158,7 +158,7 @@ PatcherResult UIDialoguePatcher::extract(const path_t& dir, std::shared_ptr<UI> 
     return result;
 }
 
-UIDialoguePatcher::UIDialoguePatcher(const path_t& src, std::shared_ptr<UI> pUI) :
+UIDialoguePatcher::UIDialoguePatcher(const path_t& src, const std::shared_ptr<UI>& pUI) :
     IPatcher(src),
     IUIDialoguePatcher(pUI),
     m_db(path_t(src) / UIDialoguePath::PATCH_FOLDER_DIALOGUE),
@@ -259,7 +259,7 @@ PatcherResult UIChoicePatcher::extract() {
     return { }; // todo: handle result
 }
 
-PatcherResult UIChoicePatcher::extract(const path_t& src, std::shared_ptr<UI> pUI) {
+PatcherResult UIChoicePatcher::extract(const path_t& src, const std::shared_ptr<UI>& pUI) {
     PatcherResult result { };
     auto& ok        = result.m_ok;
     auto& failed  = result.m_failed;

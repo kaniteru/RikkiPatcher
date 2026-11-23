@@ -17,7 +17,7 @@
 class RegistryReader {
 public:
     /**
-     * @brief Check if registry key was opened successfully.
+     * @brief Check if a registry key was opened successfully.
      *
      * @return true if opened successfully, false otherwise.
      */

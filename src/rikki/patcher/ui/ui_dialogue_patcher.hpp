@@ -1,8 +1,6 @@
 #ifndef RIKKI_PATCHER_RIKKI_PATCHER_UI_UI_DIALOGUE_PATCHER_HPP
 #define RIKKI_PATCHER_RIKKI_PATCHER_UI_UI_DIALOGUE_PATCHER_HPP
 #include "precompiled.hpp"
-#include "rikki/data/dialogue/dialogue_json.hpp"
-#include "rikki/data/dialogue/i_dialogue.hpp"
 #include "rikki/patcher/i_patcher.hpp"
 
 class UI;
@@ -19,7 +17,7 @@ class UI;
 
 class IUIDialoguePatcher {
 public:
-    explicit IUIDialoguePatcher(std::shared_ptr<UI> pUI);
+    explicit IUIDialoguePatcher(const std::shared_ptr<UI>& pUI);
 protected:
     std::shared_ptr<UI> m_pUI;
 };
@@ -30,22 +28,22 @@ protected:
 
 class UIDialoguePatcher final : public IPatcher, IUIDialoguePatcher {
 public:
-    PatcherResult patch() final;
+    PatcherResult patch();
 
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 private:
-    static PatcherResult extract(const path_t& dir, std::shared_ptr<UI> pUI);
+    static PatcherResult extract(const path_t& dir, const std::shared_ptr<UI>& pUI);
 
 public:
     /**
-     * @param [in] src Root path of custom patch data directory.
+     * @param [in] src Root path of a custom patch data directory.
      * @param [in] pUI ptr of UI.
      */
-    UIDialoguePatcher(const path_t& src, std::shared_ptr<UI> pUI);
+    UIDialoguePatcher(const path_t& src, const std::shared_ptr<UI>& pUI);
 private:
-    const path_t m_db;         /* Path of ui dialogue-dialogues patch folder */
+    const path_t m_db;     /* Path of ui dialogue-dialogues patch folder */
     const path_t m_migrDB; /* Patch of ui dialogue-dialogues migration folder */
 };
 
@@ -55,22 +53,22 @@ private:
 
 class UIChoicePatcher final : public IPatcher, IUIDialoguePatcher {
 public:
-    PatcherResult patch() final;
+    PatcherResult patch();
 
-    PatcherResult migration() final;
+    PatcherResult migration();
 
-    PatcherResult extract() final;
+    PatcherResult extract();
 private:
-    static PatcherResult extract(const path_t& src, std::shared_ptr<UI> pUI);
+    static PatcherResult extract(const path_t& src, const std::shared_ptr<UI>& pUI);
 
 public:
     /**
-     * @param [in] src Root path of custom patch data directory.
+     * @param [in] src Root path of a custom patch data directory.
      * @param [in] pUI ptr of UI.
      */
     UIChoicePatcher(const path_t& src, std::shared_ptr<UI> pUI);
 private:
-    const path_t m_db;         /* Path of ui dialogue-choices patch folder */
+    const path_t m_db;     /* Path of ui dialogue-choices patch folder */
     const path_t m_migrDB; /* Patch of ui dialogue-choices migration folder */
 };
 

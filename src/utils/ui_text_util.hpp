@@ -10,7 +10,7 @@ class UITextUtil {
 public:
     /**
      * @brief Copy the game's UI startup archive into a temp folder and decrypt/unpack it.
-     * Writes the full path of the decrypted/unpacked startup JSON into @p file.
+     * Writes the full path of the decrypted/unpacked startup JSON into @p a file.
      *
      * @param[out] file Path to the decrypted/unpacked startup.json in the temp folder.
      * @return true on success, false on failure (errors are logged).
@@ -24,12 +24,6 @@ public:
      * @return true on success, false on failure (errors are logged).
      */
     static bool encrypt_startup_and_move_to_game();
-
-    static constexpr auto FILE_NAME = "startup.json";
-    static constexpr auto ZIP_FILE_NAME = "startup.zip";
-    static constexpr auto TEMP_FOLDER_NAME = "ui";
-private:
-    static constexpr auto PW = u8"gc_zip";
 };
 
 

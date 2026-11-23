@@ -10,11 +10,11 @@
 
 namespace j {
 struct UIFont;
-}
+} //namespace j
 
 class UI;
 
-using font_vector_t = std::vector<j::UIFont>;
+using font_vector_t   = std::vector<j::UIFont>;
 using font_iterator_t = std::function<void(nlohmann::basic_json<>& array)>;
 
 // ======================== C L A S S ========================

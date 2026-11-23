@@ -20,9 +20,7 @@ A simple patch tool to modify the game《 [鼓手余命十日谭 (Shiina Taki's 
 - **develop**: The development and testing source
 
 ## Todo
-- Support for multiple languages in the client
-- Improve 'Migrate patch data'
-- Async worker
+- Rewrite everything
 
 ## Third-Party Software
 This project includes the 7-Zip executable, which is licensed under the GNU Lesser General Public License (LGPL).

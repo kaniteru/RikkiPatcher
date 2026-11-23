@@ -1,5 +1,5 @@
-#ifndef UI_FONT_PATCH_STREAM_HPP
-#define UI_FONT_PATCH_STREAM_HPP
+#ifndef RIKKI_PATCHER_RIKKI_STREAM_UI_FONT_PATCH_STREAM_HPP
+#define RIKKI_PATCHER_RIKKI_STREAM_UI_FONT_PATCH_STREAM_HPP
 #include "precompiled.hpp"
 #include "i_stream.hpp"
 #include "rikki/data/ui_font/ui_font.hpp"
@@ -16,14 +16,14 @@
 class UIFontPatchStream : public IRikkiStream {
 public:
     /**
-     * @brief Get all added fonts from stream.
+     * @brief Get all added fonts from the stream.
      *
-     * @return  Returns vector of added fonts.
+     * @return Returns vector of added fonts.
      */
     font_vector_t get_fonts();
 
     /**
-     * @brief Add fonts into stream.
+     * @brief Add fonts into the stream.
      *
      * @param [in] fonts Fonts to add.
      * @return Returns count of added fonts.
@@ -35,4 +35,4 @@ public:
 };
 
 
-#endif //UI_FONT_PATCH_STREAM_HPP
+#endif //RIKKI_PATCHER_RIKKI_STREAM_UI_FONT_PATCH_STREAM_HPP
